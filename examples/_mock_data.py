@@ -3,6 +3,8 @@ from dayu_widgets import dayu_theme
 
 
 def score_color(score, y):
+    if score is None:
+        return dayu_theme.info_color
     if score < 60:
         return dayu_theme.error_color
     elif score < 80:
@@ -30,7 +32,9 @@ header_list = [
         "icon": lambda x, y: (
             "{}.svg".format(x.lower()),
             getattr(dayu_theme, x.lower() + "_color"),
-        ),
+        )
+        if x
+        else None,
     },
     {
         "label": "Age",
