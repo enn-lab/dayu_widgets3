@@ -72,7 +72,7 @@ class MComboBox(MComboBoxSearchMixin, QtWidgets.QComboBox):
         self.set_placeholder(self.tr("Please Select"))
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self._dayu_size = dayu_theme.default_size
-        dayu_theme.apply(self)
+
 
     def get_dayu_size(self):
         """
