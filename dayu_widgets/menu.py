@@ -12,6 +12,8 @@ from qtpy import QtWidgets
 from dayu_widgets.mixin import property_mixin
 from dayu_widgets.popup import MPopup
 from dayu_widgets.line_edit import MLineEdit
+from dayu_widgets.check_box import MCheckBox
+from dayu_widgets.radio_button import MRadioButton
 import dayu_widgets.utils as utils
 
 
@@ -622,6 +624,42 @@ class SearchableMenuBase(ScrollableMenuBase):
         return super(SearchableMenuBase, self).keyPressEvent(event)
 
 
+class MMenuItemWidget(QtWidgets.QWidget):
+    def __init__(self, action, icon, label, is_exclusive=False, parent=None):
+        super(MMenuItemWidget, self).__init__(parent)
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        
+        layout = QtWidgets.QHBoxLayout(self)
+        layout.setContentsMargins(4, 2, 8, 2)
+        layout.setSpacing(4)
+
+        if is_exclusive:
+            self.indicator = MRadioButton()
+        else:
+            self.indicator = MCheckBox()
+        self.indicator.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self.indicator.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.indicator.setChecked(action.isChecked())
+        
+        self.icon_label = QtWidgets.QLabel()
+        self.icon_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        if icon:
+            pixmap = icon.pixmap(16, 16)
+            self.icon_label.setPixmap(pixmap)
+            self.icon_label.setFixedSize(16, 16)
+            self.icon_label.setAlignment(QtCore.Qt.AlignCenter)
+        
+        self.text_label = QtWidgets.QLabel(label)
+        self.text_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        
+        layout.addWidget(self.indicator)
+        layout.addWidget(self.icon_label)
+        layout.addWidget(self.text_label)
+        layout.addStretch()
+        
+        action.toggled.connect(self.indicator.setChecked)
+
+
 @property_mixin
 class MMenu(SearchableMenuBase):
     sig_value_changed = QtCore.Signal(object)
@@ -681,12 +719,27 @@ class MMenu(SearchableMenuBase):
             for i in data_dict.get("children"):
                 self._add_menu(menu, i)
         else:
-            action = self._action_group.addAction(utils.display_formatter(data_dict.get("label")))
-            action.setProperty("value", data_dict.get("value"))
-            action.setCheckable(True)
-            # 用来将来获取父层级数据
-            action.setProperty("parent_menu", parent_menu)
-            parent_menu.addAction(action)
+            if data_dict.get("icon"):
+                action = QtWidgets.QWidgetAction(self)
+                label_text = utils.display_formatter(data_dict.get("label"))
+                action.setText(label_text)
+                self._action_group.addAction(action)
+                action.setProperty("value", data_dict.get("value"))
+                action.setCheckable(True)
+                action.setProperty("parent_menu", parent_menu)
+                
+                icon = utils.icon_formatter(data_dict.get("icon"))
+                custom_widget = MMenuItemWidget(action, icon, label_text, self._action_group.isExclusive())
+                action.setDefaultWidget(custom_widget)
+                
+                parent_menu.addAction(action)
+            else:
+                action = self._action_group.addAction(utils.display_formatter(data_dict.get("label")))
+                action.setProperty("value", data_dict.get("value"))
+                action.setCheckable(True)
+                # 用来将来获取父层级数据
+                action.setProperty("parent_menu", parent_menu)
+                parent_menu.addAction(action)
 
     def set_data(self, option_list):
         assert isinstance(option_list, list)

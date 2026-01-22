@@ -450,7 +450,6 @@ MCheckBox:disabled {
 }
 
 
-MMenu::indicator:non-exclusive,
 MBigView::indicator,
 MListView::indicator,
 MTreeView::indicator,
@@ -463,7 +462,6 @@ MCheckBox::indicator{
     border: 1px solid @border_color;
     background-color: @background_in_color;
 }
-MMenu::indicator:non-exclusive:disabled,
 MBigView::indicator:disabled,
 MListView::indicator:disabled,
 MTreeView::indicator:disabled,
@@ -473,7 +471,6 @@ MCheckBox::indicator:disabled{
     border: 1px solid @border_color;
     background-color: @background_selected_color;
 }
-MMenu::indicator:non-exclusive:hover,
 MBigView::indicator:hover,
 MListView::indicator:hover,
 MTreeView::indicator:hover,
@@ -483,7 +480,6 @@ MCheckBox::indicator:hover{
     border: 1px solid @primary_5;
     background-color: @background_in_color;
 }
-MMenu::indicator:non-exclusive:checked,
 MBigView::indicator:checked,
 MListView::indicator:checked,
 MTreeView::indicator:checked,
@@ -493,7 +489,6 @@ MCheckBox::indicator:checked{
     background-color: @primary_color;
     image: url(@icon_check);
 }
-MMenu::indicator:non-exclusive:checked:disabled,
 MBigView::indicator:checked:disabled,
 MListView::indicator:checked:disabled,
 MTreeView::indicator:checked:disabled,
@@ -1241,10 +1236,7 @@ MMenu[checked=true]{
     background-color: @background_out_color;
 }
 MMenu::item {
-    padding: 2px 2px;
-}
-MMenu::item {
-    padding: 8px auto;
+    padding: 4px 24px 4px 28px;
 }
 MMenu::item:checked  {
     color: @primary_color;
@@ -1254,8 +1246,61 @@ MMenu::item:selected  {
     background-color: @background_out_color;
 }
 
-MMenu::indicator {
-    left: 6px;
+/* MMenu Indicator */
+MMenu::indicator:non-exclusive {
+    width: @check_box_size@unit;
+    height: @check_box_size@unit;
+    border-radius: 2px;
+    border: 1px solid @border_color;
+    background-color: @background_in_color;
+}
+MMenu::indicator:non-exclusive:disabled {
+    border: 1px solid @border_color;
+    background-color: @background_selected_color;
+}
+MMenu::indicator:non-exclusive:hover {
+    border: 1px solid @primary_5;
+    background-color: @background_in_color;
+}
+MMenu::indicator:non-exclusive:checked {
+    background-color: @primary_color;
+    image: url(@icon_check);
+}
+MMenu::indicator:non-exclusive:checked:disabled {
+    background-color: @disable_color;
+}
+
+MMenu::indicator:exclusive {
+    width: @radio_size@unit;
+    height: @radio_size@unit;
+    border-radius: @radio_radius@unit;
+    border: 1px solid @border_color;
+    background-color: @background_in_color;
+}
+MMenu::indicator:exclusive:disabled{
+    border: 1px solid @border_color;
+    background-color: @background_selected_color;
+}
+MMenu::indicator:exclusive:hover{
+    border: 1px solid @primary_5;
+}
+MMenu::indicator:exclusive:checked{
+    background-color: @primary_color;
+    image: url(@icon_circle);
+}
+MMenu::indicator:exclusive:checked:disabled{
+    background-color: @disable_color;
+}
+
+/* Explicit icon positioning */
+/* When both icon and indicator are present, we might need manual adjustment or use QWidgetAction */
+MMenu::icon {
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    margin-top: -8px;
+    width: 16px;
+    height: 16px;
 }
 
 QToolTip {
