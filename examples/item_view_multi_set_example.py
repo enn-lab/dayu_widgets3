@@ -10,9 +10,9 @@ from dayu_widgets.push_button import MPushButton
 import _mock_data as mock
 
 @utils.add_settings("DaYu", "DaYuExample", event_name="hideEvent")
-class ItemViewFullSetExample(QtWidgets.QWidget, MFieldMixin):
+class ItemViewMultiSetExample(QtWidgets.QWidget, MFieldMixin):
     def __init__(self, parent=None):
-        super(ItemViewFullSetExample, self).__init__(parent)
+        super(ItemViewMultiSetExample, self).__init__(parent)
         self._init_ui()
 
     def _init_ui(self):
@@ -52,6 +52,6 @@ if __name__ == "__main__":
     from dayu_widgets.qt import application
 
     with application() as app:
-        test = ItemViewFullSetExample()
+        test = ItemViewMultiSetExample()
         dayu_theme.apply(test)
         test.show()
