@@ -1,5 +1,6 @@
 # Import built-in modules
 import os
+from .__version__ import __version__
 
 
 DEFAULT_STATIC_FOLDER = os.path.join(__path__[0], "static")
@@ -43,6 +44,7 @@ from dayu_widgets.item_view import MListView
 from dayu_widgets.item_view import MTableView
 from dayu_widgets.item_view import MTreeView
 from dayu_widgets.item_view_full_set import MItemViewFullSet
+from dayu_widgets.item_view_multi_set import MItemViewMultiSet
 from dayu_widgets.item_view_set import MItemViewSet
 from dayu_widgets.label import MLabel
 from dayu_widgets.line_edit import MLineEdit
@@ -71,6 +73,7 @@ from dayu_widgets.tool_button import MToolButton
 
 
 __all__ = [
+    "__version__",
     "MAlert",
     "MAvatar",
     "MBadge",
@@ -101,6 +104,7 @@ __all__ = [
     "MTableView",
     "MTreeView",
     "MItemViewFullSet",
+    "MItemViewMultiSet",
     "MItemViewSet",
     "MLabel",
     "MLineEdit",

@@ -3,6 +3,7 @@ from itertools import groupby
 from qtpy import QtCore
 from qtpy import QtWidgets
 
+from dayu_widgets import dayu_theme
 # Import local modules
 from dayu_widgets.button_group import MToolButtonGroup
 from dayu_widgets.combo_box import MComboBox
@@ -26,8 +27,12 @@ class MItemViewMultiSet(QtWidgets.QWidget):
     sig_selection_changed = QtCore.Signal(QtCore.QItemSelection, QtCore.QItemSelection)
     sig_context_menu = QtCore.Signal(object)
 
-    def __init__(self, table_view=True, big_view=False, tree_view=False, list_view=False, parent=None):
+    def __init__(self, table_view=True, big_view=False, tree_view=False, list_view=False,
+                 show_row_count=False, view_size=None,
+                 parent=None):
         super(MItemViewMultiSet, self).__init__(parent)
+        if view_size is None:
+            view_size = dayu_theme.small
         self.sort_filter_model = MSortFilterModel()
         self.source_model = MTableModel()
         self.sort_filter_model.setSourceModel(self.source_model)
@@ -40,7 +45,7 @@ class MItemViewMultiSet(QtWidgets.QWidget):
         self.view_button_grp = MToolButtonGroup(exclusive=True)
         data_group = []
         if table_view:
-            self.table_view = MTableView(show_row_count=True)
+            self.table_view = MTableView(show_row_count=show_row_count, size=view_size)
             self.table_view.doubleClicked.connect(self.sig_double_clicked)
             self.table_view.pressed.connect(self.slot_left_clicked)
             self.table_view.setModel(self.sort_filter_model)
