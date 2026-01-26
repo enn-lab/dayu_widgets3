@@ -212,8 +212,16 @@ class MItemViewMultiSet(QtWidgets.QWidget):
                 # But MTableModel relies on specific roles for styling.
                 # If we want custom styling for group row, we'd need to add it to data.
             }
-            # Set the grouping key's value too, so it shows in that column if visible
-            group_node[key] = k
+            
+            # Ensure other columns are empty to avoid showing default values (like "--")
+            # and do NOT set the grouping key value (group_node[key] = k),
+            # so the group name only appears in the primary column.
+            if hasattr(self, 'header_list') and self.header_list:
+                for h in self.header_list:
+                    h_key = h.get("key")
+                    if h_key and h_key != primary_key:
+                        group_node[h_key] = ""
+
             groups.append(group_node)
         return groups
 
