@@ -250,17 +250,17 @@ class MCollapseFilter(QtWidgets.QWidget):
         
         # --- Top Bar ---
         self.top_bar_layout = QtWidgets.QHBoxLayout()
-        self.top_bar_layout.setContentsMargins(5, 5, 5, 5)
+        self.top_bar_layout.setContentsMargins(5, 0, 0, 5)
         
         self.clear_btn = MToolButton().text_only().small()
         self.clear_btn.setText("Clear All")
         self.clear_btn.clicked.connect(self.clear_all)
         
-        self.expand_btn = MToolButton().icon_only().small().svg("expand_line_dark.svg")
+        self.expand_btn = MToolButton().icon_only().small().svg("expand_line.svg")
         self.expand_btn.setToolTip("Expand All")
         self.expand_btn.clicked.connect(self.expand_all)
         
-        self.collapse_btn = MToolButton().icon_only().small().svg("collapse_line_dark.svg")
+        self.collapse_btn = MToolButton().icon_only().small().svg("collapse_line.svg")
         self.collapse_btn.setToolTip("Collapse All")
         self.collapse_btn.clicked.connect(self.collapse_all)
         
@@ -276,6 +276,7 @@ class MCollapseFilter(QtWidgets.QWidget):
         self.scroll.setFrameShape(QtWidgets.QFrame.NoFrame)
         
         self.main_layout.addLayout(self.top_bar_layout)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.scroll)
 
     # --- API Forwarding ---
