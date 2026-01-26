@@ -33,6 +33,7 @@ from dayu_widgets.card import MMeta
 from dayu_widgets.carousel import MCarousel
 from dayu_widgets.check_box import MCheckBox
 from dayu_widgets.collapse import MCollapse
+from dayu_widgets.collapse_filter import MCollapseFilter
 from dayu_widgets.combo_box import MComboBox
 from dayu_widgets.divider import MDivider
 from dayu_widgets.field_mixin import MFieldMixin
@@ -93,6 +94,7 @@ __all__ = [
     "MCarousel",
     "MCheckBox",
     "MCollapse",
+    "MCollapseFilter",
     "MComboBox",
     "MDivider",
     "MFieldMixin",
