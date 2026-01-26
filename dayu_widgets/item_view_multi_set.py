@@ -208,6 +208,7 @@ class MItemViewMultiSet(QtWidgets.QWidget):
             group_node = {
                 primary_key: group_label,
                 "children": children,
+                "_is_group": True,
                 # Optional: Make group row distinct if needed, e.g. bold font
                 # But MTableModel relies on specific roles for styling.
                 # If we want custom styling for group row, we'd need to add it to data.

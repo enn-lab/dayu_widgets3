@@ -83,6 +83,11 @@ class MOptionDelegate(QtWidgets.QStyledItemDelegate):
         editor.move(self.parent_widget.mapToGlobal(point))
 
     def paint(self, painter, option, index):
+        # Check if item is editable before drawing the dropdown arrow
+        if not (index.flags() & QtCore.Qt.ItemIsEditable):
+            super(MOptionDelegate, self).paint(painter, option, index)
+            return
+
         painter.save()
         icon_color = dayu_theme.icon_color
         if option.state & QtWidgets.QStyle.State_MouseOver:

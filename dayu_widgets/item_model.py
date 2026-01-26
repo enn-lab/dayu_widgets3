@@ -94,6 +94,11 @@ class MTableModel(QtCore.QAbstractItemModel):
         result = QtCore.QAbstractItemModel.flags(self, index)
         if not index.isValid():
             return QtCore.Qt.ItemIsEnabled
+        
+        data_obj = index.internalPointer()
+        if data_obj.get("_is_group", False):
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+
         if self.header_list[index.column()].get("checkable", False):
             result |= QtCore.Qt.ItemIsUserCheckable
         if self.header_list[index.column()].get("selectable", False):
@@ -192,8 +197,16 @@ class MTableModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return None
 
-        attr_dict = self.header_list[index.column()]  # 获取该列字段的配置
         data_obj = index.internalPointer()
+        if data_obj.get("_is_group", False):
+            if index.column() != 0:
+                if role == QtCore.Qt.DisplayRole:
+                    return ""
+                return None
+            if role == QtCore.Qt.CheckStateRole:
+                return None
+
+        attr_dict = self.header_list[index.column()]  # 获取该列字段的配置
         attr = attr_dict.get("key")
         if role in SETTING_MAP.keys():
             role_key = SETTING_MAP[role].get("config")  # role 配置的关键字
