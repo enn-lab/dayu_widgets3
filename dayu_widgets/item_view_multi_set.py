@@ -170,8 +170,8 @@ class MItemViewMultiSet(QtWidgets.QWidget):
     def tool_bar_append_widget(self, widget):
         self.top_lay.addWidget(widget)
 
-    def tool_bar_insert_widget(self, widget):
-        self.top_lay.insertWidget(0, widget)
+    def tool_bar_insert_widget(self, widget, index=0):
+        self.top_lay.insertWidget(index, widget)
 
     @QtCore.Slot()
     def setup_data(self, data_list):
