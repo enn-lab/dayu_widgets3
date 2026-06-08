@@ -2,6 +2,7 @@
 from qtpy import QtCore
 from qtpy import QtWidgets
 
+from dayu_widgets import dayu_theme
 # Import local modules
 from dayu_widgets.button_group import MToolButtonGroup
 from dayu_widgets.item_model import MSortFilterModel
@@ -22,18 +23,22 @@ class MItemViewFullSet(QtWidgets.QWidget):
     sig_selection_changed = QtCore.Signal(QtCore.QItemSelection, QtCore.QItemSelection)
     sig_context_menu = QtCore.Signal(object)
 
-    def __init__(self, table_view=True, big_view=False, parent=None):
+    def __init__(self, table_view=True, big_view=False,
+                 show_row_count=True,
+                 size=None,
+                 parent=None):
         super(MItemViewFullSet, self).__init__(parent)
         self.sort_filter_model = MSortFilterModel()
         self.source_model = MTableModel()
         self.sort_filter_model.setSourceModel(self.source_model)
 
         self.stack_widget = QtWidgets.QStackedWidget()
+        size = size or dayu_theme.small
 
         self.view_button_grp = MToolButtonGroup(exclusive=True)
         data_group = []
         if table_view:
-            self.table_view = MTableView(show_row_count=True)
+            self.table_view = MTableView(show_row_count=show_row_count, size=size)
             self.table_view.doubleClicked.connect(self.sig_double_clicked)
             self.table_view.pressed.connect(self.slot_left_clicked)
             self.table_view.setModel(self.sort_filter_model)
@@ -107,6 +112,9 @@ class MItemViewFullSet(QtWidgets.QWidget):
     def tool_bar_visible(self, flag):
         self.tool_bar.setVisible(flag)
 
+    def page_set_visible(self, flag):
+        self.page_set.setVisible(flag)
+
     @QtCore.Slot(QtCore.QModelIndex)
     def slot_left_clicked(self, start_index):
         button = QtWidgets.QApplication.mouseButtons()
@@ -126,8 +134,8 @@ class MItemViewFullSet(QtWidgets.QWidget):
     def tool_bar_append_widget(self, widget):
         self.top_lay.addWidget(widget)
 
-    def tool_bar_insert_widget(self, widget):
-        self.top_lay.insertWidget(0, widget)
+    def tool_bar_insert_widget(self, widget, index=0):
+        self.top_lay.insertWidget(index, widget)
 
     @QtCore.Slot()
     def setup_data(self, data_list):
