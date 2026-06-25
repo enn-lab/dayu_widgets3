@@ -1,6 +1,9 @@
 # Import built-in modules
 import string
 
+# Import third-party modules
+from qtpy import QtWidgets
+
 # Import local modules
 from dayu_widgets import DEFAULT_STATIC_FOLDER
 from dayu_widgets import utils
@@ -294,10 +297,35 @@ class MTheme(object):
         self.mask_color = utils.fade_color(self.background_color, "90%")
         self.toast_color = "#333333"
 
+    # Track whether the custom QTreeView branch style has been set globally
+    _branch_style_applied = False
+
+    @classmethod
+    def _ensure_branch_style(cls):
+        """Apply ``MDayuBranchStyle`` to the application (idempotent, one-shot).
+
+        Called from :meth:`apply` on first invocation so that QTreeView branch
+        indicators follow the dayu theme.  Must only run once because
+        ``QApplication.setStyle()`` replaces the active style globally.
+        """
+        if cls._branch_style_applied:
+            return
+        app = QtWidgets.QApplication.instance()
+        if app is None:
+            return
+        # Import local modules
+        from dayu_widgets.qt import MDayuBranchStyle
+
+        app.setStyle(MDayuBranchStyle(app.style()))
+        cls._branch_style_applied = True
+
     def apply(self, widget):
         size_dict = get_theme_size()
         size_dict.update(vars(self))
         widget.setStyleSheet(self.default_qss.substitute(size_dict))
+
+        # One-time global setup: custom QTreeView branch indicators
+        self._ensure_branch_style()
 
     def deco(self, cls):
         original_init__ = cls.__init__
