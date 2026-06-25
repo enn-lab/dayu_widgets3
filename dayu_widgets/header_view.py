@@ -99,25 +99,102 @@ class MHeaderView(QtWidgets.QHeaderView):
 
     @QtCore.Slot(int, int)
     def _slot_set_select(self, column, state):
+        """Set the check state of *all* items in the given column.
+
+        - ``QtCore.Qt.Checked``   → Select All   (every node = Checked)
+        - ``QtCore.Qt.Unchecked`` → Unselect All (every node = Unchecked)
+        - ``None``                → Invert       (toggle leaves, recalc parents)
+
+        For Select All / Unselect All every node (parent + children) is set
+        uniformly so the tree is self-consistent.
+
+        For Invert only **leaf** nodes are toggled; parent states are then
+        recomputed bottom‑up from their children.  This guarantees that a
+        parent never gets an independent value that contradicts its children,
+        and that ``PartiallyChecked`` appears whenever siblings disagree.
+        """
         current_model = self.model()
         source_model = utils.real_model(current_model)
-        source_model.beginResetModel()
-        attr = "{}_checked".format(source_model.header_list[column].get("key"))
-        for row in range(current_model.rowCount()):
-            real_index = utils.real_index(current_model.index(row, column))
-            data_obj = real_index.internalPointer()
-            if state is None:
-                old_state = utils.get_obj_value(data_obj, attr)
-                utils.set_obj_value(
-                    data_obj,
-                    attr,
-                    QtCore.Qt.Unchecked if old_state == QtCore.Qt.Checked else QtCore.Qt.Checked,
-                )
-            else:
+        header_list = source_model.header_list
+        if column < 0 or column >= len(header_list):
+            return
+        attr = "{}_checked".format(header_list[column].get("key"))
+
+        # ---- helper: normalise None / int → CheckState enum -----------------
+        # PySide6 uses a *regular* Enum (not IntEnum) for CheckState, so
+        # ``int(1)  !=  Qt.CheckState.PartiallyChecked``.
+        # setData() stores a plain int ("1") for partially-checked parents;
+        # our own setters use the Enum.  Normalising on read makes comparisons
+        # reliable regardless of which code wrote the value.
+        def _norm(val):
+            if val is None:
+                return QtCore.Qt.Unchecked
+            try:
+                return QtCore.Qt.CheckState(val)
+            except (ValueError, TypeError):
+                return val   # already a CheckState enum
+
+        # ---- invert: toggle leaves, derive parents bottom‑up ----------------
+        if state is None:
+
+            def _invert_tree(data_obj):
+                children = utils.get_obj_value(data_obj, "children", [])
+                if children:
+                    # post‑order: children first, then derive parent
+                    for child in children:
+                        _invert_tree(child)
+                    child_states = [
+                        _norm(utils.get_obj_value(c, attr)) for c in children
+                    ]
+                    if all(s == child_states[0] for s in child_states):
+                        utils.set_obj_value(data_obj, attr, child_states[0])
+                    else:
+                        utils.set_obj_value(
+                            data_obj, attr, QtCore.Qt.PartiallyChecked
+                        )
+                else:
+                    # Leaf node: binary toggle (Unchecked ↔ Checked)
+                    old = _norm(utils.get_obj_value(data_obj, attr))
+                    utils.set_obj_value(
+                        data_obj,
+                        attr,
+                        QtCore.Qt.Unchecked
+                        if old == QtCore.Qt.Checked
+                        else QtCore.Qt.Checked,
+                    )
+
+            for row in range(current_model.rowCount()):
+                proxy_index = current_model.index(row, column)
+                if not proxy_index.isValid():
+                    continue
+                real_index = utils.real_index(proxy_index)
+                data_obj = real_index.internalPointer()
+                if data_obj is None:
+                    continue
+                _invert_tree(data_obj)
+
+        # ---- select‑all / unselect‑all: set every node uniformly -----------
+        else:
+
+            def _set_all(data_obj):
                 utils.set_obj_value(data_obj, attr, state)
-        source_model.endResetModel()
-        # 使用空 QModelIndex 而非 None，避免 PySide6 Shiboken 报错：
-        # "Cannot copy-convert ... NoneType to C++ QModelIndex"
+                for child in utils.get_obj_value(data_obj, "children", []):
+                    _set_all(child)
+
+            for row in range(current_model.rowCount()):
+                proxy_index = current_model.index(row, column)
+                if not proxy_index.isValid():
+                    continue
+                real_index = utils.real_index(proxy_index)
+                data_obj = real_index.internalPointer()
+                if data_obj is None:
+                    continue
+                _set_all(data_obj)
+
+        # Notify views that all data may have changed.
+        # Using two *invalid* QModelIndex means "everything changed".
+        # We deliberately avoid beginResetModel / endResetModel so the
+        # tree's expand/collapse state is preserved.
         source_model.dataChanged.emit(
             QtCore.QModelIndex(), QtCore.QModelIndex()
         )
