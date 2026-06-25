@@ -36,9 +36,34 @@ class MHeaderView(QtWidgets.QHeaderView):
 
     @QtCore.Slot(QtCore.QPoint)
     def _slot_context_menu(self, point):
+        # 优先从父视图获取 model，避免 QHeaderView.model() 在 PySide6 中返回 None
+        parent_view = self.parent()
+        view_model = None
+        if hasattr(parent_view, "model"):
+            view_model = parent_view.model()
+        if view_model is None:
+            view_model = self.model()
+        model = utils.real_model(view_model)
+        if model is None or not getattr(model, "header_list", None):
+            # model 不可用时降级展示：仅显示 Fit Size 和列可见性 (从 header 自身获取列数)
+            context_menu = MMenu(parent=self)
+            fit_action = context_menu.addAction(self.tr("Fit Size"))
+            fit_action.triggered.connect(functools.partial(self._slot_set_resize_mode, True))
+            if self.count() > 0:
+                context_menu.addSeparator()
+                for column in range(self.count()):
+                    section_text = self.tr("Column {}").format(column + 1)
+                    action = context_menu.addAction(section_text)
+                    action.setCheckable(True)
+                    action.setChecked(not self.isSectionHidden(column))
+                    action.toggled.connect(
+                        functools.partial(self._slot_set_section_visible, column)
+                    )
+            context_menu.exec_(QtGui.QCursor.pos() + QtCore.QPoint(10, 10))
+            return
+
         context_menu = MMenu(parent=self)
         logical_column = self.logicalIndexAt(point)
-        model = utils.real_model(self.model())
         if logical_column >= 0 and model.header_list[logical_column].get("checkable", False):
             action_select_all = context_menu.addAction(self.tr("Select All"))
             action_select_none = context_menu.addAction(self.tr("Select None"))
@@ -63,6 +88,9 @@ class MHeaderView(QtWidgets.QHeaderView):
             header_text = model.headerData(
                 column, QtCore.Qt.Horizontal, QtCore.Qt.DisplayRole
             )
+            # 防止 headerData 返回 None 传入 addAction 触发 Shiboken 报错
+            if header_text is None:
+                header_text = self.tr("Column {}").format(column + 1)
             action = context_menu.addAction(header_text)
             action.setCheckable(True)
             action.setChecked(not self.isSectionHidden(column))
@@ -88,7 +116,11 @@ class MHeaderView(QtWidgets.QHeaderView):
             else:
                 utils.set_obj_value(data_obj, attr, state)
         source_model.endResetModel()
-        source_model.dataChanged.emit(None, None)
+        # 使用空 QModelIndex 而非 None，避免 PySide6 Shiboken 报错：
+        # "Cannot copy-convert ... NoneType to C++ QModelIndex"
+        source_model.dataChanged.emit(
+            QtCore.QModelIndex(), QtCore.QModelIndex()
+        )
 
     @QtCore.Slot(QtCore.QModelIndex, int)
     def _slot_set_section_visible(self, index, flag):
