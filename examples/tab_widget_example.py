@@ -18,7 +18,7 @@ class TabWidget(QtWidgets.QWidget):
     def _init_ui(self):
         main_lay = QtWidgets.QVBoxLayout()
 
-        tab_card = MTabWidget()
+        tab_card = MTabWidget().small()
         tab_card.addTab(MLabel("test 1"), "Current Element")
         tab_card.addTab(MLabel("test 2"), "Linked Assets")
         tab_card.addTab(MLabel("test 2"), "Hero Shots")

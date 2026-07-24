@@ -37,7 +37,7 @@ def get_static_file(path):
     full_path = next(
         (
             os.path.join(prefix, path)
-            for prefix in ["", DEFAULT_STATIC_FOLDER] + CUSTOM_STATIC_FOLDERS
+            for prefix in [""] + CUSTOM_STATIC_FOLDERS + [DEFAULT_STATIC_FOLDER]
             if os.path.isfile(os.path.join(prefix, path))
         ),
         path,
