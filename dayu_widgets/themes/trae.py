@@ -2,7 +2,7 @@
 Trae Theme for dayu_widgets
 
 A dark theme inspired by Trae IDE (Vibe Coding IDE).
-Features deep charcoal backgrounds with teal/cyan accents.
+Features near-black backgrounds with teal/cyan accents.
 
 Usage::
 
@@ -27,28 +27,28 @@ class MTraeTheme(MTheme):
     Color palette extracted from Trae IDE screenshots::
 
         Background hierarchy (darkest -> lightest):
-            #0d0d12  primary background (editor)
-            #16161e  sidebar / panels
-            #1e1e28  cards / elevated surfaces
-            #2a2a38  hover / active states
+            #08080c  editor / deepest background
+            #0c0c12  sidebar / panels
+            #14141c  cards / elevated surfaces
+            #1c1c24  hover / active states
 
         Text hierarchy (lightest -> darkest):
-            #e8e8ed  titles / primary
-            #a0a0b0  body / secondary
-            #6e6e80  hints / disabled
+            #ffffff  titles / primary
+            #a0a0a8  body / secondary
+            #686870  hints / disabled
 
         Accent:
-            #00e5a0  teal primary
-            #00c48c  teal dark
+            #00d9a0  teal primary
+            #00b386  teal dark
             #33ffbd  teal light
 
         Border:
-            #2a2a35  subtle dividers
+            #1a1a22  subtle dividers
     """
 
     # Trae accent color (teal/cyan)
-    teal = "#00e5a0"
-    teal_dark = "#00c48c"
+    teal = "#00d9a0"
+    teal_dark = "#00b386"
     teal_light = "#33ffbd"
 
     def __init__(self):
@@ -57,26 +57,26 @@ class MTraeTheme(MTheme):
     def _dark(self):
         """Override dark theme colors with Trae palette."""
         # Text colors (light on dark)
-        self.title_color = "#e8e8ed"
-        self.primary_text_color = "#a0a0b0"
-        self.secondary_text_color = "#6e6e80"
-        self.disable_color = "#4a4a5a"
+        self.title_color = "#ffffff"
+        self.primary_text_color = "#a0a0a8"
+        self.secondary_text_color = "#686870"
+        self.disable_color = "#404048"
 
         # Border & dividers
-        self.border_color = "#2a2a35"
-        self.divider_color = "#2a2a35"
-        self.header_color = "#0d0d12"
+        self.border_color = "#1a1a22"
+        self.divider_color = "#1a1a22"
+        self.header_color = "#08080c"
 
         # Icon color
-        self.icon_color = "#6e6e80"
+        self.icon_color = "#606068"
 
         # Background hierarchy (darkest to lightest)
-        self.background_color = "#0d0d12"
-        self.background_selected_color = "#252530"
-        self.background_in_color = "#16161e"
-        self.background_out_color = "#1e1e28"
+        self.background_color = "#08080c"
+        self.background_selected_color = "#1c1c24"
+        self.background_in_color = "#0c0c12"
+        self.background_out_color = "#14141c"
         self.mask_color = utils.fade_color(self.background_color, "90%")
-        self.toast_color = "#2a2a38"
+        self.toast_color = "#1c1c24"
 
 
 def apply_trae_theme(widget):
