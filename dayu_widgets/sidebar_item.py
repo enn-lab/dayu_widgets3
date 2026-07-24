@@ -8,7 +8,6 @@ from qtpy import QtGui
 from qtpy import QtWidgets
 
 # Import local modules
-from dayu_widgets import dayu_theme
 from dayu_widgets.mixin import cursor_mixin
 from dayu_widgets.qt import MIcon
 
@@ -150,6 +149,9 @@ class MSidebarItem(QtWidgets.QWidget):
     # Paint (ported from the original sidebar delegate)
     # ------------------------------------------------------------------
     def paintEvent(self, event):
+        # Import dynamically so theme switches are picked up at runtime
+        from dayu_widgets import dayu_theme
+
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
@@ -158,11 +160,7 @@ class MSidebarItem(QtWidgets.QWidget):
         is_selected = self._dayu_selected
 
         # -- Background --
-        if is_selected:
-            bg_color = QtGui.QColor(dayu_theme.primary_color)
-            text_color = QtGui.QColor("#ffffff")
-            icon_color = QtGui.QColor("#ffffff")
-        elif is_hover:
+        if is_selected or is_hover:
             bg_color = QtGui.QColor(dayu_theme.background_selected_color)
             text_color = QtGui.QColor(dayu_theme.title_color)
             icon_color = QtGui.QColor(dayu_theme.primary_color)
@@ -211,10 +209,7 @@ class MSidebarItem(QtWidgets.QWidget):
                 badge_width,
                 self._badge_radius * 2,
             )
-            badge_bg = (
-                QtGui.QColor(255, 255, 255, 60) if is_selected
-                else QtGui.QColor(dayu_theme.primary_color)
-            )
+            badge_bg = QtGui.QColor(dayu_theme.primary_color)
             painter.setPen(QtCore.Qt.NoPen)
             painter.setBrush(badge_bg)
             painter.drawRoundedRect(badge_rect, self._badge_radius, self._badge_radius)

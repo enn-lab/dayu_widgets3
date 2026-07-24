@@ -1,4 +1,6 @@
 # Import built-in modules
+import json
+import os
 import string
 
 # Import third-party modules
@@ -140,11 +142,58 @@ class MTheme(object):
         self.text_warning_color = self.warning_7
 
     def set_theme(self, theme):
-        if theme == "light":
+        # Try loading a custom JSON theme file from static/ first
+        static_dir = os.path.join(os.path.dirname(__file__), "static")
+        json_path = os.path.join(static_dir, "{}.json".format(theme))
+        if os.path.isfile(json_path):
+            self._load_from_json(json_path, theme)
+        elif theme == "light":
             self._light()
         else:
             self._dark()
         self._init_icon(theme)
+
+    def _load_from_json(self, json_path, theme):
+        """Load color overrides from a JSON theme file.
+
+        The built-in ``_dark()`` / ``_light()`` palette is applied first as
+        the base, then JSON values override selectively.  This way the JSON
+        file only needs to list the colors that differ from the base theme.
+
+        JSON format::
+
+            {
+                "primary_color": "#0078D4",
+                "dark": {
+                    "title_color": "#FFFFFF",
+                    "primary_text_color": "#CCCCCC",
+                    ...
+                },
+                "light": {
+                    ...
+                }
+            }
+        """
+        # Apply the built-in palette as a base first
+        if theme == "light":
+            self._light()
+        else:
+            self._dark()
+
+        with open(json_path, "r") as f:
+            data = json.load(f)
+
+        # Apply primary_color from JSON (if present)
+        if "primary_color" in data:
+            self.set_primary_color(data["primary_color"])
+
+        # Apply color overrides from the matching mode (dark/light)
+        if theme == "light":
+            colors = data.get("light", data.get("dark", {}))
+        else:
+            colors = data.get("dark", {})
+        for key, value in colors.items():
+            setattr(self, key, value)
 
     def set_primary_color(self, color):
         self.primary_color = color
@@ -320,6 +369,11 @@ class MTheme(object):
         cls._branch_style_applied = True
 
     def apply(self, widget):
+        # Update the global dayu_theme reference so dynamically-painted
+        # widgets (e.g. MSidebarItem) pick up the new theme colors.
+        import dayu_widgets
+        dayu_widgets.dayu_theme = self
+
         size_dict = get_theme_size()
         size_dict.update(vars(self))
         widget.setStyleSheet(self.default_qss.substitute(size_dict))

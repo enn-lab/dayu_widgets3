@@ -1355,3 +1355,9 @@ MSidebarMenu > QWidget#sidebar_menu_header {
 MSidebarMenu QLabel {
     background-color: transparent;
 }
+MSidebarMenu > QLabel#sidebar_menu_title {
+    color: @secondary_text_color;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: transparent;
+}

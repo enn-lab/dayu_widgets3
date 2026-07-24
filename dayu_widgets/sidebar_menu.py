@@ -8,7 +8,6 @@ from qtpy import QtGui
 from qtpy import QtWidgets
 
 # Import local modules
-from dayu_widgets import dayu_theme
 from dayu_widgets.qt import MIcon
 from dayu_widgets.sidebar_item import MSidebarItem
 
@@ -46,9 +45,6 @@ class MSidebarMenu(QtWidgets.QWidget):
         self._arrow_label.setStyleSheet("background-color: transparent;")
         self._title_label = QtWidgets.QLabel(self)
         self._title_label.setObjectName("sidebar_menu_title")
-        self._title_label.setStyleSheet(
-            "color: {}; font-size: 12px; font-weight: 600; background-color: transparent;".format(dayu_theme.secondary_text_color)
-        )
 
         header_lay = QtWidgets.QHBoxLayout()
         header_lay.setContentsMargins(12, 8, 12, 8)
@@ -170,6 +166,8 @@ class MSidebarMenu(QtWidgets.QWidget):
         self.sig_item_clicked.emit(item)
 
     def _update_arrow(self):
+        from dayu_widgets import dayu_theme
+
         icon_name = "down_line.svg" if self._dayu_expanded else "right_line.svg"
         color = dayu_theme.primary_color if self._hovered else dayu_theme.icon_color
         self._arrow_label.setPixmap(MIcon(icon_name, color).pixmap(12, 12))

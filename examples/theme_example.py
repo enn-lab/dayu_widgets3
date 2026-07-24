@@ -67,10 +67,11 @@ class ThemeExample(QtWidgets.QWidget, MFieldMixin):
 
 if __name__ == "__main__":
     # Import local modules
-    from dayu_widgets import dayu_theme
+    from dayu_widgets import dayu_theme, MTheme
     from dayu_widgets.qt import application
 
     with application() as app:
         test = ThemeExample()
+        # thm = MTheme("trae", primary_color="#1c1c24")
         dayu_theme.apply(test)
         test.show()

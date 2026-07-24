@@ -7,7 +7,6 @@ from qtpy import QtCore
 from qtpy import QtWidgets
 
 # Import local modules
-from dayu_widgets import dayu_theme
 from dayu_widgets.divider import MDivider
 from dayu_widgets.qt import get_scale_factor
 from dayu_widgets.sidebar_item import MSidebarItem
