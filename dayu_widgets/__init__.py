@@ -60,6 +60,9 @@ from dayu_widgets.progress_bar import MProgressBar
 from dayu_widgets.progress_circle import MProgressCircle
 from dayu_widgets.push_button import MPushButton
 from dayu_widgets.radio_button import MRadioButton
+from dayu_widgets.sidebar import MSidebar
+from dayu_widgets.sidebar_item import MSidebarItem
+from dayu_widgets.sidebar_menu import MSidebarMenu
 from dayu_widgets.slider import MSlider
 from dayu_widgets.spin_box import MDateEdit
 from dayu_widgets.spin_box import MDateTimeEdit
@@ -121,6 +124,9 @@ __all__ = [
     "MProgressCircle",
     "MPushButton",
     "MRadioButton",
+    "MSidebar",
+    "MSidebarItem",
+    "MSidebarMenu",
     "MSlider",
     "MDateEdit",
     "MDateTimeEdit",

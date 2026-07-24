@@ -1337,3 +1337,21 @@ MSizeGrip {
     background-color: transparent;
     image: url(@icon_size_grip);
 }
+
+/* MSidebar */
+MSidebar {
+    background-color: @background_in_color;
+    border-right: 1px solid @border_color;
+}
+MSidebar QScrollArea {
+    background-color: transparent;
+}
+MSidebarMenu {
+    background-color: transparent;
+}
+MSidebarMenu > QWidget#sidebar_menu_header {
+    background-color: transparent;
+}
+MSidebarMenu QLabel {
+    background-color: transparent;
+}
