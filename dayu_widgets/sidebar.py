@@ -102,23 +102,6 @@ class MSidebar(QtWidgets.QWidget):
 
         self.setFixedWidth(self._normal_width)
 
-        bg_color = dayu_theme.background_in_color
-        border_color = dayu_theme.border_color
-        self.setStyleSheet(
-            """
-            MSidebar {{
-                background-color: {bg};
-                border-right: 1px solid {border};
-            }}
-            MSidebar QWidget,
-            MSidebar QLabel,
-            MSidebar QFrame,
-            MSidebar QScrollArea {{
-                background-color: transparent;
-            }}
-            """.format(bg=bg_color, border=border_color)
-        )
-
     # ------------------------------------------------------------------
     # Properties
     # ------------------------------------------------------------------

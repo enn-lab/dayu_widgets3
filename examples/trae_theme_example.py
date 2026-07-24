@@ -16,6 +16,7 @@ from dayu_widgets.label import MLabel
 from dayu_widgets.push_button import MPushButton
 from dayu_widgets.sidebar import MSidebar
 from dayu_widgets.tool_button import MToolButton
+from dayu_widgets.themes.trae import MTraeTheme
 from dayu_widgets.themes.trae import apply_trae_theme
 
 
@@ -124,19 +125,34 @@ class ThemeDemo(QtWidgets.QWidget):
         self._update_swatches()
 
     def _toggle_theme(self):
+        import dayu_widgets
         if self._is_trae:
-            dayu_theme.apply(self)
+            # Restore default dayu theme
+            default = dayu_widgets.theme.MTheme("dark", primary_color=dayu_widgets.theme.MTheme.orange)
+            dayu_widgets.dayu_theme = default
+            default.apply(self)
             self._theme_label.setText("Default Dayu (Dark + Orange)")
             self._toggle_btn.setText("Switch to Trae Theme")
         else:
-            apply_trae_theme(self)
+            # Apply Trae theme globally
+            trae = MTraeTheme()
+            dayu_widgets.dayu_theme = trae
+            trae.apply(self)
             self._theme_label.setText("Trae Theme (Dark + Teal)")
             self._toggle_btn.setText("Switch to Dayu Theme")
         self._is_trae = not self._is_trae
+        # Refresh sidebar items to pick up new theme colors
+        self.sidebar.update()
+        for menu in self.sidebar._navigation_widgets:
+            menu.update()
+            if hasattr(menu, 'items'):
+                for item in menu.items():
+                    item.update()
         self._update_swatches()
 
     def _update_swatches(self):
-        theme = dayu_theme
+        import dayu_widgets
+        theme = dayu_widgets.dayu_theme
         for attr, lbl in self._swatch_labels:
             val = getattr(theme, attr, "N/A")
             lbl.setText(val)
