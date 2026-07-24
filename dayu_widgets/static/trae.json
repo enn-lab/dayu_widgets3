@@ -1,0 +1,18 @@
+{
+    "primary_color": "#00BBD4",
+    "dark": {
+        "title_color": "#FFFFFF",
+        "primary_text_color": "#CCCCCC",
+        "secondary_text_color": "#9D9D9D",
+        "disable_color": "#868686",
+        "border_color": "#2B2B2B",
+        "divider_color": "#2B2B2B",
+        "header_color": "#181818",
+        "icon_color": "#CCCCCC",
+        "background_color": "#181818",
+        "background_selected_color": "#3C3C3C",
+        "background_in_color": "#1F1F1F",
+        "background_out_color": "#222222",
+        "toast_color": "#202020"
+    }
+}
