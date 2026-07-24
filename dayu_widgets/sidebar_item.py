@@ -163,7 +163,7 @@ class MSidebarItem(QtWidgets.QWidget):
             text_color = QtGui.QColor("#ffffff")
             icon_color = QtGui.QColor("#ffffff")
         elif is_hover:
-            bg_color = QtGui.QColor(dayu_theme.background_in_color)
+            bg_color = QtGui.QColor(dayu_theme.background_selected_color)
             text_color = QtGui.QColor(dayu_theme.title_color)
             icon_color = QtGui.QColor(dayu_theme.primary_color)
         else:

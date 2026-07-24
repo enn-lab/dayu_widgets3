@@ -72,7 +72,7 @@ class MTraeTheme(MTheme):
 
         # Background hierarchy (darkest to lightest)
         self.background_color = "#0d0d12"
-        self.background_selected_color = "#2a2a38"
+        self.background_selected_color = "#252530"
         self.background_in_color = "#16161e"
         self.background_out_color = "#1e1e28"
         self.mask_color = utils.fade_color(self.background_color, "90%")
