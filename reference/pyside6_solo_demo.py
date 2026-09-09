@@ -14,25 +14,84 @@ from PySide6.QtWidgets import (QApplication, QWidget, QMainWindow, QFrame,
                                QLabel, QPushButton, QLineEdit, QComboBox,
                                QListWidget, QListWidgetItem, QHBoxLayout,
                                QVBoxLayout, QGridLayout, QScrollArea,
-                               QSpacerItem, QSizePolicy)
+                               QSpacerItem, QSizePolicy,
+                               QGraphicsDropShadowEffect)
 
 # ---------------------------------------------------------------- 调色板
-DEEP      = "#0c0d10"
-PANEL     = "#121419"
-CARD      = "#15171d"
-INPUT     = "#1a1d24"
-BORDER    = "#252a33"
+# 表面颜色用 rgba() 半透明玻璃质感; 文字保持不透明
+# 备注标注每个颜色在代码里被用到的具体位置
+
+# 窗口/主背景 —— 不透明深黑底
+DEEP      = "#0a0b0e"
+#   用途: QMainWindow root 背景 | CenterPanel 背景 | SOLO logo 文本盒背景
+
+# 面板层 —— 不透明深色, 区块(左/中/右)整体底色
+PANEL     = "#0f1114"
+#   用途: LeftPanel 侧栏背景 | SettingsPanel 整体背景 | QComboBox 下拉浮层背景 | 顶栏分隔线
+
+# 玻璃表面 —— 卡片/按钮半透明底
+GLASS     = "rgba(255,255,255,0.04)"
+#   用途: QFrame.card/.subcard 默认背景 | ghost 按钮背景 | 下拉框(QComboBox)背景 | 任务卡片底
+
+# 玻璃抬升/hover —— 比 GLASS 更亮的半透明白
+GLASS_HI  = "rgba(255,255,255,0.07)"
+#   用途: 顶部 tabBar 玻璃容器背景 | PromptBar 输入框背景 | 下拉框 hover 态
+
+# 内凹玻璃 —— 输入槽底, 比面板更深(用黑色 alpha 营造下凹感)
+GLASS_LO  = "rgba(0,0,0,0.26)"
+#   用途: QLineEdit 输入框背景(搜索框 Ctrl+F)
+
+# 边框 —— 标准淡白边
+BORDER    = "rgba(255,255,255,0.10)"
+#   用途: cards/subcards 边框 | PromptBar 边框 | ghost 按钮边框 | 下拉框边框 | QLineEdit 边框
+
+# 弱化边框 —— 比 BORDER 更淡的描边
+BORDER_LO = "rgba(255,255,255,0.05)"
+#   用途: 卡片/按钮/PromptBar 更微弱的描边 | 设置项分隔线 | tabBar 容器边 | 任务项选中态边框
+
+# 文字色阶
 TXT       = "#e8eaed"
+#   用途: 主文字 —— 标题、按钮文字、菜单/列表/输入框前景(全局默认色)
 TXT2      = "#9aa0ad"
+#   用途: 次级文字 —— 段落标题(基础设置/偏好设置)、按钮次级文案、设置项副标题、导航未选中文字
 TXT3      = "#5f6572"
-# 品牌主色 = 青绿/薄荷绿(从截图采样 @Agent Logo), 非紫色
+#   用途: 辅助文字 —— 占位符(搜索框 placeholder)、任务时间戳、设置项说明性小字、参数标签
+
+# 品牌主色 —— 青绿/薄荷绿(@Agent Logo 采样, 非紫色)
 ACCENT    = "#23d18b"
+#   用途: Agent 项目要点小圆点 | QLineEdit focus 聚焦边框 | 主按钮(btn=primary)背景
 ACCENT_D  = "#1cb878"
-BRAND_BG  = "#0f3d2b"   # @Agent 徽标深绿底
-BRAND_FG  = "#4ce8a0"   # @Agent 徽标薄荷绿图形
-HOVER     = "#1c1f27"
-SELTINT   = "#24272f"   # 选中项: 中性灰高亮(非紫色)
+#   用途: 主按钮 hover 态
+BRAND_BG  = "#0f3d2b"
+#   用途: @Agent 徽标的深绿底色
+BRAND_FG  = "#4ce8a0"
+#   用途: @Agent 徽标文字色(薄荷绿图形/字符)
+
+# 交互态
+HOVER     = "rgba(255,255,255,0.07)"
+#   用途: 设置导航/任务列表/ghost 按钮 hover 半透明高亮
+SELTINT   = "rgba(255,255,255,0.09)"
+#   用途: 导航选中项背景 | 任务选中项背景 | 下拉框浮层选中项背景(中性灰高亮, 非紫色)
+
+# 纯白 —— 用于激活标签文字/主按钮文字等需要最高对比度的地方
 WHITE     = "#ffffff"
+#   用途: 激活 tab 文字 | 主按钮文字 | SOLO logo 文字 | 头像图形描边
+
+# 头像渐变色 —— 仅用于右上方用户头像圆形的紫/品红渐变
+AVATAR_C1 = "#a08bff"
+#   用途: 头像渐变起点(亮紫)
+AVATAR_C2 = "#6f4df0"
+#   用途: 头像渐变终点(深紫)
+
+# 任务状态色 —— 左侧任务列表前的小图标
+DONE_COLOR = "#3ddc84"
+#   用途: 已完成任务的对勾(✓)绿色
+BUSY_COLOR = "#e6a23c"
+#   用途: 进行中任务的圆点(●)琥珀色
+
+# 兼容别名(用于底层仍引用旧变量名的场合)
+CARD      = GLASS
+INPUT     = GLASS_LO
 
 FONT = 'Segoe UI, "Microsoft YaHei", sans-serif'
 
@@ -40,44 +99,53 @@ FONT = 'Segoe UI, "Microsoft YaHei", sans-serif'
 STYLE = f"""
 * {{ font-family: {FONT}; }}
 QMainWindow, QWidget#root {{ background-color: {DEEP}; }}
+QWidget {{ color: {TXT}; }}
 
-/* 顶部标签页 */
+/* 顶部标签容器 —— 半透明玻璃条 */
+QFrame#tabBar {{
+    background: {GLASS_HI}; border: 1px solid {BORDER_LO};
+    border-radius: 12px;
+}}
 QPushButton[tab="true"] {{
     color: {TXT2}; background: transparent; border: none;
-    padding: 6px 16px; border-radius: 8px; font-size: 12px;
+    padding: 6px 16px; border-radius: 9px; font-size: 12px;
 }}
 QPushButton[tab="true"]:hover {{ color: {TXT}; background: {HOVER}; }}
-QPushButton[tab="true"]:checked {{ color: {WHITE}; background: {CARD}; }}
+QPushButton[tab="true"]:checked {{
+    color: {WHITE}; background: {GLASS}; border: 1px solid {BORDER_LO};
+}}
 
-/* 通用按钮 —— 主/次 */
+/* 通用按钮 —— 半透明 */
 QPushButton[btn="primary"] {{
     color: {WHITE}; background: {ACCENT}; border: none; border-radius: 8px;
     padding: 7px 20px; font-size: 12px; font-weight: 600;
 }}
 QPushButton[btn="primary"]:hover {{ background: {ACCENT_D}; }}
 QPushButton[btn="ghost"] {{
-    color: {TXT}; background: {CARD}; border: 1px solid {BORDER};
+    color: {TXT}; background: {GLASS}; border: 1px solid {BORDER_LO};
     border-radius: 8px; padding: 7px 16px; font-size: 12px;
 }}
-QPushButton[btn="ghost"]:hover {{ background: {HOVER}; }}
+QPushButton[btn="ghost"]:hover {{ background: {HOVER}; border-color: {BORDER}; }}
 
-/* 下拉框 */
+/* 下拉框 —— 半透明 */
 QComboBox {{
-    color: {TXT}; background: {CARD}; border: 1px solid {BORDER};
+    color: {TXT}; background: {GLASS}; border: 1px solid {BORDER_LO};
     border-radius: 8px; padding: 7px 12px; font-size: 12px; min-width: 150px;
 }}
+QComboBox:hover {{ background: {GLASS_HI}; }}
 QComboBox::drop-down {{ border: none; width: 24px; }}
 QComboBox QAbstractItemView {{
-    background: {PANEL}; color: {TXT}; border: 1px solid {BORDER};
+    background: {PANEL}; color: {TXT}; border: 1px solid {BORDER_LO};
     selection-background-color: {SELTINT}; selection-color: {WHITE};
-    outline: none; font-size: 12px;
+    outline: none; font-size: 12px; border-radius: 8px;
 }}
 
-/* 搜索框 / 文本输入 */
+/* 搜索框 / 文本输入 —— 内凹半透明 */
 QLineEdit {{
-    color: {TXT}; background: {INPUT}; border: 1px solid {BORDER};
+    color: {TXT}; background: {INPUT}; border: 1px solid {BORDER_LO};
     border-radius: 8px; padding: 7px 12px; font-size: 12px;
 }}
+QLineEdit:hover {{ border-color: {BORDER}; }}
 QLineEdit:focus {{ border: 1px solid {ACCENT}; }}
 QLineEdit::placeholder {{ color: {TXT3}; }}
 
@@ -90,32 +158,40 @@ QListWidget#nav::item {{
 QListWidget#nav::item:hover {{ background: {HOVER}; color: {TXT}; }}
 QListWidget#nav::item:selected {{ background: {SELTINT}; color: {WHITE}; }}
 
-/* 左侧任务列表 */
+/* 左侧任务列表 —— 每项带半透明玻璃卡片底; 文字靠内层透明 widget 显示, 不遮挡玻璃 */
 QListWidget#tasks {{ background: transparent; border: none; outline: none; }}
 QListWidget#tasks::item {{
-    background: {PANEL}; border: none; border-radius: 8px;
+    background: {GLASS}; border: 1px solid {BORDER_LO}; border-radius: 9px;
     margin: 2px 4px; padding: 8px; color: {TXT};
 }}
-QListWidget#tasks::item:hover {{ background: {HOVER}; }}
-QListWidget#tasks::item:selected {{ background: {SELTINT}; }}
+QListWidget#tasks::item:hover {{ background: {GLASS_HI}; border-color: {BORDER}; }}
+QListWidget#tasks::item:selected {{
+    background: {SELTINT}; border: 1px solid {BORDER};
+}}
 
 /* 滚动条 */
-QScrollBar:vertical {{
-    background: transparent; width: 8px; margin: 0;
-}}
+QScrollBar:vertical {{ background: transparent; width: 8px; margin: 0; }}
 QScrollBar::handle:vertical {{
-    background: {BORDER}; border-radius: 4px; min-height: 30px;
+    background: {BORDER_LO}; border-radius: 4px; min-height: 30px;
 }}
 QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; }}
 QScrollBar::add-page, QScrollBar::sub-page {{ background: transparent; }}
 
-/* 分组卡片 */
-QFrame.card {{ background: {CARD}; border: 1px solid {BORDER}; border-radius: 10px; }}
-QFrame.subcard {{ background: {PANEL}; border-radius: 8px; }}
+/* 玻璃分组卡片 */
+QFrame.card {{ background: {GLASS}; border: 1px solid {BORDER_LO}; border-radius: 12px; }}
+QFrame.subcard {{ background: {GLASS}; border: 1px solid {BORDER_LO}; border-radius: 10px; }}
 """
 
 
 # ---------------------------------------------------------------- 工具
+def glass_shadow(widget, radius=24, alpha=70, dy=6, blur=30):
+    """给卡片/容器加柔和阴影, 营造浮起玻璃感"""
+    eff = QGraphicsDropShadowEffect(widget)
+    eff.setBlurRadius(blur)
+    eff.setOffset(0, dy)
+    eff.setColor(QColor(0, 0, 0, alpha))
+    widget.setGraphicsEffect(eff)
+    return eff
 def mk_lbl(text, color=TXT, size=12, bold=False, wrap=False):
     l = QLabel(text)
     l.setStyleSheet(f"color:{color}; font-size:{size}px;"
@@ -126,8 +202,8 @@ def mk_lbl(text, color=TXT, size=12, bold=False, wrap=False):
     return l
 
 
-def circle_avatar(diameter=40, color1="#a08bff", color2="#6f4df0", glyph=""):
-    """渐变圆形头像"""
+def circle_avatar(diameter=40, color1=AVATAR_C1, color2=AVATAR_C2, glyph=""):
+    """渐变圆形头像(默认用调色板的紫/品红渐变)"""
     pm = QPixmap(diameter, diameter)
     pm.fill(Qt.transparent)
     p = QPainter(pm)
@@ -206,10 +282,13 @@ class LeftPanel(QFrame):
         ]
         for title, sub, done in rows:
             item = QListWidgetItem()
-            w = QWidget(); h = QHBoxLayout(w); h.setContentsMargins(0, 0, 0, 0); h.setSpacing(8)
+            w = QWidget(); h = QHBoxLayout(w); h.setContentsMargins(6, 0, 6, 0); h.setSpacing(8)
+            # 关键: 让内层 widget 完全透明, 背景交给 item 的 QSS 控制(默认透明)
+            w.setAttribute(Qt.WA_TranslucentBackground, True)
+            w.setStyleSheet("background: transparent;")
             dot = QLabel("✓" if done else "●")
             dot.setStyleSheet(
-                f"color:{'#3ddc84' if done else '#e6a23c'};font-size:11px;font-weight:700;")
+                f"color:{DONE_COLOR if done else BUSY_COLOR};font-size:11px;font-weight:700;")
             col = QVBoxLayout(); col.setSpacing(2)
             col.addWidget(mk_lbl(title, TXT, 12))
             col.addWidget(mk_lbl(sub, TXT3, 10))
@@ -225,7 +304,8 @@ class PromptBar(QFrame):
     def __init__(self):
         super().__init__()
         self.setStyleSheet(
-            f"background:{CARD};border:1px solid {BORDER};border-radius:12px;")
+            f"background:{GLASS_HI};border:1px solid {BORDER_LO};border-radius:14px;")
+        glass_shadow(self, radius=24, alpha=80, dy=6, blur=30)
         v = QVBoxLayout(self); v.setContentsMargins(14, 12, 14, 10); v.setSpacing(12)
         ph = QLabel("帮你编写代码、调试 Bug、优化性能等开发工作、交付生产级代码产物…")
         ph.setStyleSheet(f"color:{TXT3};font-size:12px;")
@@ -260,7 +340,7 @@ class CenterPanel(QFrame):
         v = QVBoxLayout(self); v.setContentsMargins(18, 12, 18, 12); v.setSpacing(0)
 
         # 项目名 + 顶部标签
-        top = QHBoxLayout(); top.setSpacing(10)
+        top = QHBoxLayout(); top.setSpacing(12)
         proj = QLabel("km-pipeline"); proj.setStyleSheet(
             f"color:{TXT};font-size:12px;font-weight:600;")
         top.addWidget(proj)
@@ -269,14 +349,20 @@ class CenterPanel(QFrame):
             f"color:{TXT3};font-size:12px;")
         top.addWidget(mid)
         top.addStretch()
-        # 标签页
+
+        # 顶部标签页 —— 放进半透明玻璃容器
+        tabbar = QFrame(); tabbar.setObjectName("tabBar")
+        tb_layout = QHBoxLayout(tabbar); tb_layout.setContentsMargins(4, 3, 4, 3)
+        tb_layout.setSpacing(4)
         for t in ["编辑器", "MCP", "插件市场", "设置", "+"]:
             tb = QPushButton(t)
             tb.setProperty("tab", True); tb.setCheckable(True)
             tb.setCursor(Qt.PointingHandCursor)
             if t == "设置":
                 tb.setChecked(True)
-            top.addWidget(tb)
+            tb_layout.addWidget(tb)
+        glass_shadow(tabbar, radius=20, alpha=80, dy=5, blur=24)
+        top.addWidget(tabbar)
         v.addLayout(top)
 
         # 顶部标签也放到中间标题下方横线
@@ -360,10 +446,10 @@ class SettingsPanel(QFrame):
 
         # ---- 左: 设置导航
         navcol = QVBoxLayout(); navcol.setContentsMargins(6, 0, 0, 0); navcol.setSpacing(6)
-        # 用户卡
+        # 用户卡(半透明玻璃)
         usercard = QFrame(); usercard.setObjectName("subcard")
         usercard.setStyleSheet(
-            f"background:{PANEL}; border:1px solid {BORDER}; border-radius:10px;")
+            f"background:{GLASS}; border:1px solid {BORDER_LO}; border-radius:12px;")
         uv = QVBoxLayout(usercard); uv.setContentsMargins(10, 12, 10, 12); uv.setSpacing(10)
         urow = QHBoxLayout(); urow.setSpacing(10)
         urow.addWidget(circle_avatar(38, glyph="U"))
@@ -375,6 +461,7 @@ class SettingsPanel(QFrame):
         uv.addLayout(urow)
         usearch = QLineEdit(); usearch.setPlaceholderText("Ctrl+F  搜索")
         uv.addWidget(usearch)
+        glass_shadow(usercard, radius=18, alpha=60, dy=3, blur=22)
         navcol.addWidget(usercard)
 
         navcol.addSpacing(2)
@@ -421,10 +508,11 @@ class SettingsPanel(QFrame):
         # 通用 标题
         cv.addWidget(mk_lbl("通用", TXT, 18, bold=True))
 
-        # 基础设置 卡片
+        # 基础设置 卡片(半透明玻璃)
         basic = QFrame(); basic.setProperty("card", True)
         basic.setStyleSheet("QFrame[card=\"true\"]{"
-                            f"background:{PANEL}; border:1px solid {BORDER}; border-radius:10px;}}")
+                            f"background:{GLASS}; border:1px solid {BORDER_LO}; border-radius:12px;}}")
+        glass_shadow(basic, radius=20, alpha=70, dy=5, blur=26)
         bv = QVBoxLayout(basic); bv.setContentsMargins(16, 16, 16, 16); bv.setSpacing(4)
         bv.addWidget(mk_lbl("基础设置", TXT2, 12, bold=True))
         bv.addSpacing(8)
@@ -439,11 +527,12 @@ class SettingsPanel(QFrame):
         bv.addLayout(g)
         cv.addWidget(basic)
 
-        # 偏好设置
+        # 偏好设置(半透明玻璃)
         pref = QFrame()
         pref.setStyleSheet("QFrame[card=\"true\"]{"
-                           f"background:{PANEL}; border:1px solid {BORDER}; border-radius:10px;}}")
+                           f"background:{GLASS}; border:1px solid {BORDER_LO}; border-radius:12px;}}")
         pref.setProperty("card", True)
+        glass_shadow(pref, radius=20, alpha=70, dy=5, blur=26)
         pv = QVBoxLayout(pref); pv.setContentsMargins(16, 16, 16, 16); pv.setSpacing(0)
         pv.addWidget(mk_lbl("偏好设置", TXT2, 12, bold=True))
         pv.addSpacing(10)
@@ -469,7 +558,7 @@ class SettingsPanel(QFrame):
             pv.addLayout(setting_row(t, d, c))
             if i != len(rows) - 1:
                 sep = QFrame(); sep.setFixedHeight(1)
-                sep.setStyleSheet(f"background:{BORDER};")
+                sep.setStyleSheet(f"background:{BORDER_LO};")
                 pv.addWidget(sep)
             pv.addSpacing(8)
         cv.addWidget(pref)
