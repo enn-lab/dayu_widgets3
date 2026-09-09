@@ -169,13 +169,15 @@ QListWidget#tasks::item:selected {{
     background: {SELTINT}; border: 1px solid {BORDER};
 }}
 
-/* 滚动条 */
+/* 滚动条 —— 完全透明, 不再显示任何竖向细线(滚动仍可用) */
 QScrollBar:vertical {{ background: transparent; width: 8px; margin: 0; }}
-QScrollBar::handle:vertical {{
-    background: {BORDER_LO}; border-radius: 4px; min-height: 30px;
-}}
-QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; }}
+QScrollBar::handle:vertical {{ background: transparent; border-radius: 4px; min-height: 30px; }}
+QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; width: 0; border: none; }}
 QScrollBar::add-page, QScrollBar::sub-page {{ background: transparent; }}
+QScrollBar:horizontal {{ background: transparent; height: 8px; margin: 0; }}
+QScrollBar::handle:horizontal {{ background: transparent; border-radius: 4px; min-width: 30px; }}
+QScrollBar:left-arrow, QScrollBar:right-arrow {{ background: transparent; border: none; width: 0; height: 0; }}
+QScrollBar:up-arrow, QScrollBar:down-arrow {{ background: transparent; border: none; width: 0; height: 0; }}
 
 /* 玻璃分组卡片 */
 QFrame.card {{ background: {GLASS}; border: 1px solid {BORDER_LO}; border-radius: 12px; }}
@@ -228,7 +230,8 @@ class LeftPanel(QFrame):
     def __init__(self):
         super().__init__()
         self.setFixedWidth(250)
-        self.setStyleSheet(f"background:{PANEL}; border-right:1px solid {BORDER};")
+        # 不画 border-right 分隔线(避免多余的竖线), 靠左右面板底色差异做区分
+        self.setStyleSheet(f"background:{PANEL};")
         v = QVBoxLayout(self); v.setContentsMargins(12, 14, 12, 12); v.setSpacing(10)
 
         # logo
@@ -271,6 +274,8 @@ class LeftPanel(QFrame):
 
         # 任务列表
         self.tasks = QListWidget(); self.tasks.setObjectName("tasks")
+        self.tasks.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.tasks.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         rows = [
             ("设计 Launcher UI...", "完成 8月26日 21:17", True),
             ("本地模型部署...", "完成 8月18日 15:44", True),
@@ -439,7 +444,8 @@ class SettingsPanel(QFrame):
     def __init__(self):
         super().__init__()
         self.setFixedWidth(720)
-        self.setStyleSheet(f"background:{DEEP}; border-left:1px solid {BORDER};")
+        # 不画 border-left 分隔线, 靠底色差异区分(避免多余竖线)
+        self.setStyleSheet(f"background:{DEEP};")
         outer = QVBoxLayout(self); outer.setContentsMargins(0, 0, 0, 0)
 
         body = QHBoxLayout(); body.setContentsMargins(0, 16, 0, 0); body.setSpacing(0)
