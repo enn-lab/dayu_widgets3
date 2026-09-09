@@ -22,11 +22,11 @@ from PySide6.QtWidgets import (QApplication, QWidget, QMainWindow, QFrame,
 # 备注标注每个颜色在代码里被用到的具体位置
 
 # 窗口/主背景 —— 不透明深黑底
-DEEP      = "#0a0b0e"
+DEEP      = "#1a1b1d"
 #   用途: QMainWindow root 背景 | CenterPanel 背景 | SOLO logo 文本盒背景
 
 # 面板层 —— 不透明深色, 区块(左/中/右)整体底色
-PANEL     = "#0f1114"
+PANEL     = "#222427"
 #   用途: LeftPanel 侧栏背景 | SettingsPanel 整体背景 | QComboBox 下拉浮层背景 | 顶栏分隔线
 
 # 玻璃表面 —— 卡片/按钮半透明底
@@ -439,7 +439,7 @@ class SettingsPanel(QFrame):
     def __init__(self):
         super().__init__()
         self.setFixedWidth(720)
-        self.setStyleSheet(f"background:{PANEL}; border-left:1px solid {BORDER};")
+        self.setStyleSheet(f"background:{DEEP}; border-left:1px solid {BORDER};")
         outer = QVBoxLayout(self); outer.setContentsMargins(0, 0, 0, 0)
 
         body = QHBoxLayout(); body.setContentsMargins(0, 16, 0, 0); body.setSpacing(0)
