@@ -319,7 +319,7 @@ MBadge > QPushButton{
     max-height:@badge_width@unit;
     min-width:@badge_width@unit;
     border-radius: @badge_width_radius@unit;
-    background-color: red;
+    background-color: @accent_color;
     border: none;
     color: white;
     font-weight:bold;
@@ -861,36 +861,35 @@ MLineEdit:disabled{
 
 MTabWidget::pane { /* The tab widget frame */
     border: 1px solid @border_color;
-    border-radius: 3px;
+    border-radius: @border_radius_base@unit;
     top: -1px;
-    background-color: @background_color;
+    background-color: @surface_color;
 }
 MTabWidget::tab-bar {
-    padding: 5px;
+    padding: 4px;
 }
  /* Style the tab using the tab sub-control. Note that
      it reads QTabBar _not_ QTabWidget */
 MTabBar::tab {
-    border: 1px solid @border_color;
-    border-bottom: none;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    background-color: @background_in_color;
+    border: 1px solid transparent;
+    border-radius: @border_radius_base@unit;
+    background-color: transparent;
+    color: @text_secondary_color;
+    padding: 6px 12px;
 }
 
 QTabBar::tab:selected{
-    background: #323232;
-    border-bottom: none;
-    color: @primary_color;
-    background-color: @background_color;
+    color: @text_primary_color;
+    background-color: @surface_selected_color;
+    border-color: @border_subtle_color;
 }
 QTabBar::tab:!selected {
-    margin-top: 2px;
-    border-bottom: 1px solid @border_color;
+    margin-top: 0;
 }
 
 MTabBar::tab:hover {
-    color: @primary_color;
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
 }
 MTabBar::close-button {
     subcontrol-origin: content;
@@ -899,17 +898,17 @@ MTabBar::close-button {
     image: url(@icon_close);
 }
 MTabBar::close-button:hover {
-    border: 1px solid @primary_color;
+    border: 1px solid @focus_color;
 }
 
 MTabBar QToolButton {
     border: 1px solid @border_color;
 }
 MTabBar QToolButton:hover {
-    border: 1px solid @primary_5;
+    border: 1px solid @focus_color;
 }
 MTabBar QToolButton:disabled {
-    background-color: @disable_color;
+    background-color: @surface_selected_color;
 }
 MTabBar QToolButton::right-arrow {
     image: url(@icon_right);
@@ -989,10 +988,10 @@ MListView,
 MTreeView,
 MColumnView,
 MTableView{
-    background-color: @background_in_color;
-    alternate-background-color: @background_color;
-    selection-background-color: rgba(45, 140, 240, 50);
-    selection-color:#1e1e1e;
+    background-color: @surface_color;
+    alternate-background-color: @canvas_color;
+    selection-background-color: @surface_selected_color;
+    selection-color: @text_primary_color;
     border: 1px solid @border_color;
     padding: 0;
     gridline-color: @border_color;
@@ -1003,8 +1002,8 @@ MListView::item:hover,
 MTreeView::item:hover,
 MColumnView::item:hover,
 MTableView::item:hover{
-    color: @text_color_inverse;
-    background-color: @primary_5;
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
 }
 
 MBigView::item:selected,
@@ -1012,11 +1011,11 @@ MListView::item:selected,
 MTreeView::item:selected,
 MColumnView::item:selected,
 MTableView::item:selected{
-    background-color: @primary_color;
+    background-color: @surface_selected_color;
 }
 
 MTableView QTableCornerButton::section {
-    background-color: @background_out_color;
+    background-color: @surface_out_color;
     border: 0px solid @border_color;
     border-right: 1px solid @border_color;
     border-bottom: 1px solid @border_color;
@@ -1024,44 +1023,43 @@ MTableView QTableCornerButton::section {
 }
 
 QScrollBar:horizontal {
-    border: 0 solid @border_color;
-    height: 9px;
-    margin: 0 32px 0 0;
-    background-color: @border_color;
+    border: none;
+    height: 8px;
+    margin: 0;
+    background-color: transparent;
 }
 
 QScrollBar::handle:horizontal {
-    background-color: @background_selected_color;
+    background-color: @surface_selected_color;
+    border-radius: 4px;
     min-width: 10px;
 }
 
 QScrollBar::add-line:horizontal {
     subcontrol-origin: margin;
     subcontrol-position: right center;
-    background: @border_color;
+    background: transparent;
     width: 15px;
 }
 
 QScrollBar::sub-line:horizontal {
     subcontrol-origin: margin;
     subcontrol-position: right center;
-    background: @border_color;
+    background: transparent;
     width: 15px;
     right: 16px;
 }
 
 QScrollBar::left-arrow:horizontal {
-    width: 9px;
-    height: 9px;
-    position: relative;
-    image: url(@icon_left);
+    width: 0;
+    height: 0;
+    image: none;
 }
 
 QScrollBar::right-arrow:horizontal {
-    width: 9px;
-    height: 9px;
-    position: relative;
-    image: url(@icon_right);
+    width: 0;
+    height: 0;
+    image: none;
 }
 
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
@@ -1069,44 +1067,43 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
 }
 
 QScrollBar:vertical {
-    border: 0 solid @border_color;
-    width: 9px;
-    margin: 0 0 32px 0 ;
-    background-color: @border_color;
+    border: none;
+    width: 8px;
+    margin: 0;
+    background-color: transparent;
 }
 
 QScrollBar::handle:vertical {
-    background-color: @background_selected_color;
+    background-color: @surface_selected_color;
+    border-radius: 4px;
     min-height: 10px;
 }
 
 QScrollBar::add-line:vertical {
     subcontrol-origin: margin;
     subcontrol-position: center bottom;
-    background: @border_color;
+    background: transparent;
     height: 15px;
 }
 
 QScrollBar::sub-line:vertical {
     subcontrol-origin: margin;
     subcontrol-position: center bottom;
-    background: @border_color;
+    background: transparent;
     height: 15px;
     bottom: 16px;
 }
 
 QScrollBar::up-arrow:vertical {
-    width: 9px;
-    height: 9px;
-    position: relative;
-    image: url(@icon_up)
+    width: 0;
+    height: 0;
+    image: none;
 }
 
 QScrollBar::down-arrow:vertical {
-    width: 9px;
-    height: 9px;
-    position: relative;
-    image: url(@icon_down)
+    width: 0;
+    height: 0;
+    image: none;
 }
 
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
@@ -1236,24 +1233,24 @@ MProgressBar[dayu_status=primary]::chunk {
 }
 
 MMenu {
-    background-color: @background_color;
+    background-color: @elevated_color;
     padding: 0;
-    border-radius: 2px;
+    border-radius: @border_radius_base@unit;
     border: 1px solid @border_color;
 }
 MMenu[checked=true]{
-    color: @primary_color;
-    background-color: @background_out_color;
+    color: @accent_color;
+    background-color: @surface_selected_color;
 }
 MMenu::item {
     padding: 4px 24px 4px 28px;
 }
 MMenu::item:checked  {
-    color: @primary_color;
-    background-color: @background_out_color;
+    color: @accent_color;
+    background-color: @surface_selected_color;
 }
 MMenu::item:selected  {
-    background-color: @background_out_color;
+    background-color: @surface_hover_color;
 }
 
 /* MMenu Indicator */
@@ -1313,11 +1310,6 @@ MMenu::icon {
     height: 16px;
 }
 
-QToolTip {
-    border: none;
-    background-color: @background_selected_color;
-}
-
 MLoading {
     background-color: transparent;
 }
@@ -1329,18 +1321,19 @@ MLoadingWrapper #mask{
 
 MCard[border=true]{
     border: 1px solid @border_color;
-    border-radius: @border_radius_small@unit;
+    border-radius: @border_radius_large@unit;
+    background-color: @surface_color;
 }
 MCard[border=false]{
     border: 0 solid @border_color;
-    border-radius: @border_radius_small@unit;
-    background-color: @background_in_color;
+    border-radius: @border_radius_large@unit;
+    background-color: @surface_color;
 }
 
 MMeta {
     border: 1px solid @border_color;
-    border-radius: @border_radius_small@unit;
-    background-color: @background_in_color;
+    border-radius: @border_radius_large@unit;
+    background-color: @surface_color;
 }
 
 MSizeGrip {
@@ -1350,8 +1343,8 @@ MSizeGrip {
 
 /* MSidebar */
 MSidebar {
-    background-color: @background_in_color;
-    border-right: 1px solid @border_color;
+    background-color: @surface_color;
+    border-right: 1px solid @border_subtle_color;
 }
 MSidebar QScrollArea {
     background-color: transparent;
@@ -1366,7 +1359,7 @@ MSidebarMenu QLabel {
     background-color: transparent;
 }
 MSidebarMenu > QLabel#sidebar_menu_title {
-    color: @secondary_text_color;
+    color: @text_secondary_color;
     font-size: 12px;
     font-weight: 600;
     background-color: transparent;
