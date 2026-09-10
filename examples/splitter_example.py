@@ -20,7 +20,7 @@ class SplitterExample(QtWidgets.QWidget):
 
         workspace = MSplitter()
         workspace.addWidget(self._editor("Explorer", "Assets\n  scenes\n  materials\n  characters"))
-        workspace.addWidget(self._editor("Editor", "Select a panel handle to collapse a side.\nDouble-click a handle to reset the layout."))
+        workspace.addWidget(self._editor("Editor", "Drag a handle to resize panels.\nHold the pointer for one second to highlight it.\nDouble-click a handle to reset the layout."))
         workspace.addWidget(self._editor("Preview", "Preview output\n\nThe splitter keeps each panel responsive."))
         workspace.setStretchFactor(0, 1)
         workspace.setStretchFactor(1, 3)

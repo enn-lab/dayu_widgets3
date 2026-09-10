@@ -1713,26 +1713,13 @@ MSplitter::handle {
     border: none;
 }
 MSplitter::handle:horizontal {
-    width: 14px;
+    width: 4px;
     margin: 0;
 }
 MSplitter::handle:vertical {
-    height: 14px;
+    height: 4px;
     margin: 0;
 }
-#dayuSplitterHandle:hover {
-    background-color: @surface_hover_color;
-}
-#dayuSplitterButton {
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    min-width: 14px;
-    max-width: 14px;
-    min-height: 14px;
-    max-height: 14px;
-}
-#dayuSplitterButton:hover {
-    background-color: @surface_selected_color;
-    border: none;
+#dayuSplitterHandle[hover_active="true"] {
+    background-color: @accent_color;
 }

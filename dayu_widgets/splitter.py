@@ -5,7 +5,38 @@ from qtpy import QtWidgets
 
 from dayu_widgets import dayu_theme
 from dayu_widgets.mixin import property_mixin
-from dayu_widgets.tool_button import MToolButton
+
+
+class _MSplitterHandle(QtWidgets.QSplitterHandle):
+    """Minimal draggable handle with a delayed hover highlight."""
+
+    def __init__(self, orientation, splitter):
+        super(_MSplitterHandle, self).__init__(orientation, splitter)
+        self.setObjectName("dayuSplitterHandle")
+        self.setAttribute(QtCore.Qt.WA_Hover, True)
+        self.setCursor(
+            QtCore.Qt.SplitHCursor
+            if orientation == QtCore.Qt.Horizontal
+            else QtCore.Qt.SplitVCursor
+        )
+        self._hover_timer = QtCore.QTimer(self)
+        self._hover_timer.setSingleShot(True)
+        self._hover_timer.setInterval(1000)
+        self._hover_timer.timeout.connect(self._activate_hover)
+
+    def _activate_hover(self):
+        self.setProperty("hover_active", True)
+        self.style().polish(self)
+
+    def enterEvent(self, event):
+        self._hover_timer.start()
+        return super(_MSplitterHandle, self).enterEvent(event)
+
+    def leaveEvent(self, event):
+        self._hover_timer.stop()
+        self.setProperty("hover_active", False)
+        self.style().polish(self)
+        return super(_MSplitterHandle, self).leaveEvent(event)
 
 
 @property_mixin
@@ -18,7 +49,7 @@ class MSplitter(QtWidgets.QSplitter):
 
     def __init__(self, Orientation=QtCore.Qt.Horizontal, parent=None):
         super(MSplitter, self).__init__(Orientation, parent=parent)
-        self.setHandleWidth(14)
+        self.setHandleWidth(4)
         self.setChildrenCollapsible(True)
         self.setProperty("animatable", True)
         self.setProperty("default_size", 100)
@@ -96,33 +127,6 @@ class MSplitter(QtWidgets.QSplitter):
             self._animate_sizes(self.sizes(), [1] * self.count())
 
     def createHandle(self):
-        handle = QtWidgets.QSplitterHandle(self.orientation(), self)
-        handle.setObjectName("dayuSplitterHandle")
-        handle.setAttribute(QtCore.Qt.WA_Hover, True)
-        is_horizontal = self.orientation() == QtCore.Qt.Horizontal
-        layout = QtWidgets.QVBoxLayout() if is_horizontal else QtWidgets.QHBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
-        handle.setLayout(layout)
-
-        icon_names = (
-            ("left_line.svg", "Collapse left panel"),
-            ("right_line.svg", "Collapse right panel"),
-        ) if is_horizontal else (
-            ("up_line.svg", "Collapse upper panel"),
-            ("down_line.svg", "Collapse lower panel"),
-        )
-        for first, (icon_name, tooltip) in enumerate(icon_names):
-            button = MToolButton(handle).icon_only().small().svg(icon_name)
-            button.setObjectName("dayuSplitterButton")
-            button.setFixedSize(QtCore.QSize(14, 14))
-            button.setIconSize(QtCore.QSize(9, 9))
-            button.setToolTip(self.tr(tooltip))
-            button.clicked.connect(
-                lambda _checked=False, h=handle, first=first:
-                self.slot_splitter_click(self._handle_index(h), first == 0)
-            )
-            layout.addWidget(button)
-
+        handle = _MSplitterHandle(self.orientation(), self)
         handle.mouseDoubleClickEvent = lambda event: self._reset_sizes()
         return handle
