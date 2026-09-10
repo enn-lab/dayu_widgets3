@@ -38,7 +38,7 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
         float, get_indicator_opacity, set_indicator_opacity
     )
 
-    def _fade_to(self, target, duration=180):
+    def _fade_to(self, target, duration=360):
         if self._fade_animation is not None:
             self._fade_animation.stop()
         animation = QtCore.QPropertyAnimation(self, b"indicator_opacity")
@@ -67,7 +67,7 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.setProperty("dragging", True)
-            self._fade_to(1.0, 120)
+            self._fade_to(1.0, 240)
         return super(_MSplitterHandle, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
