@@ -18,7 +18,7 @@ class MSplitter(QtWidgets.QSplitter):
 
     def __init__(self, Orientation=QtCore.Qt.Horizontal, parent=None):
         super(MSplitter, self).__init__(Orientation, parent=parent)
-        self.setHandleWidth(24)
+        self.setHandleWidth(14)
         self.setChildrenCollapsible(True)
         self.setProperty("animatable", True)
         self.setProperty("default_size", 100)
@@ -115,6 +115,8 @@ class MSplitter(QtWidgets.QSplitter):
         for first, (icon_name, tooltip) in enumerate(icon_names):
             button = MToolButton(handle).icon_only().small().svg(icon_name)
             button.setObjectName("dayuSplitterButton")
+            button.setFixedSize(QtCore.QSize(14, 14))
+            button.setIconSize(QtCore.QSize(9, 9))
             button.setToolTip(self.tr(tooltip))
             button.clicked.connect(
                 lambda _checked=False, h=handle, first=first:
