@@ -67,6 +67,7 @@ class ModernThemeStaticTest(unittest.TestCase):
             "QComboBox QAbstractItemView",
             "QComboBox QAbstractItemView::item:hover",
             "QComboBox QAbstractItemView::indicator:checked",
+            'MComboBox[dayu_size="@small"] QAbstractItemView::item',
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, qss)

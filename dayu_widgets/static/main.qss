@@ -782,6 +782,23 @@ QComboBox QAbstractItemView::item:disabled,
 MComboBox QAbstractItemView::item:disabled {
     color: @text_disabled_color;
 }
+MComboBox[dayu_size="@huge"] QAbstractItemView::item {
+    min-height: @huge@unit;
+}
+MComboBox[dayu_size="@large"] QAbstractItemView::item {
+    min-height: @large@unit;
+}
+MComboBox[dayu_size="@medium"] QAbstractItemView::item {
+    min-height: @medium@unit;
+}
+MComboBox[dayu_size="@small"] QAbstractItemView::item {
+    min-height: @small@unit;
+}
+MComboBox[dayu_size="@tiny"] QAbstractItemView::item {
+    min-height: @tiny@unit;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
 /* MLabel */
 MLabel{
     padding: 2px;
