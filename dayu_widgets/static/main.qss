@@ -1709,17 +1709,19 @@ MSplitter {
     background-color: transparent;
 }
 MSplitter::handle {
-    background-color: @border_subtle_color;
+    background-color: transparent;
     border: none;
+    image: none;
 }
 MSplitter::handle:horizontal {
-    width: 4px;
+    width: 2px;
     margin: 0;
 }
 MSplitter::handle:vertical {
-    height: 4px;
+    height: 2px;
     margin: 0;
 }
-#dayuSplitterHandle[hover_active="true"] {
+#dayuSplitterHandle[hover_active="true"],
+#dayuSplitterHandle[dragging="true"] {
     background-color: @accent_color;
 }

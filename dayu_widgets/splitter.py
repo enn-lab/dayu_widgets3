@@ -34,9 +34,23 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
 
     def leaveEvent(self, event):
         self._hover_timer.stop()
-        self.setProperty("hover_active", False)
-        self.style().polish(self)
+        if not self.property("dragging"):
+            self.setProperty("hover_active", False)
+            self.style().polish(self)
         return super(_MSplitterHandle, self).leaveEvent(event)
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.setProperty("dragging", True)
+            self.style().polish(self)
+        return super(_MSplitterHandle, self).mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        result = super(_MSplitterHandle, self).mouseReleaseEvent(event)
+        if event.button() == QtCore.Qt.LeftButton:
+            self.setProperty("dragging", False)
+            self.style().polish(self)
+        return result
 
 
 @property_mixin
@@ -49,7 +63,7 @@ class MSplitter(QtWidgets.QSplitter):
 
     def __init__(self, Orientation=QtCore.Qt.Horizontal, parent=None):
         super(MSplitter, self).__init__(Orientation, parent=parent)
-        self.setHandleWidth(4)
+        self.setHandleWidth(2)
         self.setChildrenCollapsible(True)
         self.setProperty("animatable", True)
         self.setProperty("default_size", 100)
