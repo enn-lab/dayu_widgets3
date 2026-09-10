@@ -1678,9 +1678,17 @@ MDockWidget::title {
 }
 MDockWidget::close-button,
 MDockWidget::float-button {
+    width: 18px;
+    height: 18px;
     border: 1px solid transparent;
     border-radius: @border_radius_small@unit;
-    padding: 2px;
+    padding: 0;
+}
+MDockWidget::close-button {
+    image: url(@icon_close);
+}
+MDockWidget::float-button {
+    image: url(@icon_float);
 }
 MDockWidget::close-button:hover,
 MDockWidget::float-button:hover {
