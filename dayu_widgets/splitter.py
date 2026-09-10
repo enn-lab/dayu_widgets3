@@ -9,7 +9,7 @@ from dayu_widgets.mixin import property_mixin
 
 
 class _MSplitterHandle(QtWidgets.QSplitterHandle):
-    """Minimal draggable handle with a delayed hover highlight."""
+    """Minimal draggable handle with an animated hover highlight."""
 
     def __init__(self, orientation, splitter):
         super(_MSplitterHandle, self).__init__(orientation, splitter)
@@ -20,10 +20,6 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
             if orientation == QtCore.Qt.Horizontal
             else QtCore.Qt.SplitVCursor
         )
-        self._hover_timer = QtCore.QTimer(self)
-        self._hover_timer.setSingleShot(True)
-        self._hover_timer.setInterval(1000)
-        self._hover_timer.timeout.connect(self._activate_hover)
         self._fade_animation = None
         self._indicator_opacity = 0.0
 
@@ -61,11 +57,10 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
         self._fade_to(1.0)
 
     def enterEvent(self, event):
-        self._hover_timer.start()
+        self._activate_hover()
         return super(_MSplitterHandle, self).enterEvent(event)
 
     def leaveEvent(self, event):
-        self._hover_timer.stop()
         if not self.property("dragging"):
             self.setProperty("hover_active", False)
             self._fade_to(0.0)
