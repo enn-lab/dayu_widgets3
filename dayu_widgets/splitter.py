@@ -45,7 +45,14 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
         animation.setDuration(duration)
         animation.setStartValue(self._indicator_opacity)
         animation.setEndValue(target)
-        animation.setEasingCurve(QtCore.QEasingCurve.OutCubic)
+        # Entering should reveal the line progressively instead of appearing
+        # immediately when the cursor changes to the splitter cursor.  Keep
+        # the existing decelerating fade-out, which feels natural on exit.
+        animation.setEasingCurve(
+            QtCore.QEasingCurve.InOutCubic
+            if target > self._indicator_opacity
+            else QtCore.QEasingCurve.OutCubic
+        )
         self._fade_animation = animation
         animation.start()
 
