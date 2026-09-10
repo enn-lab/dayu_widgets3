@@ -137,10 +137,16 @@ class ScrollableMenuBase(QtWidgets.QMenu):
     deltaY = 0
     dirty = True
     ignoreAutoScroll = False
-    cascadeGap = 4
+    # Keep the popup pair visually connected while leaving the rounded
+    # borders distinct.  The value is intentionally smaller than the
+    # original native-menu overlap compensation.
+    cascadeGap = 2
 
     def __init__(self, *args, **kwargs):
         super(ScrollableMenuBase, self).__init__(*args, **kwargs)
+        # QMenu is a top-level popup.  Without a translucent window surface,
+        # the stylesheet's rounded corners still sit on an opaque rectangle.
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
         self._maximumHeight = self.maximumHeight()
         self._actionRects = []
         self._compat_style = CompatStyle(self.style())
