@@ -53,7 +53,9 @@ class ModernThemeExample(QtWidgets.QWidget):
 
         layout.addWidget(MLabel("Inputs").h4(), 1, 0)
         inputs = QtWidgets.QHBoxLayout()
-        inputs.addWidget(MLineEdit(placeholder="Search or type..."))
+        line_edit = MLineEdit()
+        line_edit.setPlaceholderText("Search or type...")
+        inputs.addWidget(line_edit)
         combo = MComboBox()
         combo.addItems(["Surface", "Elevated", "Inset"])
         inputs.addWidget(combo)

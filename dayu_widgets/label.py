@@ -23,6 +23,10 @@ class MLabel(QtWidgets.QLabel):
     H4Level = 4
 
     def __init__(self, text="", parent=None, flags=QtCore.Qt.Widget):
+        # Qt6 rejects ``None`` for QLabel's text argument.  MCard and other
+        # containers intentionally create empty labels by passing None, so
+        # normalize it at the public widget boundary for Qt5/Qt6 parity.
+        text = "" if text is None else str(text)
         super(MLabel, self).__init__(text, parent, flags)
         flags = QtCore.Qt.TextBrowserInteraction | QtCore.Qt.LinksAccessibleByMouse
         self.setTextInteractionFlags(flags)

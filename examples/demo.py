@@ -2,6 +2,15 @@
 import codecs
 import importlib
 import os
+import sys
+
+
+# Some legacy example modules use ``import _mock_data`` when launched from
+# inside the examples directory.  Keep that import style working when the
+# demo is launched from the repository root or by an IDE.
+EXAMPLES_DIR = os.path.dirname(os.path.abspath(__file__))
+if EXAMPLES_DIR not in sys.path:
+    sys.path.insert(0, EXAMPLES_DIR)
 
 # Import third-party modules
 from qtpy import QtCore
