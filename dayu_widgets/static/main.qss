@@ -1522,8 +1522,36 @@ MMenu::item {
     color: @text_primary_color;
     background-color: transparent;
     border-radius: @border_radius_small@unit;
-    padding: 7px 28px 7px 32px;
+    padding: 7px 28px 7px 12px;
     margin: 2px 4px;
+}
+MMenu QWidget {
+    background-color: transparent;
+}
+MMenu::indicator:non-exclusive {
+    width: 13px;
+    height: 13px;
+    subcontrol-origin: padding;
+    subcontrol-position: left center;
+    left: 12px;
+    border-radius: 3px;
+    border: 1px solid @border_strong_color;
+    background-color: @input_color;
+}
+MMenu::indicator:non-exclusive:checked {
+    border-color: @accent_color;
+    background-color: @accent_color;
+    image: url(@icon_check);
+}
+MMenu::indicator:non-exclusive:hover {
+    border-color: @accent_hover_color;
+}
+MMenu::icon {
+    subcontrol-origin: padding;
+    subcontrol-position: left center;
+    left: 0;
+    width: 16px;
+    height: 16px;
 }
 MMenu::right-arrow {
     image: url(@icon_menu_right);

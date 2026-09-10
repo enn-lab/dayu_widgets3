@@ -790,18 +790,18 @@ class MMenu(SearchableMenuBase):
                 self._add_menu(menu, i)
         else:
             if data_dict.get("icon"):
-                action = QtWidgets.QWidgetAction(self)
-                label_text = utils.display_formatter(data_dict.get("label"))
-                action.setText(label_text)
-                self._action_group.addAction(action)
+                # Keep check state, icon and text in one native QMenu item.
+                # A QWidgetAction with its own MCheckBox makes Qt paint a
+                # second checkbox for the still-checkable QAction, which
+                # causes duplicated indicators and mismatched backgrounds.
+                action = self._action_group.addAction(
+                    utils.display_formatter(data_dict.get("label"))
+                )
                 action.setProperty("value", data_dict.get("value"))
                 action.setCheckable(True)
                 action.setProperty("parent_menu", parent_menu)
-                
                 icon = utils.icon_formatter(data_dict.get("icon"))
-                custom_widget = MMenuItemWidget(action, icon, label_text, self._action_group.isExclusive())
-                action.setDefaultWidget(custom_widget)
-                
+                action.setIcon(icon)
                 parent_menu.addAction(action)
             else:
                 action = self._action_group.addAction(utils.display_formatter(data_dict.get("label")))

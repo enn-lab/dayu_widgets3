@@ -98,6 +98,7 @@ class ModernThemeStaticTest(unittest.TestCase):
                 "font_unit",
                 "icon_close",
                 "icon_float",
+                "icon_check",
                 "icon_menu_right",
                 "progress_bar_radius",
                 "success_6",

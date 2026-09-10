@@ -36,15 +36,8 @@ class ToolMenuExample(QtWidgets.QWidget, MFieldMixin):
 
         # 创建多选菜单 (exclusive=False)
         menu = MMenu(exclusive=False, parent=self)
-        menu.setStyleSheet("""
-            MCheckBox::indicator {
-                border: none;
-                background-color: transparent;
-            }
-        """)
-        
-        # 现在可以直接使用 set_data 设置带有 icon 的数据
-        # MMenu 内部会自动处理 Checkbox + Icon 的布局
+
+        # 使用 MMenu 原生的 checkbox + icon 布局，确保主题样式统一。
         menu.set_data([
             {"label": "Apple", "value": "Apple", "icon": "check.svg"},
             {"label": "Banana", "value": "Banana", "icon": "cloud_line.svg"},
