@@ -171,6 +171,21 @@ class ScrollableMenuBase(QtWidgets.QMenu):
     def _set_max_scroll_count(self, value):
         self.setMaxItemCount(value * 2.2)
 
+    def _update_rounded_mask(self):
+        """Clip the top-level popup to the same radius used by modern QSS.
+
+        A stylesheet can paint rounded corners, but Windows still creates a
+        rectangular popup surface for QMenu.  The explicit mask removes the
+        platform-owned pixels outside that surface, including any residual
+        rectangular shadow around the popup.
+        """
+        if self.width() <= 0 or self.height() <= 0:
+            return
+        radius = 6
+        path = QtGui.QPainterPath()
+        path.addRoundedRect(QtCore.QRectF(self.rect()), radius, radius)
+        self.setMask(QtGui.QRegion(path.toFillPolygon().toPolygon()))
+
     @property
     def actionRects(self):
         if self.dirty or not self._actionRects:
@@ -458,6 +473,7 @@ class ScrollableMenuBase(QtWidgets.QMenu):
 
     def resizeEvent(self, event):
         super(ScrollableMenuBase, self).resizeEvent(event)
+        self._update_rounded_mask()
 
         margins = self.contentsMargins()
         l, t, r, b = margins.left(), margins.top(), margins.right(), margins.bottom()
