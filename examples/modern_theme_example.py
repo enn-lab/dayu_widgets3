@@ -25,7 +25,7 @@ class ModernThemeExample(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(ModernThemeExample, self).__init__(parent)
         self.setWindowTitle("Modern Theme Showcase")
-        self.resize(760, 560)
+        self.resize(760, 720)
         self._build_ui()
 
     def _build_ui(self):
@@ -76,6 +76,38 @@ class ModernThemeExample(QtWidgets.QWidget):
 
         card.set_widget(content)
         root.addWidget(card)
+
+        small_card = MCard(title="Small sizes").border()
+        small_content = QtWidgets.QWidget()
+        small_layout = QtWidgets.QGridLayout(small_content)
+        small_layout.setContentsMargins(18, 18, 18, 18)
+        small_layout.setHorizontalSpacing(12)
+        small_layout.setVerticalSpacing(10)
+
+        small_layout.addWidget(MLabel("Buttons").h4(), 0, 0)
+        small_buttons = QtWidgets.QHBoxLayout()
+        small_buttons.addWidget(MPushButton("Default").small())
+        small_buttons.addWidget(MPushButton("Primary").primary().small())
+        small_buttons.addWidget(MPushButton("Success").success().small())
+        small_buttons.addWidget(MPushButton("Warning").warning().small())
+        small_buttons.addWidget(MPushButton("Danger").danger().small())
+        small_layout.addLayout(small_buttons, 0, 1)
+
+        small_layout.addWidget(MLabel("Inputs").h4(), 1, 0)
+        small_inputs = QtWidgets.QHBoxLayout()
+        small_line_edit = MLineEdit().small()
+        small_line_edit.setPlaceholderText("Small input...")
+        small_inputs.addWidget(small_line_edit)
+        small_combo = MComboBox().small()
+        small_combo.addItems(["Surface", "Elevated", "Inset"])
+        small_inputs.addWidget(small_combo)
+        small_layout.addLayout(small_inputs, 1, 1)
+
+        small_layout.addWidget(MLabel("Switch").h4(), 2, 0)
+        small_layout.addWidget(MSwitch().small(), 2, 1, alignment=QtCore.Qt.AlignLeft)
+
+        small_card.set_widget(small_content)
+        root.addWidget(small_card)
         root.addStretch()
 
 

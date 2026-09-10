@@ -38,6 +38,17 @@ theme = MTheme("modern_dark")
 theme.apply(window)
 ```
 
+展示页 `examples/modern_theme_example.py` 同时包含默认尺寸和小尺寸案例。小尺寸组件使用现有的链式 API：
+
+```python
+MPushButton("Small").small()
+MLineEdit().small()
+MComboBox().small()
+MSwitch().small()
+```
+
+当前 `MCheckBox` 和 `MRadioButton` 尚未提供 `.small()` 链式方法，因此展示页暂不对它们伪造小尺寸 API。
+
 ## 实施阶段
 
 ### 阶段一：主题令牌和基础控件
