@@ -147,6 +147,15 @@ class ScrollableMenuBase(QtWidgets.QMenu):
         # QMenu is a top-level popup.  Without a translucent window surface,
         # the stylesheet's rounded corners still sit on an opaque rectangle.
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+        # Native popup shadows are rectangular on Windows and remain visible
+        # outside the rounded stylesheet surface.  Disable that platform
+        # shadow so the transparent corners stay visually transparent.
+        try:
+            no_shadow = QtCore.Qt.WindowType.NoDropShadowWindowHint
+        except AttributeError:
+            no_shadow = getattr(QtCore.Qt, "NoDropShadowWindowHint", None)
+        if no_shadow is not None:
+            self.setWindowFlags(self.windowFlags() | no_shadow)
         self._maximumHeight = self.maximumHeight()
         self._actionRects = []
         self._compat_style = CompatStyle(self.style())
