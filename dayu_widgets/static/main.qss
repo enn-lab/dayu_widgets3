@@ -1522,8 +1522,16 @@ MMenu::item {
     color: @text_primary_color;
     background-color: transparent;
     border-radius: @border_radius_small@unit;
-    padding: 7px 12px 7px 32px;
+    padding: 7px 28px 7px 32px;
     margin: 2px 4px;
+}
+MMenu::right-arrow {
+    image: url(@icon_menu_right);
+    width: 10px;
+    height: 12px;
+    subcontrol-position: right center;
+    subcontrol-origin: padding;
+    right: 10px;
 }
 MMenu::item:hover,
 MMenu::item:selected {

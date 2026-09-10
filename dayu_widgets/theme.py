@@ -253,6 +253,7 @@ class MTheme(object):
         self.icon_up = url_prefix.format("up_line")
         self.icon_left = url_prefix.format("left_line")
         self.icon_right = url_prefix.format("right_line")
+        self.icon_menu_right = url_prefix_2.format("menu_right_dark" if suf_str else "menu_right")
         self.icon_close = url_prefix.format("close_line")
         self.icon_calender = url_prefix.format("calendar_fill")
         self.icon_splitter = url_prefix.format("splitter")
