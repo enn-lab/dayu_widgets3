@@ -432,19 +432,19 @@ MToolButton::menu-indicator {
 }
 
 MDragFileButton, MDragFolderButton{
-    color: @primary_text_color;
-    background-color: @background_color;
+    color: @text_primary_color;
+    background-color: @surface_color;
     border: @drag_border@unit dashed @border_color;
     border-radius: @drag_border_radius@unit;
     padding: @drag_padding_x@unit @drag_padding_y@unit;
 }
 MDragFileButton:hover, MDragFolderButton:hover{
-    color: @primary_color;
-    border-color: @primary_5;
+    color: @accent_color;
+    border-color: @accent_hover_color;
 }
 MDragFileButton:pressed, MDragFolderButton:pressed{
-    color: @primary_color;
-    border-color: @primary_7;
+    color: @accent_color;
+    border-color: @accent_pressed_color;
 }
 
 /* MCheckBox */
@@ -650,7 +650,7 @@ MRadioButton {
     spacing: @radio_spacing@unit;
 }
 MRadioButton:disabled {
-    color: @disable_color;
+    color: @text_disabled_color;
 }
 
 MMenu::indicator:exclusive,
@@ -659,26 +659,26 @@ MRadioButton::indicator{
     height: @radio_size@unit;
     border-radius: @radio_radius@unit;
     border: 1px solid @border_color;
-    background-color: @background_in_color;
+    background-color: @input_color;
 }
 MMenu::indicator:exclusive:disabled,
 MRadioButton::indicator:disabled{
     border: 1px solid @border_color;
-    background-color: @background_selected_color;
+    background-color: @surface_selected_color;
 }
 
 MMenu::indicator:exclusive:hover,
 MRadioButton::indicator:hover{
-    border: 1px solid @primary_5;
+    border: 1px solid @accent_hover_color;
 }
 MMenu::indicator:exclusive:checked,
 MRadioButton::indicator:checked{
-    background-color: @primary_color;
+    background-color: @accent_color;
     image: url(@icon_circle);
 }
 MMenu::indicator:exclusive:checked:disabled,
 MRadioButton::indicator:checked:disabled{
-    background-color: @disable_color;
+    background-color: @text_disabled_color;
 }
 
 
@@ -718,14 +718,14 @@ MSwitch[dayu_size="@tiny"]::indicator{
 }
 MSwitch::indicator:checked{
     image-position: center right;
-    background-color: @primary_color;
+    background-color: @accent_color;
 }
 MSwitch::indicator:unchecked{
     image-position: center left;
-    background-color: @background_selected_color;
+    background-color: @surface_selected_color;
 }
 MSwitch::indicator:disabled{
-    background-color: @disable_color;
+    background-color: @text_disabled_color;
 }
 
 MComboBox{
@@ -751,7 +751,7 @@ MLabel{
     padding: 2px;
     background-color: transparent;
     font-size: @font_size_base@font_unit;
-    color: @primary_text_color;
+    color: @text_primary_color;
     font-weight: 400;
 }
 MLabel[dayu_level="1"]{
@@ -800,19 +800,19 @@ MLabel[dayu_type=warning]{
     color: @warning_6;
 }
 MLabel[dayu_type=secondary]{
-    color: @secondary_text_color;
+    color: @text_secondary_color;
 }
 
 MLabel:disabled{
-    color:@disable_color;
+    color:@text_disabled_color;
 }
 
 MMessage,
 MDrawer{
     padding: 2px;
     border: 1px solid @border_color;
-    border-radius: 2px;
-    background-color: @background_color;
+    border-radius: @border_radius_base@unit;
+    background-color: @elevated_color;
 }
 
 
@@ -827,11 +827,11 @@ MToast QLabel{
 
 MSectionItem{
     border: 1px solid @border_color;
-    border-radius: 2px;
-    background-color: @background_color;
+    border-radius: @border_radius_base@unit;
+    background-color: @surface_color;
 }
 QWidget#title {
-    background-color: @background_out_color;
+    background-color: @surface_out_color;
 }
 MTextEdit {
     border-radius: @border_radius_base@unit;
@@ -1139,14 +1139,14 @@ MSlider::groove:horizontal {
 }
 
 MSlider::handle {
-    background: @background_in_color;
-    border: 2px solid @primary_color;
+    background: @surface_color;
+    border: 2px solid @accent_color;
     width: @slider_handle_size@unit;
     height: @slider_handle_size@unit;
     border-radius: @slider_handle_radius@unit;
 }
 MSlider::handle:disabled{
-    border-color: @disable_color;
+    border-color: @text_disabled_color;
 }
 
 MSlider::handle:horizontal {
@@ -1166,13 +1166,13 @@ MSlider::add-page:horizontal {
 }
 
 MSlider::sub-page:horizontal {
-    background: @primary_color;
+    background: @accent_color;
 }
 MSlider::sub-page:disabled{
-    background: @disable_color;
+    background: @text_disabled_color;
 }
 MSlider::add-page:vertical {
-    background: @primary_color;
+    background: @accent_color;
 }
 
 MSlider::sub-page:vertical {
@@ -1187,7 +1187,7 @@ MDockWidget {
 
 }
 MDockWidget::title {
-    background: @background_selected_color;
+    background: @surface_selected_color;
     text-align: left;
     padding-left: 10px;
 }
@@ -1204,14 +1204,14 @@ MDockWidget::float-button {
     right: 30px;
 }
 MDockWidget::close-button:hover, MDockWidget::float-button:hover {
-    border: 1px solid @primary_color;
+    border: 1px solid @focus_color;
 }
 
 MProgressBar {
     font-size: @font_size_base@font_unit;
     color: @primary_text_color;
     border: 0 solid @border_color;
-    background-color: @border_color;
+    background-color: @surface_selected_color;
     min-height: @progress_bar_size@unit;
     max-height: @progress_bar_size@unit;
     border-radius: @progress_bar_radius@unit;
@@ -1229,7 +1229,7 @@ MProgressBar[dayu_status=success]::chunk {
     background-color: @success_6;
 }
 MProgressBar[dayu_status=primary]::chunk {
-    background-color: @primary_color;
+    background-color: @accent_color;
 }
 
 MMenu {
@@ -1259,22 +1259,22 @@ MMenu::indicator:non-exclusive {
     height: @check_box_size@unit;
     border-radius: 2px;
     border: 1px solid @border_color;
-    background-color: @background_in_color;
+    background-color: @input_color;
 }
 MMenu::indicator:non-exclusive:disabled {
     border: 1px solid @border_color;
-    background-color: @background_selected_color;
+    background-color: @surface_selected_color;
 }
 MMenu::indicator:non-exclusive:hover {
-    border: 1px solid @primary_5;
-    background-color: @background_in_color;
+    border: 1px solid @accent_hover_color;
+    background-color: @input_color;
 }
 MMenu::indicator:non-exclusive:checked {
-    background-color: @primary_color;
+    background-color: @accent_color;
     image: url(@icon_check);
 }
 MMenu::indicator:non-exclusive:checked:disabled {
-    background-color: @disable_color;
+    background-color: @text_disabled_color;
 }
 
 MMenu::indicator:exclusive {
@@ -1282,21 +1282,21 @@ MMenu::indicator:exclusive {
     height: @radio_size@unit;
     border-radius: @radio_radius@unit;
     border: 1px solid @border_color;
-    background-color: @background_in_color;
+    background-color: @input_color;
 }
 MMenu::indicator:exclusive:disabled{
     border: 1px solid @border_color;
-    background-color: @background_selected_color;
+    background-color: @surface_selected_color;
 }
 MMenu::indicator:exclusive:hover{
-    border: 1px solid @primary_5;
+    border: 1px solid @accent_hover_color;
 }
 MMenu::indicator:exclusive:checked{
-    background-color: @primary_color;
+    background-color: @accent_color;
     image: url(@icon_circle);
 }
 MMenu::indicator:exclusive:checked:disabled{
-    background-color: @disable_color;
+    background-color: @text_disabled_color;
 }
 
 /* Explicit icon positioning */
