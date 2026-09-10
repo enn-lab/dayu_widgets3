@@ -20,6 +20,7 @@ from qtpy import QtWidgets
 from dayu_widgets import dayu_theme
 from dayu_widgets.dock_widget import MDockWidget
 from dayu_widgets.item_view_set import MItemViewSet
+from dayu_widgets.text_edit import MTextEdit
 
 
 def get_test_widget():
@@ -45,7 +46,8 @@ class MDemo(QtWidgets.QMainWindow):
         self._init_ui()
 
     def _init_ui(self):
-        self.text_edit = QtWidgets.QTextEdit()
+        self.text_edit = MTextEdit()
+        self.text_edit.setReadOnly(True)
         self.stacked_widget = QtWidgets.QStackedWidget()
 
         list_widget = MItemViewSet(view_type=MItemViewSet.ListViewType)
