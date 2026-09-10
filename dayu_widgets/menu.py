@@ -709,7 +709,7 @@ class MMenuItemWidget(QtWidgets.QWidget):
             self.indicator = MCheckBox()
         self.indicator.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
         self.indicator.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.indicator.setChecked(action.isChecked())
+        self.indicator.setChecked(action.property("dayu_checked") is True)
         
         self.icon_label = QtWidgets.QLabel()
         self.icon_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
@@ -728,6 +728,12 @@ class MMenuItemWidget(QtWidgets.QWidget):
         layout.addStretch()
         
         action.toggled.connect(self.indicator.setChecked)
+
+    def set_checked(self, checked):
+        self.indicator.setChecked(checked)
+
+    def toggle_checked(self, *_args):
+        self.set_checked(not self.indicator.isChecked())
 
 
 @property_mixin
@@ -772,11 +778,36 @@ class MMenu(SearchableMenuBase):
         flag = False
         for act in self._action_group.actions():
             checked = act.property("value") in data_list
-            if act.isChecked() != checked:  # 更新来自代码
-                act.setChecked(checked)
+            if self._is_action_checked(act) != checked:  # 更新来自代码
+                self._set_action_checked(act, checked)
                 flag = True
         if flag:
             self.sig_value_changed.emit(value)
+
+    @staticmethod
+    def _is_action_checked(action):
+        if action.property("custom_widget"):
+            return action.property("dayu_checked") is True
+        return action.isChecked()
+
+    @staticmethod
+    def _set_action_checked(action, checked):
+        if action.property("custom_widget"):
+            action.setProperty("dayu_checked", checked)
+            widget = action.defaultWidget()
+            if widget:
+                widget.set_checked(checked)
+        else:
+            action.setChecked(checked)
+
+    def _on_custom_action_triggered(self, action):
+        checked = not self._is_action_checked(action)
+        if self._action_group.isExclusive():
+            for sibling in self._action_group.actions():
+                self._set_action_checked(sibling, sibling is action)
+        else:
+            self._set_action_checked(action, checked)
+        self.slot_on_action_triggered(action)
 
     def _add_menu(self, parent_menu, data_dict):
         if "children" in data_dict:
@@ -790,18 +821,22 @@ class MMenu(SearchableMenuBase):
                 self._add_menu(menu, i)
         else:
             if data_dict.get("icon"):
-                # Keep check state, icon and text in one native QMenu item.
-                # A QWidgetAction with its own MCheckBox makes Qt paint a
-                # second checkbox for the still-checkable QAction, which
-                # causes duplicated indicators and mismatched backgrounds.
-                action = self._action_group.addAction(
-                    utils.display_formatter(data_dict.get("label"))
-                )
+                action = QtWidgets.QWidgetAction(self)
+                label_text = utils.display_formatter(data_dict.get("label"))
+                action.setText(label_text)
+                self._action_group.addAction(action)
                 action.setProperty("value", data_dict.get("value"))
-                action.setCheckable(True)
+                action.setProperty("custom_widget", True)
+                action.setProperty("dayu_checked", False)
                 action.setProperty("parent_menu", parent_menu)
                 icon = utils.icon_formatter(data_dict.get("icon"))
-                action.setIcon(icon)
+                custom_widget = MMenuItemWidget(
+                    action, icon, label_text, self._action_group.isExclusive()
+                )
+                action.setDefaultWidget(custom_widget)
+                action.triggered.connect(
+                    lambda _checked, act=action: self._on_custom_action_triggered(act)
+                )
                 parent_menu.addAction(action)
             else:
                 action = self._action_group.addAction(utils.display_formatter(data_dict.get("label")))
@@ -844,7 +879,11 @@ class MMenu(SearchableMenuBase):
             if self._action_group.isExclusive():
                 selected_data = current_data
             else:
-                selected_data = [act.property("value") for act in self._action_group.actions() if act.isChecked()]
+                selected_data = [
+                    act.property("value")
+                    for act in self._action_group.actions()
+                    if self._is_action_checked(act)
+                ]
         self.set_value(selected_data)
         self.sig_value_changed.emit(selected_data)
 
