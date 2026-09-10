@@ -1585,6 +1585,10 @@ MToolButton {
     border-radius: @border_radius_small@unit;
     padding: 4px 8px;
 }
+MToolButton[icon_only="true"] {
+    padding: 0;
+    border: none;
+}
 MToolButton:hover {
     color: @text_primary_color;
     background-color: @surface_hover_color;

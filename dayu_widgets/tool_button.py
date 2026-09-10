@@ -130,20 +130,28 @@ class MToolButton(QtWidgets.QToolButton):
     def icon_only(self):
         """Set tool button style to icon only"""
         self.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        self.setProperty("icon_only", True)
         self.setFixedSize(QtCore.QSize(self._dayu_size, self._dayu_size))
+        self.style().polish(self)
         return self
 
     def text_only(self):
         """Set tool button style to text only"""
         self.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+        self.setProperty("icon_only", False)
+        self.style().polish(self)
         return self
 
     def text_beside_icon(self):
         """Set tool button style to text beside icon"""
         self.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.setProperty("icon_only", False)
+        self.style().polish(self)
         return self
 
     def text_under_icon(self):
         """Set tool button style to text under icon"""
         self.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.setProperty("icon_only", False)
+        self.style().polish(self)
         return self
