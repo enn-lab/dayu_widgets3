@@ -1578,6 +1578,29 @@ MMenu::separator {
     background-color: @border_subtle_color;
     margin: 4px 8px;
 }
+MToolButton {
+    color: @text_secondary_color;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: @border_radius_small@unit;
+    padding: 4px 8px;
+}
+MToolButton:hover {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+    border-color: @border_subtle_color;
+}
+MToolButton:pressed,
+MToolButton:checked {
+    color: @accent_color;
+    background-color: @surface_selected_color;
+    border-color: @border_subtle_color;
+}
+MToolButton:disabled {
+    color: @text_disabled_color;
+    background-color: transparent;
+    border-color: transparent;
+}
 MMessage {
     padding: 8px 12px;
 }
