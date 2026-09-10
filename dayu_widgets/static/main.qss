@@ -1678,8 +1678,9 @@ MDockWidget::title {
 }
 MDockWidget::close-button,
 MDockWidget::float-button {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
+    icon-size: 18px, 18px;
     border: 1px solid transparent;
     border-radius: @border_radius_small@unit;
     padding: 0;
@@ -1694,4 +1695,13 @@ MDockWidget::close-button:hover,
 MDockWidget::float-button:hover {
     background-color: @surface_hover_color;
     border-color: @border_strong_color;
+}
+#dayuDockTitleBar {
+    background-color: @surface_out_color;
+    border-bottom: 1px solid @border_subtle_color;
+}
+#dayuDockTitle {
+    color: @text_primary_color;
+    background-color: transparent;
+    font-weight: 500;
 }
