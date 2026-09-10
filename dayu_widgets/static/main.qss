@@ -1714,14 +1714,10 @@ MSplitter::handle {
     image: none;
 }
 MSplitter::handle:horizontal {
-    width: 2px;
+    width: 1px;
     margin: 0;
 }
 MSplitter::handle:vertical {
-    height: 2px;
+    height: 1px;
     margin: 0;
-}
-#dayuSplitterHandle[hover_active="true"],
-#dayuSplitterHandle[dragging="true"] {
-    background-color: @accent_color;
 }

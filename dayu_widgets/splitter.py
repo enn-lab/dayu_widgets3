@@ -1,6 +1,7 @@
 """Modern splitter with animated collapse and restore controls."""
 
 from qtpy import QtCore
+from qtpy import QtGui
 from qtpy import QtWidgets
 
 from dayu_widgets import dayu_theme
@@ -23,10 +24,34 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
         self._hover_timer.setSingleShot(True)
         self._hover_timer.setInterval(1000)
         self._hover_timer.timeout.connect(self._activate_hover)
+        self._fade_animation = None
+        self._indicator_opacity = 0.0
+
+    def get_indicator_opacity(self):
+        return self._indicator_opacity
+
+    def set_indicator_opacity(self, value):
+        self._indicator_opacity = max(0.0, min(1.0, float(value)))
+        self.update()
+
+    indicator_opacity = QtCore.Property(
+        float, get_indicator_opacity, set_indicator_opacity
+    )
+
+    def _fade_to(self, target, duration=180):
+        if self._fade_animation is not None:
+            self._fade_animation.stop()
+        animation = QtCore.QPropertyAnimation(self, b"indicator_opacity")
+        animation.setDuration(duration)
+        animation.setStartValue(self._indicator_opacity)
+        animation.setEndValue(target)
+        animation.setEasingCurve(QtCore.QEasingCurve.OutCubic)
+        self._fade_animation = animation
+        animation.start()
 
     def _activate_hover(self):
         self.setProperty("hover_active", True)
-        self.style().polish(self)
+        self._fade_to(1.0)
 
     def enterEvent(self, event):
         self._hover_timer.start()
@@ -36,21 +61,36 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
         self._hover_timer.stop()
         if not self.property("dragging"):
             self.setProperty("hover_active", False)
-            self.style().polish(self)
+            self._fade_to(0.0)
         return super(_MSplitterHandle, self).leaveEvent(event)
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.setProperty("dragging", True)
-            self.style().polish(self)
+            self._fade_to(1.0, 120)
         return super(_MSplitterHandle, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         result = super(_MSplitterHandle, self).mouseReleaseEvent(event)
         if event.button() == QtCore.Qt.LeftButton:
             self.setProperty("dragging", False)
-            self.style().polish(self)
+            if not self.underMouse():
+                self._fade_to(0.0)
         return result
+
+    def paintEvent(self, event):
+        super(_MSplitterHandle, self).paintEvent(event)
+        if self._indicator_opacity <= 0:
+            return
+        painter = QtGui.QPainter(self)
+        color = QtGui.QColor(dayu_theme.accent_color)
+        color.setAlphaF(self._indicator_opacity)
+        if self.orientation() == QtCore.Qt.Horizontal:
+            line = QtCore.QRect(self.width() // 2, 0, 1, self.height())
+        else:
+            line = QtCore.QRect(0, self.height() // 2, self.width(), 1)
+        painter.fillRect(line, color)
+        painter.end()
 
 
 @property_mixin
@@ -63,7 +103,7 @@ class MSplitter(QtWidgets.QSplitter):
 
     def __init__(self, Orientation=QtCore.Qt.Horizontal, parent=None):
         super(MSplitter, self).__init__(Orientation, parent=parent)
-        self.setHandleWidth(2)
+        self.setHandleWidth(1)
         self.setChildrenCollapsible(True)
         self.setProperty("animatable", True)
         self.setProperty("default_size", 100)
