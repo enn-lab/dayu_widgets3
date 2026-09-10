@@ -63,6 +63,13 @@ class ModernThemeStaticTest(unittest.TestCase):
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, completion)
+        for selector in (
+            "QComboBox QAbstractItemView",
+            "QComboBox QAbstractItemView::item:hover",
+            "QComboBox QAbstractItemView::indicator:checked",
+        ):
+            with self.subTest(selector=selector):
+                self.assertIn(selector, qss)
 
     def test_completion_layer_uses_declared_theme_tokens(self):
         qss = (STATIC / "main.qss").read_text(encoding="utf-8")

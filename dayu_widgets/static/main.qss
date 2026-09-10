@@ -746,6 +746,42 @@ MComboBox:hover{
 MComboBox:disabled{
     color: @text_disabled_color;
 }
+QComboBox QAbstractItemView,
+MComboBox QAbstractItemView {
+    color: @text_primary_color;
+    background-color: @elevated_color;
+    border: 1px solid @border_strong_color;
+    border-radius: @border_radius_base@unit;
+    outline: none;
+    padding: 4px;
+    selection-background-color: @surface_selected_color;
+    selection-color: @text_primary_color;
+}
+QComboBox QAbstractItemView::item,
+MComboBox QAbstractItemView::item {
+    min-height: @medium@unit;
+    padding: 5px 8px;
+    border-radius: @border_radius_small@unit;
+}
+QComboBox QAbstractItemView::item:hover,
+MComboBox QAbstractItemView::item:hover {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+}
+QComboBox QAbstractItemView::item:selected,
+MComboBox QAbstractItemView::item:selected {
+    color: @text_primary_color;
+    background-color: @surface_selected_color;
+    border-right: 2px solid @accent_color;
+}
+QComboBox QAbstractItemView::indicator:checked,
+MComboBox QAbstractItemView::indicator:checked {
+    image: url(@icon_check);
+}
+QComboBox QAbstractItemView::item:disabled,
+MComboBox QAbstractItemView::item:disabled {
+    color: @text_disabled_color;
+}
 /* MLabel */
 MLabel{
     padding: 2px;
