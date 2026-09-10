@@ -4,6 +4,7 @@
 * [快速上手](/zh-cn/quick_guide.md)
 * [定制主题](/zh-cn/custom_theme.md)
 * [现代主题升级计划](/zh-cn/modern_theme.md)
+* [现代主题任务卡](/zh-cn/modern_theme_issues.md)
 * 组件
 
     * 通用
