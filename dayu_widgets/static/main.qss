@@ -1705,3 +1705,21 @@ MDockWidget::float-button:hover {
     background-color: transparent;
     font-weight: 500;
 }
+MSplitter {
+    background-color: transparent;
+}
+MSplitter::handle {
+    background-color: @surface_out_color;
+    border: 1px solid @border_subtle_color;
+}
+MSplitter::handle:horizontal {
+    width: 24px;
+    margin: 0 2px;
+}
+MSplitter::handle:vertical {
+    height: 24px;
+    margin: 2px 0;
+}
+#dayuSplitterHandle:hover {
+    background-color: @surface_hover_color;
+}
