@@ -86,7 +86,6 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
         return result
 
     def paintEvent(self, event):
-        super(_MSplitterHandle, self).paintEvent(event)
         if self._indicator_opacity <= 0:
             return
         painter = QtGui.QPainter(self)
