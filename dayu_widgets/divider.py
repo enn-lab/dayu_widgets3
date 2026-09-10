@@ -53,6 +53,8 @@ class MDivider(QtWidgets.QWidget):
 
         if orientation == QtCore.Qt.Horizontal:
             self.setProperty("orientation", "horizontal")
+            self._left_frame.setFixedHeight(1)
+            self._right_frame.setFixedHeight(1)
             self.setMinimumHeight(1)
         else:
             self.setProperty("orientation", "vertical")
