@@ -1364,3 +1364,190 @@ MSidebarMenu > QLabel#sidebar_menu_title {
     font-weight: 600;
     background-color: transparent;
 }
+
+/* Modern theme completion: data surfaces, overlays and workspace chrome.
+ * Keep this block at the end so the semantic tokens win over legacy rules
+ * while preserving the existing widget API and size properties.
+ */
+MHeaderView {
+    background-color: @surface_out_color;
+    color: @text_secondary_color;
+    border: none;
+}
+MHeaderView::section {
+    background-color: @surface_out_color;
+    color: @text_secondary_color;
+    border: none;
+    border-bottom: 1px solid @border_color;
+    padding: 6px 10px;
+}
+MHeaderView::section:hover {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+}
+MHeaderView::section:pressed {
+    background-color: @surface_pressed_color;
+}
+
+MBigView,
+MListView,
+MTreeView,
+MColumnView,
+MTableView {
+    color: @text_primary_color;
+    background-color: @surface_color;
+    alternate-background-color: @surface_in_color;
+    selection-background-color: @surface_selected_color;
+    selection-color: @text_primary_color;
+    border: 1px solid @border_subtle_color;
+    border-radius: @border_radius_base@unit;
+    gridline-color: @border_subtle_color;
+    outline: none;
+}
+MBigView::item,
+MListView::item,
+MTreeView::item,
+MColumnView::item,
+MTableView::item {
+    color: @text_primary_color;
+    border: none;
+}
+MBigView::item:hover,
+MListView::item:hover,
+MTreeView::item:hover,
+MColumnView::item:hover,
+MTableView::item:hover {
+    background-color: @surface_hover_color;
+}
+MBigView::item:selected,
+MListView::item:selected,
+MTreeView::item:selected,
+MColumnView::item:selected,
+MTableView::item:selected {
+    color: @text_primary_color;
+    background-color: @surface_selected_color;
+    border-left: 2px solid @accent_color;
+}
+MBigView::item:disabled,
+MListView::item:disabled,
+MTreeView::item:disabled,
+MColumnView::item:disabled,
+MTableView::item:disabled {
+    color: @text_disabled_color;
+}
+MTableView QTableCornerButton::section {
+    background-color: @surface_out_color;
+    border: none;
+    border-right: 1px solid @border_color;
+    border-bottom: 1px solid @border_color;
+}
+
+MMenu,
+MMessage,
+MDrawer {
+    color: @text_primary_color;
+    background-color: @elevated_color;
+    border: 1px solid @border_strong_color;
+    border-radius: @border_radius_large@unit;
+}
+MMenu::item {
+    color: @text_primary_color;
+    background-color: transparent;
+    border-radius: @border_radius_small@unit;
+    padding: 7px 12px 7px 32px;
+    margin: 2px 4px;
+}
+MMenu::item:hover,
+MMenu::item:selected {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+}
+MMenu::item:checked {
+    color: @accent_color;
+    background-color: @surface_selected_color;
+}
+MMenu::item:disabled {
+    color: @text_disabled_color;
+}
+MMenu::separator {
+    height: 1px;
+    background-color: @border_subtle_color;
+    margin: 4px 8px;
+}
+MMessage {
+    padding: 8px 12px;
+}
+MToast {
+    color: @text_primary_color;
+    background-color: @elevated_color;
+    border: 1px solid @border_strong_color;
+    border-radius: @border_radius_large@unit;
+    padding: 8px 12px;
+}
+MToast QLabel {
+    color: @text_primary_color;
+}
+MLoadingWrapper #mask {
+    background-color: rgba(0, 0, 0, 55%);
+}
+
+MProgressBar {
+    color: @text_secondary_color;
+    background-color: @surface_in_color;
+    border: 1px solid @border_subtle_color;
+    border-radius: @progress_bar_radius@unit;
+}
+MProgressBar::chunk {
+    background-color: @accent_color;
+    border-radius: @progress_bar_radius@unit;
+}
+MProgressBar[dayu_status=error]::chunk {
+    background-color: @error_6;
+}
+MProgressBar[dayu_status=success]::chunk {
+    background-color: @success_6;
+}
+MProgressBar:disabled::chunk {
+    background-color: @text_disabled_color;
+}
+
+QSplitter::handle {
+    background-color: @border_subtle_color;
+}
+QSplitter::handle:hover {
+    background-color: @accent_color;
+}
+QSplitter::handle:horizontal {
+    width: 4px;
+}
+QSplitter::handle:vertical {
+    height: 4px;
+}
+MMenuTabWidget QWidget#bar_widget {
+    background-color: @surface_out_color;
+    border: 1px solid @border_subtle_color;
+    border-radius: @border_radius_base@unit;
+    spacing: 4px;
+}
+MDockWidget {
+    color: @text_primary_color;
+    background-color: @surface_color;
+    font-size: @font_size_base@font_unit;
+}
+MDockWidget::title {
+    color: @text_primary_color;
+    background-color: @surface_out_color;
+    border-bottom: 1px solid @border_color;
+    padding: 6px 10px;
+}
+MDockWidget::close-button,
+MDockWidget::float-button {
+    border: 1px solid transparent;
+    border-radius: @border_radius_small@unit;
+    padding: 2px;
+}
+MDockWidget::close-button:hover,
+MDockWidget::float-button:hover {
+    background-color: @surface_hover_color;
+    border-color: @border_strong_color;
+}
