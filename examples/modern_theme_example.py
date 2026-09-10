@@ -36,8 +36,9 @@ class ModernThemeExample(QtWidgets.QWidget):
         root.addWidget(MLabel("Modern Theme").h2())
         root.addWidget(MLabel("Semantic colors and interaction states").secondary())
 
-        card = MCard()
-        layout = QtWidgets.QGridLayout(card)
+        card = MCard().border()
+        content = QtWidgets.QWidget()
+        layout = QtWidgets.QGridLayout(content)
         layout.setContentsMargins(18, 18, 18, 18)
         layout.setHorizontalSpacing(12)
         layout.setVerticalSpacing(12)
@@ -73,6 +74,7 @@ class ModernThemeExample(QtWidgets.QWidget):
         disabled.setEnabled(False)
         layout.addWidget(disabled, 3, 1, alignment=QtCore.Qt.AlignLeft)
 
+        card.set_widget(content)
         root.addWidget(card)
         root.addStretch()
 
