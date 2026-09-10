@@ -1590,6 +1590,11 @@ MToolButton:hover {
     background-color: @surface_hover_color;
     border-color: @border_subtle_color;
 }
+MToolButton[menu_open="true"] {
+    color: @text_primary_color;
+    background-color: @surface_selected_color;
+    border-color: @border_subtle_color;
+}
 MToolButton:pressed,
 MToolButton:checked {
     color: @accent_color;

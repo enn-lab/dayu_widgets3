@@ -17,6 +17,7 @@ class MToolButton(QtWidgets.QToolButton):
     def __init__(self, parent=None):
         super(MToolButton, self).__init__(parent=parent)
         self._dayu_svg = None
+        self._dayu_menu = None
         self.setAutoExclusive(False)
         self.setAutoRaise(True)
 
@@ -71,6 +72,28 @@ class MToolButton(QtWidgets.QToolButton):
         """Set current svg path"""
         self._dayu_svg = path
         self._polish_icon()
+
+    def _set_menu_open(self, value):
+        self.setProperty("menu_open", bool(value))
+        self.style().polish(self)
+
+    def setMenu(self, menu):
+        """Set a menu and keep the button highlighted while it is open."""
+        if self._dayu_menu is not None:
+            try:
+                self._dayu_menu.aboutToShow.disconnect(self._menu_show_slot)
+                self._dayu_menu.aboutToHide.disconnect(self._menu_hide_slot)
+            except (TypeError, RuntimeError):
+                pass
+
+        self._dayu_menu = menu
+        super(MToolButton, self).setMenu(menu)
+        if menu is not None:
+            self._menu_show_slot = lambda: self._set_menu_open(True)
+            self._menu_hide_slot = lambda: self._set_menu_open(False)
+            menu.aboutToShow.connect(self._menu_show_slot)
+            menu.aboutToHide.connect(self._menu_hide_slot)
+        self._set_menu_open(menu is not None and menu.isVisible())
 
     dayu_size = QtCore.Property(int, get_dayu_size, set_dayu_size)
 
