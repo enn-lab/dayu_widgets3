@@ -22,7 +22,7 @@ class _MSplitterHandle(QtWidgets.QSplitterHandle):
         )
         self._hover_timer = QtCore.QTimer(self)
         self._hover_timer.setSingleShot(True)
-        self._hover_timer.setInterval(1000)
+        self._hover_timer.setInterval(2000)
         self._hover_timer.timeout.connect(self._activate_hover)
         self._fade_animation = None
         self._indicator_opacity = 0.0
