@@ -61,6 +61,13 @@
 - 范围：主题使用方式、迁移说明、兼容性边界、示例运行命令和已知限制。
 - 验收：中文导航可达，示例命令和主题名称与代码一致。
 
+### THEME-009 滚动条 hover 动画
+
+- 状态：已完成
+- 范围：为 ItemView 和 TextEdit 提供组件级滚动条淡入淡出能力。
+- 实现：`MHoverScrollBar` + `install_hover_scrollbars()`。
+- 验收：PySide6 offscreen 验证动画可从 0 淡入至 1，helper 重复安装不会创建重复滚动条。
+
 ## 当前验收策略
 
 开发完成后启动独立验收会话，检查：

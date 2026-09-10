@@ -2,6 +2,8 @@
 from qtpy import QtCore
 from qtpy import QtWidgets
 
+from dayu_widgets.scrolling import install_hover_scrollbars
+
 
 class MSizeGrip(QtWidgets.QSizeGrip):
     def __init__(self, parent=None):
@@ -18,6 +20,7 @@ class MTextEdit(QtWidgets.QTextEdit):
         layout.addWidget(self._size_grip, 0, 0, QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)
         self.setLayout(layout)
         self._size_grip.setVisible(False)
+        install_hover_scrollbars(self)
 
     def autosize(self):
         self.textChanged.connect(self._autosize_text_edit)

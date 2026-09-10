@@ -11,6 +11,7 @@ from dayu_widgets.item_model import MTableModel
 from dayu_widgets.menu import MMenu
 from dayu_widgets.qt import MPixmap
 from dayu_widgets.qt import get_scale_factor
+from dayu_widgets.scrolling import install_hover_scrollbars
 
 
 HEADER_SORT_MAP = {"asc": QtCore.Qt.AscendingOrder, "desc": QtCore.Qt.DescendingOrder}
@@ -230,6 +231,7 @@ class MTableView(QtWidgets.QTableView):
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.setAlternatingRowColors(True)
         self.setShowGrid(False)
+        install_hover_scrollbars(self)
 
     def set_no_data_text(self, text):
         self._no_data_text = text
@@ -313,6 +315,7 @@ class MTreeView(QtWidgets.QTreeView):
         self.setHeader(self.header_view)
         self.setSortingEnabled(True)
         self.setAlternatingRowColors(True)
+        install_hover_scrollbars(self)
 
     def paintEvent(self, event):
         """Override paintEvent when there is no data to show, draw the preset picture and text."""
@@ -344,6 +347,7 @@ class MBigView(QtWidgets.QListView):
         self.setResizeMode(QtWidgets.QListView.Adjust)
         self.setMovement(QtWidgets.QListView.Static)
         self.setSpacing(10)
+        install_hover_scrollbars(self)
         default_size = dayu_theme.big_view_default_size
         self.setIconSize(QtCore.QSize(default_size, default_size))
 
@@ -397,6 +401,7 @@ class MListView(QtWidgets.QListView):
         self.header_view = None
         self.setModelColumn(0)
         self.setAlternatingRowColors(True)
+        install_hover_scrollbars(self)
 
     def set_show_column(self, attr):
         for index, attr_dict in enumerate(self.header_list):

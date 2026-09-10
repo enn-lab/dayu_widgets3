@@ -28,6 +28,7 @@ dayu_widgets 将逐步升级为现代化的深色工作台风格，视觉参考 
 5. 基础 QSS 接入新的画布、表面、边框、文字和按钮状态令牌。
 6. 数据视图、Header、Menu、Toast、Message、Drawer、Progress、Splitter、MenuTab 和 Dock 已接入现代语义令牌及交互状态。
 7. 新增 `tests/test_modern_theme_static.py`，在无 Qt 运行时的环境中检查主题 JSON、QSS 组件覆盖范围和主题令牌引用。
+8. 新增 `install_hover_scrollbars()` 和 `MHoverScrollBar`，为列表、树、表格、大图列表和文本编辑器提供滚动条 hover 淡入、移出淡出动画。
 
 使用方式：
 
@@ -48,6 +49,14 @@ MSwitch().small()
 ```
 
 当前 `MCheckBox` 和 `MRadioButton` 尚未提供 `.small()` 链式方法，因此展示页暂不对它们伪造小尺寸 API。
+
+滚动条动画由组件库行为实现，QSS 只负责滚动条外观。自定义 `QAbstractScrollArea` 可以主动安装：
+
+```python
+from dayu_widgets import install_hover_scrollbars
+
+install_hover_scrollbars(custom_scroll_area)
+```
 
 ## 实施阶段
 

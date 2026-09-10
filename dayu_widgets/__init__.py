@@ -74,6 +74,7 @@ from dayu_widgets.tab_widget import MTabWidget
 from dayu_widgets.text_edit import MTextEdit
 from dayu_widgets.toast import MToast
 from dayu_widgets.tool_button import MToolButton
+from dayu_widgets.scrolling import MHoverScrollBar, install_hover_scrollbars
 
 
 __all__ = [
@@ -138,4 +139,6 @@ __all__ = [
     "MTextEdit",
     "MToast",
     "MToolButton",
+    "MHoverScrollBar",
+    "install_hover_scrollbars",
 ]
