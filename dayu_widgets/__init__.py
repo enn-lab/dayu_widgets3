@@ -9,7 +9,7 @@ CUSTOM_STATIC_FOLDERS = []
 from dayu_widgets.theme import MTheme
 
 
-dayu_theme = MTheme("dark", primary_color=MTheme.orange)
+dayu_theme = MTheme("modern_dark")
 # dayu_theme.default_size = dayu_theme.small
 # dayu_theme = MTheme('light')
 

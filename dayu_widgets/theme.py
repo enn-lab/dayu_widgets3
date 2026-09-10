@@ -142,12 +142,13 @@ class MTheme(object):
         self.text_warning_color = self.warning_7
 
     def set_theme(self, theme):
+        is_light_theme = theme == "light" or theme.endswith("_light")
         # Try loading a custom JSON theme file from static/ first
         static_dir = os.path.join(os.path.dirname(__file__), "static")
         json_path = os.path.join(static_dir, "{}.json".format(theme))
         if os.path.isfile(json_path):
             self._load_from_json(json_path, theme)
-        elif theme == "light":
+        elif is_light_theme:
             self._light()
         else:
             self._dark()
@@ -175,7 +176,8 @@ class MTheme(object):
             }
         """
         # Apply the built-in palette as a base first
-        if theme == "light":
+        is_light_theme = theme == "light" or theme.endswith("_light")
+        if is_light_theme:
             self._light()
         else:
             self._dark()
@@ -188,12 +190,33 @@ class MTheme(object):
             self.set_primary_color(data["primary_color"])
 
         # Apply color overrides from the matching mode (dark/light)
-        if theme == "light":
-            colors = data.get("light", data.get("dark", {}))
+        if is_light_theme:
+            colors = data.get("light", data.get("dark", data.get("color", {})))
         else:
-            colors = data.get("dark", {})
+            colors = data.get("dark", data.get("color", {}))
         for key, value in colors.items():
             setattr(self, key, value)
+
+        # Normalize older attribute names to the semantic tokens used by the
+        # modern QSS while keeping the original public API intact.
+        legacy_to_semantic = {
+            "background_color": "canvas_color",
+            "background_in_color": "surface_in_color",
+            "background_out_color": "surface_out_color",
+            "background_selected_color": "surface_selected_color",
+            "primary_text_color": "text_primary_color",
+            "secondary_text_color": "text_secondary_color",
+            "disable_color": "text_disabled_color",
+        }
+        for legacy_name, semantic_name in legacy_to_semantic.items():
+            if legacy_name in colors:
+                setattr(self, semantic_name, colors[legacy_name])
+        if "accent_color" not in colors:
+            self.accent_color = self.primary_color
+            self.focus_color = self.primary_color
+            self.accent_hover_color = self.primary_5
+            self.accent_pressed_color = self.primary_7
+        self._sync_theme_aliases()
 
     def set_primary_color(self, color):
         self.primary_color = color
@@ -223,7 +246,7 @@ class MTheme(object):
     def _init_icon(self, theme):
         # icon
         pre_str = DEFAULT_STATIC_FOLDER.replace("\\", "/")
-        suf_str = "" if theme == "light" else "_dark"
+        suf_str = "" if theme == "light" or theme.endswith("_light") else "_dark"
         url_prefix = "{pre}/{{}}{suf}.png".format(pre=pre_str, suf=suf_str)
         url_prefix_2 = "{pre}/{{}}.svg".format(pre=pre_str)
         self.icon_down = url_prefix.format("down_line")
@@ -328,6 +351,26 @@ class MTheme(object):
         self.background_out_color = "#494949"
         self.mask_color = utils.fade_color(self.background_color, "90%")
         self.toast_color = "#555555"
+        self.canvas_color = "#1a1b1d"
+        self.surface_color = "#222427"
+        self.surface_hover_color = "#2b2e32"
+        self.surface_pressed_color = "#30343a"
+        self.surface_selected_color = "#30343a"
+        self.surface_in_color = "#1f2124"
+        self.surface_out_color = "#292c30"
+        self.elevated_color = "#292c30"
+        self.input_color = "#151618"
+        self.border_subtle_color = "rgba(255, 255, 255, 5%)"
+        self.border_strong_color = "rgba(255, 255, 255, 16%)"
+        self.text_primary_color = "#e8eaed"
+        self.text_secondary_color = "#9aa0ad"
+        self.text_tertiary_color = "#5f6572"
+        self.text_disabled_color = "#5f6572"
+        self.focus_color = self.primary_color
+        self.accent_color = self.primary_color
+        self.accent_hover_color = self.primary_5
+        self.accent_pressed_color = self.primary_7
+        self._sync_theme_aliases()
 
     def _light(self):
         self.title_color = "#262626"
@@ -345,6 +388,40 @@ class MTheme(object):
         self.background_out_color = "#eeeeee"
         self.mask_color = utils.fade_color(self.background_color, "90%")
         self.toast_color = "#333333"
+        self.canvas_color = "#f5f6f8"
+        self.surface_color = "#ffffff"
+        self.surface_hover_color = "#f0f2f5"
+        self.surface_pressed_color = "#e6e9ed"
+        self.surface_selected_color = "#e6e9ed"
+        self.surface_in_color = "#ffffff"
+        self.surface_out_color = "#f0f2f5"
+        self.elevated_color = "#ffffff"
+        self.input_color = "#f7f8fa"
+        self.border_subtle_color = "rgba(0, 0, 0, 9%)"
+        self.border_strong_color = "rgba(0, 0, 0, 18%)"
+        self.text_primary_color = "#202124"
+        self.text_secondary_color = "#656b76"
+        self.text_tertiary_color = "#8b919c"
+        self.text_disabled_color = "#aeb4bf"
+        self.focus_color = self.primary_color
+        self.accent_color = self.primary_color
+        self.accent_hover_color = self.primary_5
+        self.accent_pressed_color = self.primary_7
+        self._sync_theme_aliases()
+
+    def _sync_theme_aliases(self):
+        """Keep legacy theme attributes aligned with semantic theme tokens."""
+        semantic_to_legacy = {
+            "canvas_color": "background_color",
+            "surface_in_color": "background_in_color",
+            "surface_out_color": "background_out_color",
+            "surface_selected_color": "background_selected_color",
+            "text_primary_color": "primary_text_color",
+            "text_secondary_color": "secondary_text_color",
+            "text_disabled_color": "disable_color",
+        }
+        for semantic_name, legacy_name in semantic_to_legacy.items():
+            setattr(self, legacy_name, getattr(self, semantic_name))
 
     # Track whether the custom QTreeView branch style has been set globally
     _branch_style_applied = False

@@ -1,0 +1,29 @@
+{
+  "primary_color": "#23d18b",
+  "dark": {
+    "canvas_color": "#1a1b1d",
+    "surface_color": "#222427",
+    "surface_hover_color": "#2b2e32",
+    "surface_pressed_color": "#30343a",
+    "surface_selected_color": "#30343a",
+    "surface_in_color": "#1f2124",
+    "surface_out_color": "#292c30",
+    "elevated_color": "#292c30",
+    "input_color": "#151618",
+    "border_subtle_color": "rgba(255, 255, 255, 5%)",
+    "border_color": "rgba(255, 255, 255, 10%)",
+    "border_strong_color": "rgba(255, 255, 255, 16%)",
+    "text_primary_color": "#e8eaed",
+    "text_secondary_color": "#9aa0ad",
+    "text_tertiary_color": "#5f6572",
+    "text_disabled_color": "#5f6572",
+    "focus_color": "#23d18b",
+    "accent_color": "#23d18b",
+    "accent_hover_color": "#32e49b",
+    "accent_pressed_color": "#1cb878",
+    "header_color": "#1a1b1d",
+    "divider_color": "rgba(255, 255, 255, 5%)",
+    "icon_color": "#9aa0ad",
+    "toast_color": "#292c30"
+  }
+}

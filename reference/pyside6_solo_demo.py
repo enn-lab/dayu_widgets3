@@ -7,15 +7,17 @@ SOLO / CodeBuddy 风格深色设置面板 —— PySide6 demo
 截图:   python pyside6_solo_demo.py --shot out.png  (离屏渲染)
 """
 import sys
-from PySide6.QtCore import Qt, QRect, QSize
+from PySide6.QtCore import Qt, QRect, QSize, QTimer, QEvent, QObject
 from PySide6.QtGui import (QColor, QFont, QLinearGradient, QPainter, QBrush,
                            QPixmap)
 from PySide6.QtWidgets import (QApplication, QWidget, QMainWindow, QFrame,
                                QLabel, QPushButton, QLineEdit, QComboBox,
                                QListWidget, QListWidgetItem, QHBoxLayout,
                                QVBoxLayout, QGridLayout, QScrollArea,
-                               QSpacerItem, QSizePolicy,
-                               QGraphicsDropShadowEffect)
+                               QSpacerItem, QSizePolicy, QScrollBar,
+                               QAbstractItemView,
+                               QGraphicsDropShadowEffect,
+                               QGraphicsOpacityEffect)
 
 # ---------------------------------------------------------------- 调色板
 # 表面颜色用 rgba() 半透明玻璃质感; 文字保持不透明
@@ -169,15 +171,18 @@ QListWidget#tasks::item:selected {{
     background: {SELTINT}; border: 1px solid {BORDER};
 }}
 
-/* 滚动条 —— 完全透明, 不再显示任何竖向细线(滚动仍可用) */
+/* 滚动条 —— 对齐截图: 6px 宽、#313337 淡灰、圆头胶囊, 无可见轨道
+   默认不可见, 由 HoverScrollBar 通过 QGraphicsOpacityEffect 淡入/淡出 */
 QScrollBar:vertical {{ background: transparent; width: 8px; margin: 0; }}
-QScrollBar::handle:vertical {{ background: transparent; border-radius: 4px; min-height: 30px; }}
+QScrollBar::handle:vertical {{
+    background: #313337; border-radius: 3px; min-height: 30px;
+    margin: 1px 1px;   /* 左右各留 1px, 实际滑块宽 6px */
+}}
+QScrollBar::handle:vertical:hover {{ background: #3c3f45; }}
 QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; width: 0; border: none; }}
 QScrollBar::add-page, QScrollBar::sub-page {{ background: transparent; }}
 QScrollBar:horizontal {{ background: transparent; height: 8px; margin: 0; }}
-QScrollBar::handle:horizontal {{ background: transparent; border-radius: 4px; min-width: 30px; }}
-QScrollBar:left-arrow, QScrollBar:right-arrow {{ background: transparent; border: none; width: 0; height: 0; }}
-QScrollBar:up-arrow, QScrollBar:down-arrow {{ background: transparent; border: none; width: 0; height: 0; }}
+QScrollBar::handle:horizontal {{ background: #313337; border-radius: 3px; min-width: 30px; margin: 1px 1px; }}
 
 /* 玻璃分组卡片 */
 QFrame.card {{ background: {GLASS}; border: 1px solid {BORDER_LO}; border-radius: 12px; }}
@@ -194,6 +199,101 @@ def glass_shadow(widget, radius=24, alpha=70, dy=6, blur=30):
     eff.setColor(QColor(0, 0, 0, alpha))
     widget.setGraphicsEffect(eff)
     return eff
+
+
+# ---------------------------------------------------------------- 悬停淡入淡出滚动条
+class HoverScrollBar(QScrollBar):
+    """滚动条: 鼠标移入父区域时淡入, 移出时淡出(用 QGraphicsOpacityEffect 做渐隐)"""
+    def __init__(self, parent=None):
+        super().__init__(Qt.Vertical, parent)
+        self._target = 0.0
+        self._current = 0.0
+        self._timer = QTimer(self)
+        self._timer.setInterval(16)  # ~60fps
+        self._timer.timeout.connect(self._tick)
+        eff = QGraphicsOpacityEffect(self)
+        eff.setOpacity(0.0)
+        self.setGraphicsEffect(eff)
+        self.hide()
+        # 鼠标移入/移出滚动条本身时, 保持显示(防止鼠标进入滚动条时与父区域交错闪烁)
+        self.setMouseTracking(True)
+
+    def _tick(self):
+        diff = self._target - self._current
+        if abs(diff) < 0.08:
+            self._current = self._target
+            self.graphicsEffect().setOpacity(self._current)
+            self._timer.stop()
+            if self._target < 0.01:
+                self.hide()
+            return
+        self._current += 0.18 if diff > 0 else -0.18
+        self.graphicsEffect().setOpacity(self._current)
+
+    def fade_in(self):
+        if self.maximum() <= 0:
+            return  # 内容不需要滚动, 不显示
+        self._target = 1.0
+        self.show()
+        self.raise_()
+        self._timer.start()
+
+    def fade_out(self):
+        self._target = 0.0
+        self._timer.start()
+
+    # 鼠标在滚动条本体上时, 保持可见
+    def enterEvent(self, ev):
+        self._target = 1.0
+        self.show()
+        self.graphicsEffect().setOpacity(1.0)
+        self._current = 1.0
+        self._timer.stop()
+        super().enterEvent(ev)
+    def leaveEvent(self, ev):
+        self._target = 0.0
+        self._timer.start()
+        super().leaveEvent(ev)
+
+
+class _VpHover(QObject):
+    """viewport 事件过滤器: 捕获 Enter/Leave 驱动滚动条淡入/淡出
+    parent 设为 viewport, 保证过滤器对象存活(否则会被 GC 导致失效)"""
+    def __init__(self, scrollbar, parent):
+        super().__init__(parent)
+        self._sb = scrollbar
+    def eventFilter(self, obj, ev):
+        t = ev.type()
+        if t == QEvent.Enter:
+            self._sb.fade_in(); return False
+        if t == QEvent.Leave:
+            self._sb.fade_out(); return False
+        return False
+
+
+class HoverListWidget(QListWidget):
+    """QListWidget: 鼠标进入控件区域时显示其滚动条, 离开时淡出"""
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        self._hover_sb = HoverScrollBar(self)
+        self.setVerticalScrollBar(self._hover_sb)
+        self.setMouseTracking(True)
+        # 在 viewport 上装事件过滤器(父级+强引用, 避免被 GC)
+        self._vpf = _VpHover(self._hover_sb, self.viewport())
+        self.viewport().installEventFilter(self._vpf)
+
+
+class HoverScrollArea(QScrollArea):
+    """QScrollArea: 鼠标进入时显示滚动条, 离开时淡出"""
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        self._hover_sb = HoverScrollBar(self)
+        self.setVerticalScrollBar(self._hover_sb)
+        self.setMouseTracking(True)
+        self._vpf = _VpHover(self._hover_sb, self.viewport())
+        self.viewport().installEventFilter(self._vpf)
+
+
 def mk_lbl(text, color=TXT, size=12, bold=False, wrap=False):
     l = QLabel(text)
     l.setStyleSheet(f"color:{color}; font-size:{size}px;"
@@ -272,9 +372,8 @@ class LeftPanel(QFrame):
         rc.addWidget(search)
         v.addLayout(rc)
 
-        # 任务列表
-        self.tasks = QListWidget(); self.tasks.setObjectName("tasks")
-        self.tasks.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # 任务列表 —— 滚动条悬停淡入淡出
+        self.tasks = HoverListWidget(); self.tasks.setObjectName("tasks")
         self.tasks.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         rows = [
             ("设计 Launcher UI...", "完成 8月26日 21:17", True),
@@ -471,7 +570,7 @@ class SettingsPanel(QFrame):
         navcol.addWidget(usercard)
 
         navcol.addSpacing(2)
-        nav = QListWidget()
+        nav = HoverListWidget()
         nav.setObjectName("nav")
         nav.setCursor(Qt.PointingHandCursor)
         nav.setStyleSheet("""
@@ -504,8 +603,8 @@ class SettingsPanel(QFrame):
         navcol.addStretch()
         body.addLayout(navcol)
 
-        # ---- 右: 内容区(可滚动)
-        scroll = QScrollArea()
+        # ---- 右: 内容区(可滚动) 滚动条悬停淡入淡出
+        scroll = HoverScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setStyleSheet("QScrollArea{background:transparent;border:none;}")
         inner = QWidget(); inner.setStyleSheet("background:transparent;")
