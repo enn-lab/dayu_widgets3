@@ -32,10 +32,17 @@ class MDivider(QtWidgets.QWidget):
         parent=None,
     ):
         super(MDivider, self).__init__(parent)
+        self.setObjectName("dayuDivider")
         self._orient = orientation
         self._text_label = MLabel().secondary()
+        self._text_label.setObjectName("dayuDividerLabel")
         self._left_frame = QtWidgets.QFrame()
         self._right_frame = QtWidgets.QFrame()
+        self._left_frame.setObjectName("dayuDividerLine")
+        self._right_frame.setObjectName("dayuDividerLine")
+        for frame in (self._left_frame, self._right_frame):
+            frame.setFrameShape(QtWidgets.QFrame.NoFrame)
+            frame.setFrameShadow(QtWidgets.QFrame.Plain)
         self._main_lay = QtWidgets.QHBoxLayout()
         self._main_lay.setContentsMargins(0, 0, 0, 0)
         self._main_lay.setSpacing(0)
@@ -45,16 +52,14 @@ class MDivider(QtWidgets.QWidget):
         self.setLayout(self._main_lay)
 
         if orientation == QtCore.Qt.Horizontal:
-            self._left_frame.setFrameShape(QtWidgets.QFrame.HLine)
-            self._left_frame.setFrameShadow(QtWidgets.QFrame.Sunken)
-            self._right_frame.setFrameShape(QtWidgets.QFrame.HLine)
-            self._right_frame.setFrameShadow(QtWidgets.QFrame.Sunken)
+            self.setProperty("orientation", "horizontal")
+            self.setMinimumHeight(1)
         else:
+            self.setProperty("orientation", "vertical")
             self._text_label.setVisible(False)
             self._right_frame.setVisible(False)
-            self._left_frame.setFrameShape(QtWidgets.QFrame.VLine)
-            self._left_frame.setFrameShadow(QtWidgets.QFrame.Plain)
-            self.setFixedWidth(2)
+            self.setFixedWidth(1)
+            self._left_frame.setFixedWidth(1)
         left_stretch = self._alignment_map.get(alignment, 50)
         right_stretch = 100 - left_stretch
         self._main_lay.setStretchFactor(self._left_frame, left_stretch)

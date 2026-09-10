@@ -1394,6 +1394,21 @@ MSizeGrip {
     image: url(@icon_size_grip);
 }
 
+/* MDivider: one-pixel semantic rule, matching the modern card borders. */
+QWidget#dayuDivider {
+    background: transparent;
+    border: none;
+}
+QFrame#dayuDividerLine {
+    background-color: @border_subtle_color;
+    border: none;
+}
+QLabel#dayuDividerLabel {
+    color: @text_secondary_color;
+    background: transparent;
+    padding: 0 8px;
+}
+
 /* MSidebar */
 MSidebar {
     background-color: @surface_color;
