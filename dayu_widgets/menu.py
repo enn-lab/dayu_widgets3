@@ -137,6 +137,7 @@ class ScrollableMenuBase(QtWidgets.QMenu):
     deltaY = 0
     dirty = True
     ignoreAutoScroll = False
+    cascadeGap = 4
 
     def __init__(self, *args, **kwargs):
         super(ScrollableMenuBase, self).__init__(*args, **kwargs)
@@ -282,6 +283,8 @@ class ScrollableMenuBase(QtWidgets.QMenu):
 
     def eventFilter(self, source, event):
         if event.type() == QtCore.QEvent.Show:
+            if isinstance(source, QtWidgets.QMenu) and source is not self:
+                self._position_submenu(source)
             if self.isScrollable() and self.deltaY:
                 action = source.menuAction()
                 self.ensureVisible(action)
@@ -290,6 +293,41 @@ class ScrollableMenuBase(QtWidgets.QMenu):
                 source.move(source.pos() + delta)
             return False
         return super(ScrollableMenuBase, self).eventFilter(source, event)
+
+    def _position_submenu(self, submenu):
+        """Keep cascade popups visually separated from their parent menu.
+
+        Qt intentionally lets a submenu overlap its parent by a couple of
+        pixels.  That works for the native menu frame, but the modern theme
+        uses rounded borders and makes the overlap look like a broken edge.
+        Keep Qt's screen-edge side selection and add a small gap on the
+        selected side.
+        """
+        action = submenu.menuAction()
+        action_rect = self.actionGeometry(action)
+        parent_top_left = self.mapToGlobal(QtCore.QPoint(0, 0))
+        anchor_left = parent_top_left.x() + action_rect.left()
+        anchor_right = parent_top_left.x() + action_rect.right() + 1
+        parent_center = parent_top_left.x() + self.width() / 2
+        gap = self.cascadeGap
+
+        opens_right = submenu.x() >= parent_center
+        if opens_right:
+            target_x = anchor_right + gap
+        else:
+            target_x = anchor_left - submenu.width() - gap
+
+        screen = QtGui.QGuiApplication.screenAt(
+            QtCore.QPoint(anchor_right, submenu.y())
+        )
+        if screen is not None:
+            available = screen.availableGeometry()
+            if opens_right and target_x + submenu.width() > available.right() + 1:
+                target_x = anchor_left - submenu.width() - gap
+            elif not opens_right and target_x < available.left():
+                target_x = anchor_right + gap
+
+        submenu.move(target_x, submenu.y())
 
     def event(self, event):
         if not self.isScrollable():
@@ -387,12 +425,13 @@ class ScrollableMenuBase(QtWidgets.QMenu):
             self.scrollBy(-self.defaultItemHeight)
 
     def showEvent(self, event):
+        for action in self.actions():
+            if action.menu():
+                action.menu().installEventFilter(self)
+
         if self.isScrollable():
             self.deltaY = 0
             self.dirty = True
-            for action in self.actions():
-                if action.menu():
-                    action.menu().installEventFilter(self)
             self.ignoreAutoScroll = False
         super(ScrollableMenuBase, self).showEvent(event)
 
