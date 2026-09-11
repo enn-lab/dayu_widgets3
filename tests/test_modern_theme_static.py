@@ -74,6 +74,7 @@ class ModernThemeStaticTest(unittest.TestCase):
             'MSidebar[dayu_navigation_level="2"]',
             'MListView[dayu_navigation_level="3"]::item:selected',
             "MUnderlineButton:checked",
+            "MUnderlineButton:checked:hover",
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, qss)
