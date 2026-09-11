@@ -20,9 +20,9 @@ class LineTabWidgetExample(QtWidgets.QWidget):
         main_lay = QtWidgets.QVBoxLayout()
 
         tab_center = MLineTabWidget()
-        tab_center.add_tab(MLabel("test 1 " * 10), {"text": "Tab 1", "svg": "user_line.svg"})
-        tab_center.add_tab(MLabel("test 2 " * 10), {"svg": "calendar_line.svg"})
-        tab_center.add_tab(MLabel("test 3 " * 10), "Tab 3")
+        tab_center.add_tab(MLabel("User settings"), {"text": "Profile", "svg": "user_line.svg"})
+        tab_center.add_tab(MLabel("Calendar content"), {"text": "Calendar", "svg": "calendar_line.svg"})
+        tab_center.add_tab(MLabel("Activity content"), "Activity")
         tab_center.tool_button_group.set_dayu_checked(0)
 
         tab_left = MLineTabWidget(alignment=QtCore.Qt.AlignLeft)

@@ -1672,6 +1672,27 @@ MToolButton:disabled {
     background-color: transparent;
     border-color: transparent;
 }
+
+/* Line tabs use typography for selection.  Keep the active label neutral and
+ * reserve the accent color for the two-pixel underline. */
+MUnderlineButton {
+    color: @text_secondary_color;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+}
+MUnderlineButton:hover {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+    border-bottom-color: transparent;
+}
+MUnderlineButton:checked {
+    color: @text_primary_color;
+    font-weight: 700;
+    background-color: transparent;
+    border-bottom: 2px solid @accent_color;
+}
 MMessage {
     padding: 8px 12px;
 }
