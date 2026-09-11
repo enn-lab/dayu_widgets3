@@ -75,6 +75,11 @@ class ModernThemeStaticTest(unittest.TestCase):
             'MListView[dayu_navigation_level="3"]::item:selected',
             "MUnderlineButton:checked",
             "MUnderlineButton:checked:hover",
+            'MPushButton[dayu_type="primary"]',
+            'MPushButton[dayu_type="success"]:hover',
+            'MPushButton[dayu_type="warning"]:pressed',
+            'MPushButton[dayu_type]:disabled',
+            'MLabel[dayu_mark="true"]',
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, qss)
@@ -99,6 +104,10 @@ class ModernThemeStaticTest(unittest.TestCase):
                 "border_radius_large",
                 "border_radius_small",
                 "error_6",
+                "error_1",
+                "error_3",
+                "error_5",
+                "error_7",
                 "font_size_base",
                 "font_unit",
                 "icon_close",
@@ -107,6 +116,15 @@ class ModernThemeStaticTest(unittest.TestCase):
                 "icon_menu_right",
                 "progress_bar_radius",
                 "success_6",
+                "success_1",
+                "success_3",
+                "success_5",
+                "success_7",
+                "warning_1",
+                "warning_3",
+                "warning_5",
+                "warning_6",
+                "warning_7",
                 "unit",
             }
         )

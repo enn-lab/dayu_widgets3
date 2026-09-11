@@ -1810,3 +1810,92 @@ MSplitter::handle:vertical {
     height: 1px;
     margin: 0;
 }
+
+/* Modern push buttons: one quiet surface language, with semantic colors
+ * reserved for the label, border and interaction states. */
+MPushButton {
+    color: @text_primary_color;
+    background-color: @surface_out_color;
+    border: 1px solid @border_color;
+    border-radius: @border_radius_base@unit;
+    padding: 0 12px;
+    font-weight: 500;
+}
+MPushButton:hover {
+    background-color: @surface_hover_color;
+    border-color: @border_strong_color;
+}
+MPushButton:pressed {
+    background-color: @surface_pressed_color;
+    border-color: @border_strong_color;
+}
+MPushButton[dayu_type="primary"] {
+    color: @accent_color;
+    background-color: @surface_out_color;
+    border-color: @accent_color;
+}
+MPushButton[dayu_type="primary"]:hover {
+    color: @accent_hover_color;
+    background-color: @surface_hover_color;
+    border-color: @accent_hover_color;
+}
+MPushButton[dayu_type="primary"]:pressed {
+    color: @accent_pressed_color;
+    background-color: @surface_pressed_color;
+    border-color: @accent_pressed_color;
+}
+MPushButton[dayu_type="success"] {
+    color: @success_6;
+    background-color: @surface_out_color;
+    border-color: @success_6;
+}
+MPushButton[dayu_type="success"]:hover {
+    background-color: @success_1;
+    border-color: @success_5;
+}
+MPushButton[dayu_type="success"]:pressed {
+    background-color: @success_3;
+    border-color: @success_7;
+}
+MPushButton[dayu_type="warning"] {
+    color: @warning_6;
+    background-color: @surface_out_color;
+    border-color: @warning_6;
+}
+MPushButton[dayu_type="warning"]:hover {
+    background-color: @warning_1;
+    border-color: @warning_5;
+}
+MPushButton[dayu_type="warning"]:pressed {
+    background-color: @warning_3;
+    border-color: @warning_7;
+}
+MPushButton[dayu_type="danger"] {
+    color: @error_6;
+    background-color: @surface_out_color;
+    border-color: @error_6;
+}
+MPushButton[dayu_type="danger"]:hover {
+    background-color: @error_1;
+    border-color: @error_5;
+}
+MPushButton[dayu_type="danger"]:pressed {
+    background-color: @error_3;
+    border-color: @error_7;
+}
+MPushButton:disabled,
+MPushButton[dayu_type]:disabled {
+    color: @text_disabled_color;
+    background-color: @surface_color;
+    border-color: @border_subtle_color;
+}
+
+/* Mark is a compact semantic badge, not a full warning-colored text block. */
+MLabel[dayu_mark="true"] {
+    color: @warning_6;
+    background-color: @warning_1;
+    border: 1px solid @warning_3;
+    border-radius: @border_radius_small@unit;
+    padding: 2px 6px;
+    font-weight: 600;
+}
