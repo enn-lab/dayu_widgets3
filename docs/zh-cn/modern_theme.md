@@ -39,6 +39,24 @@ theme = MTheme("modern_dark")
 theme.apply(window)
 ```
 
+### 侧边栏三层视觉分层
+
+现代主题将导航容器分成三层，避免主程序导航、内容区导航和局部分类列表使用同一明度：
+
+1. 一级主导航：`MSidebar().primary()`，默认宽度 220px，使用更明确的外层表面和选中态。
+2. 二级内容导航：`MSidebar().secondary()`，默认宽度 196px，降低背景和选中态对比度。
+3. 三级局部分类：`MListView().tertiary()`，使用紧凑行高和轻量边界，不再伪装成主侧边栏。
+
+也可以使用统一的 `navigation(level)` 或 `dayu_navigation_level` 属性：
+
+```python
+primary = MSidebar().navigation(1)
+secondary = MSidebar().navigation(2)
+tertiary = MListView().navigation(3)
+```
+
+示例见 `examples/sidebar_hierarchy_example.py`，其中三种容器并排展示，项目内部仍可继续使用侧边栏项目的 `.h1()` ~ `.h4()` 做局部层级控制。
+
 展示页 `examples/modern_theme_example.py` 同时包含默认尺寸和小尺寸案例。小尺寸组件使用现有的链式 API：
 
 ```python

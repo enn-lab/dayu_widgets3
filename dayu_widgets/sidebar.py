@@ -35,19 +35,24 @@ class MSidebar(QtWidgets.QWidget):
     Properties:
         dayu_compact: bool, compact mode shows icons only
         dayu_width: int, normal mode width
+        dayu_navigation_level: int, container hierarchy (1 primary, 2 secondary)
     """
 
     sig_current_changed = QtCore.Signal(object)
 
     CompactWidth = 56
     NormalWidth = 220
+    SecondaryWidth = 196
+    PrimaryLevel = 1
+    SecondaryLevel = 2
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, navigation_level=PrimaryLevel):
         super(MSidebar, self).__init__(parent)
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
         self.setObjectName("sidebar")
 
         self._dayu_compact = False
+        self._dayu_navigation_level = self.PrimaryLevel
         self._current_item = None
         self._navigation_widgets = []  # flat list of items/menus for selection
 
@@ -99,7 +104,7 @@ class MSidebar(QtWidgets.QWidget):
         main_lay.addWidget(self._bottom_widget)
         self.setLayout(main_lay)
 
-        self.setFixedWidth(self._normal_width)
+        self.set_dayu_navigation_level(navigation_level)
 
     # ------------------------------------------------------------------
     # Properties
@@ -124,6 +129,41 @@ class MSidebar(QtWidgets.QWidget):
     dayu_compact = QtCore.Property(bool, get_dayu_compact, set_dayu_compact)
     dayu_width = QtCore.Property(int, get_dayu_width, set_dayu_width)
 
+    def get_dayu_navigation_level(self):
+        return self._dayu_navigation_level
+
+    def set_dayu_navigation_level(self, value):
+        value = self.SecondaryLevel if int(value) == self.SecondaryLevel else self.PrimaryLevel
+        self._dayu_navigation_level = value
+        scale_x, _ = get_scale_factor()
+        default_width = self.NormalWidth if value == self.PrimaryLevel else self.SecondaryWidth
+        self._normal_width = int(default_width * scale_x)
+        self.setFixedWidth(self._compact_width if self._dayu_compact else self._normal_width)
+
+        content_margin = 8 if value == self.PrimaryLevel else 6
+        self._content_layout.setContentsMargins(
+            content_margin, content_margin, content_margin, content_margin
+        )
+        self._content_layout.setSpacing(2 if value == self.PrimaryLevel else 1)
+        self._top_layout.setContentsMargins(
+            12 if value == self.PrimaryLevel else 10,
+            12 if value == self.PrimaryLevel else 10,
+            12 if value == self.PrimaryLevel else 10,
+            12 if value == self.PrimaryLevel else 10,
+        )
+        self._bottom_layout.setContentsMargins(
+            12 if value == self.PrimaryLevel else 10,
+            8,
+            12 if value == self.PrimaryLevel else 10,
+            12 if value == self.PrimaryLevel else 10,
+        )
+        self.update()
+        return self._dayu_navigation_level
+
+    dayu_navigation_level = QtCore.Property(
+        int, get_dayu_navigation_level, set_dayu_navigation_level
+    )
+
     # ------------------------------------------------------------------
     # Fluent API
     # ------------------------------------------------------------------
@@ -134,6 +174,16 @@ class MSidebar(QtWidgets.QWidget):
     def set_normal_width(self, width):
         self.set_dayu_width(width)
         return self
+
+    def navigation(self, level):
+        self.set_dayu_navigation_level(level)
+        return self
+
+    def primary(self):
+        return self.navigation(self.PrimaryLevel)
+
+    def secondary(self):
+        return self.navigation(self.SecondaryLevel)
 
     # ------------------------------------------------------------------
     # Public API: building the sidebar

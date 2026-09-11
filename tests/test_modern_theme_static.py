@@ -70,6 +70,9 @@ class ModernThemeStaticTest(unittest.TestCase):
             'MComboBox[dayu_size="@small"] QAbstractItemView::item',
             "QFrame#dayuDividerLine",
             "QLabel#dayuDividerLabel",
+            'MSidebar[dayu_navigation_level="1"]',
+            'MSidebar[dayu_navigation_level="2"]',
+            'MListView[dayu_navigation_level="3"]::item:selected',
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, qss)

@@ -392,16 +392,40 @@ class MListView(QtWidgets.QListView):
     slot_context_menu = slot_context_menu
     sig_context_menu = QtCore.Signal(object)
 
-    def __init__(self, size=None, parent=None):
+    def __init__(self, size=None, parent=None, navigation_level=0):
         super(MListView, self).__init__(parent)
         self._no_data_image = None
         self._no_data_text = self.tr("No Data")
         self.setProperty("dayu_size", size or dayu_theme.default_size)
+        self._dayu_navigation_level = 0
+        self.set_dayu_navigation_level(navigation_level)
         self.header_list = []
         self.header_view = None
         self.setModelColumn(0)
         self.setAlternatingRowColors(True)
         install_hover_scrollbars(self)
+
+    def get_dayu_navigation_level(self):
+        return self._dayu_navigation_level
+
+    def set_dayu_navigation_level(self, value):
+        value = int(value or 0)
+        if value not in (0, 3):
+            value = 3 if value > 0 else 0
+        self._dayu_navigation_level = value
+        self.update()
+        return self._dayu_navigation_level
+
+    dayu_navigation_level = QtCore.Property(
+        int, get_dayu_navigation_level, set_dayu_navigation_level
+    )
+
+    def navigation(self, level=3):
+        self.set_dayu_navigation_level(level)
+        return self
+
+    def tertiary(self):
+        return self.navigation(3)
 
     def set_show_column(self, attr):
         for index, attr_dict in enumerate(self.header_list):

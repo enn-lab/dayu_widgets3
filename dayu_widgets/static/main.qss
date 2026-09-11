@@ -1538,6 +1538,48 @@ MDrawer {
     border: 1px solid @border_strong_color;
     border-radius: @border_radius_large@unit;
 }
+
+/* Navigation hierarchy: container-level contrast complements the item
+ * h1~h4 hierarchy.  Primary is the application chrome, secondary is an
+ * in-content navigator, and tertiary is reserved for compact list views. */
+MSidebar[dayu_navigation_level="1"] {
+    background-color: @surface_out_color;
+    border-right: 1px solid @border_color;
+}
+MSidebar[dayu_navigation_level="2"] {
+    background-color: @surface_color;
+    border-right: 1px solid @border_subtle_color;
+}
+MSidebar[dayu_navigation_level="2"] MSidebarItem {
+    color: @text_secondary_color;
+}
+MListView[dayu_navigation_level="3"],
+MTreeView[dayu_navigation_level="3"] {
+    color: @text_secondary_color;
+    background-color: @surface_in_color;
+    alternate-background-color: transparent;
+    selection-background-color: @surface_selected_color;
+    border: 1px solid @border_subtle_color;
+    border-radius: @border_radius_small@unit;
+}
+MListView[dayu_navigation_level="3"]::item,
+MTreeView[dayu_navigation_level="3"]::item {
+    min-height: 30px;
+    max-height: 30px;
+    padding: 0 10px;
+    color: @text_secondary_color;
+}
+MListView[dayu_navigation_level="3"]::item:hover,
+MTreeView[dayu_navigation_level="3"]::item:hover {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+}
+MListView[dayu_navigation_level="3"]::item:selected,
+MTreeView[dayu_navigation_level="3"]::item:selected {
+    color: @text_primary_color;
+    background-color: @surface_selected_color;
+    border-left: 2px solid @accent_color;
+}
 MMenu::item {
     color: @text_primary_color;
     background-color: transparent;
