@@ -80,6 +80,7 @@ class ModernThemeStaticTest(unittest.TestCase):
             'MPushButton[dayu_type="warning"]:pressed',
             'MPushButton[dayu_type]:disabled',
             'MLabel[dayu_mark="true"]',
+            "MTableView::item:selected",
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, qss)

@@ -1580,6 +1580,14 @@ MTreeView[dayu_navigation_level="3"]::item:selected {
     background-color: @surface_selected_color;
     border-left: 2px solid @accent_color;
 }
+
+/* Table selection is row-oriented.  Do not repeat the navigation accent on
+ * every selected cell; the row surface already communicates selection. */
+MTableView::item:selected {
+    color: @text_primary_color;
+    background-color: @surface_selected_color;
+    border: none;
+}
 MMenu::item {
     color: @text_primary_color;
     background-color: transparent;
