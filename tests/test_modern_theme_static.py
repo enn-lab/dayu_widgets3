@@ -112,6 +112,12 @@ class ModernThemeStaticTest(unittest.TestCase):
         )
         self.assertFalse(tokens - known, sorted(tokens - known))
 
+    def test_line_tab_selected_state_keeps_hover_surface(self):
+        qss = (STATIC / "main.qss").read_text(encoding="utf-8")
+        selected = qss[qss.index("MUnderlineButton:checked {") :]
+        selected = selected[: selected.index("}") + 1]
+        self.assertIn("background-color: @surface_hover_color;", selected)
+
 
 if __name__ == "__main__":
     unittest.main()

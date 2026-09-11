@@ -1690,7 +1690,7 @@ MUnderlineButton:hover {
 MUnderlineButton:checked {
     color: @text_primary_color;
     font-weight: 700;
-    background-color: transparent;
+    background-color: @surface_hover_color;
     border-bottom: 2px solid @accent_color;
 }
 MUnderlineButton:checked:hover {
