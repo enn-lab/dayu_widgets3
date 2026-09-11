@@ -1588,6 +1588,13 @@ MTableView::item:selected {
     background-color: @surface_selected_color;
     border: none;
 }
+/* Tree selection is also row-oriented; avoid repeating the accent on every
+ * visible tree column/cell. */
+MTreeView::item:selected {
+    color: @text_primary_color;
+    background-color: @surface_selected_color;
+    border: none;
+}
 MMenu::item {
     color: @text_primary_color;
     background-color: transparent;

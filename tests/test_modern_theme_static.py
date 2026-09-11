@@ -81,6 +81,7 @@ class ModernThemeStaticTest(unittest.TestCase):
             'MPushButton[dayu_type]:disabled',
             'MLabel[dayu_mark="true"]',
             "MTableView::item:selected",
+            "MTreeView::item:selected",
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, qss)
