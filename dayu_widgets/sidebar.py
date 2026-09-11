@@ -145,11 +145,14 @@ class MSidebar(QtWidgets.QWidget):
         keys ``text`` / ``icon`` / ``badge``.
         """
         if isinstance(item, dict):
+            item_data = item
             item = MSidebarItem(
-                text=item.get("text", ""),
-                icon=item.get("icon", ""),
-                badge=item.get("badge", ""),
+                text=item_data.get("text", ""),
+                icon=item_data.get("icon", ""),
+                badge=item_data.get("badge", ""),
             )
+            if item_data.get("level") is not None:
+                item.set_dayu_level(item_data["level"])
         item.sig_clicked.connect(self._handle_item_clicked)
         item.set_dayu_compact(self._dayu_compact)
         # Insert before the trailing stretch.
@@ -164,8 +167,11 @@ class MSidebar(QtWidgets.QWidget):
         :class:`MSidebarMenu` instance.
         """
         if isinstance(menu, dict):
-            inst = MSidebarMenu(title=menu.get("title", ""))
-            inst.add_items(menu.get("items", []))
+            menu_data = menu
+            inst = MSidebarMenu(title=menu_data.get("title", ""))
+            if menu_data.get("level") is not None:
+                inst.set_dayu_level(menu_data["level"])
+            inst.add_items(menu_data.get("items", []))
             menu = inst
         else:
             menu.set_dayu_compact(self._dayu_compact)

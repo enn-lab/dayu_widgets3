@@ -30,6 +30,11 @@ class MSidebarItem(QtWidgets.QWidget):
 
     sig_clicked = QtCore.Signal(object)
 
+    H1Level = 1
+    H2Level = 2
+    H3Level = 3
+    H4Level = 4
+
     def __init__(self, text="", icon=None, badge="", parent=None):
         super(MSidebarItem, self).__init__(parent)
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
@@ -41,6 +46,7 @@ class MSidebarItem(QtWidgets.QWidget):
         self._dayu_badge = badge
         self._dayu_selected = False
         self._dayu_compact = False
+        self._dayu_level = self.H3Level
         self._hovered = False
 
         self._item_height = 36
@@ -97,11 +103,29 @@ class MSidebarItem(QtWidgets.QWidget):
         self.setToolTip(self._dayu_text if self._dayu_compact else "")
         self.update()
 
+    def get_dayu_level(self):
+        return self._dayu_level
+
+    def set_dayu_level(self, value):
+        self._dayu_level = max(self.H1Level, min(self.H4Level, int(value)))
+        metrics = {
+            self.H1Level: (44, 20, 14, 14, 10),
+            self.H2Level: (40, 19, 13, 13, 9),
+            self.H3Level: (36, 18, 13, 12, 8),
+            self.H4Level: (30, 16, 12, 11, 6),
+        }
+        (self._item_height, self._icon_size, self._label_font_size,
+         self._padding_h, self._spacing) = metrics[self._dayu_level]
+        self.setFixedHeight(self._item_height)
+        self.style().polish(self)
+        self.update()
+
     dayu_icon = QtCore.Property(str, get_dayu_icon, set_dayu_icon)
     dayu_text = QtCore.Property(str, get_dayu_text, set_dayu_text)
     dayu_badge = QtCore.Property(str, get_dayu_badge, set_dayu_badge)
     dayu_selected = QtCore.Property(bool, get_dayu_selected, set_dayu_selected)
     dayu_compact = QtCore.Property(bool, get_dayu_compact, set_dayu_compact)
+    dayu_level = QtCore.Property(int, get_dayu_level, set_dayu_level)
 
     # ------------------------------------------------------------------
     # Fluent setters (consistent with MToolButton / MPushButton style)
@@ -122,6 +146,22 @@ class MSidebarItem(QtWidgets.QWidget):
         """Left indent in pixels (used for sub-items inside a menu group)."""
         self._indent = max(0, int(indent))
         self.update()
+        return self
+
+    def h1(self):
+        self.set_dayu_level(self.H1Level)
+        return self
+
+    def h2(self):
+        self.set_dayu_level(self.H2Level)
+        return self
+
+    def h3(self):
+        self.set_dayu_level(self.H3Level)
+        return self
+
+    def h4(self):
+        self.set_dayu_level(self.H4Level)
         return self
 
     # ------------------------------------------------------------------
@@ -161,13 +201,25 @@ class MSidebarItem(QtWidgets.QWidget):
 
         # -- Background --
         if is_selected or is_hover:
-            bg_color = QtGui.QColor(dayu_theme.background_selected_color)
-            text_color = QtGui.QColor(dayu_theme.title_color)
+            if self._dayu_level == self.H1Level:
+                bg_color = QtGui.QColor(dayu_theme.surface_selected_color)
+            elif self._dayu_level == self.H4Level:
+                bg_color = QtGui.QColor(dayu_theme.surface_hover_color)
+            else:
+                bg_color = QtGui.QColor(dayu_theme.background_selected_color)
+            text_color = QtGui.QColor(dayu_theme.text_primary_color)
             icon_color = QtGui.QColor(dayu_theme.primary_color)
         else:
             bg_color = None
-            text_color = QtGui.QColor(dayu_theme.secondary_text_color)
-            icon_color = QtGui.QColor(dayu_theme.icon_color)
+            if self._dayu_level == self.H1Level:
+                text_color = QtGui.QColor(dayu_theme.text_primary_color)
+                icon_color = QtGui.QColor(dayu_theme.text_secondary_color)
+            elif self._dayu_level == self.H4Level:
+                text_color = QtGui.QColor(dayu_theme.text_tertiary_color)
+                icon_color = QtGui.QColor(dayu_theme.text_tertiary_color)
+            else:
+                text_color = QtGui.QColor(dayu_theme.secondary_text_color)
+                icon_color = QtGui.QColor(dayu_theme.icon_color)
 
         if bg_color is not None:
             bg_rect = rect.adjusted(4, 2, -4, -2)
@@ -222,6 +274,10 @@ class MSidebarItem(QtWidgets.QWidget):
         if label_text:
             label_font = QtGui.QFont()
             label_font.setPixelSize(self._label_font_size)
+            label_font.setWeight(
+                QtGui.QFont.DemiBold if self._dayu_level <= self.H2Level
+                else QtGui.QFont.Normal
+            )
             painter.setFont(label_font)
             painter.setPen(text_color)
 

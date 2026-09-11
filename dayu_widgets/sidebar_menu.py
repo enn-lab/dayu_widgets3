@@ -28,6 +28,11 @@ class MSidebarMenu(QtWidgets.QWidget):
     sig_expanded_changed = QtCore.Signal(bool)
     sig_item_clicked = QtCore.Signal(object)
 
+    H1Level = 1
+    H2Level = 2
+    H3Level = 3
+    H4Level = 4
+
     def __init__(self, title="", parent=None):
         super(MSidebarMenu, self).__init__(parent)
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
@@ -37,6 +42,7 @@ class MSidebarMenu(QtWidgets.QWidget):
         self._dayu_title = title
         self._dayu_expanded = True
         self._dayu_compact = False
+        self._dayu_level = self.H2Level
         self._hovered = False
 
         # -- Header --
@@ -108,6 +114,16 @@ class MSidebarMenu(QtWidgets.QWidget):
         self._dayu_compact = bool(value)
         self._apply_compact()
 
+    def get_dayu_level(self):
+        return self._dayu_level
+
+    def set_dayu_level(self, value):
+        self._dayu_level = max(self.H1Level, min(self.H4Level, int(value)))
+        self._title_label.setProperty("dayu_level", self._dayu_level)
+        self._title_label.style().polish(self._title_label)
+
+    dayu_level = QtCore.Property(int, get_dayu_level, set_dayu_level)
+
     dayu_title = QtCore.Property(str, get_dayu_title, set_dayu_title)
     dayu_expanded = QtCore.Property(bool, get_dayu_expanded, set_dayu_expanded)
     dayu_compact = QtCore.Property(bool, get_dayu_compact, set_dayu_compact)
@@ -123,17 +139,36 @@ class MSidebarMenu(QtWidgets.QWidget):
         self.set_dayu_expanded(expanded)
         return self
 
+    def h1(self):
+        self.set_dayu_level(self.H1Level)
+        return self
+
+    def h2(self):
+        self.set_dayu_level(self.H2Level)
+        return self
+
+    def h3(self):
+        self.set_dayu_level(self.H3Level)
+        return self
+
+    def h4(self):
+        self.set_dayu_level(self.H4Level)
+        return self
+
     # ------------------------------------------------------------------
     # Child items management
     # ------------------------------------------------------------------
     def add_item(self, item):
         """Add a :class:`MSidebarItem` (or a dict describing one) into the group."""
         if isinstance(item, dict):
+            item_data = item
             item = MSidebarItem(
-                text=item.get("text", ""),
-                icon=item.get("icon", ""),
-                badge=item.get("badge", ""),
+                text=item_data.get("text", ""),
+                icon=item_data.get("icon", ""),
+                badge=item_data.get("badge", ""),
             )
+            if item_data.get("level") is not None:
+                item.set_dayu_level(item_data["level"])
         item.set_indent(16)
         item.sig_clicked.connect(self._relay_item_clicked)
         self._content_layout.addWidget(item)

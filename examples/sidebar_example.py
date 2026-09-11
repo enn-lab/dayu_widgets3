@@ -28,33 +28,35 @@ class SidebarExample(QtWidgets.QWidget):
         sidebar.set_top_widget(brand_label)
 
         # Leaf navigation items.
-        sidebar.add_item({"text": "Home", "icon": "home_line.svg"})
-        sidebar.add_item({"text": "Projects", "icon": "folder_line.svg", "badge": "12"})
-        sidebar.add_item({"text": "Search", "icon": "search_line.svg"})
+        sidebar.add_item({"text": "Home", "icon": "home_line.svg", "level": 1})
+        sidebar.add_item({"text": "Projects", "icon": "folder_line.svg", "badge": "12", "level": 1})
+        sidebar.add_item({"text": "Search", "icon": "search_line.svg", "level": 2})
 
         sidebar.add_divider()
 
         # Collapsible menu group with sub items.
         sidebar.add_menu({
             "title": "Workspace",
+            "level": 2,
             "items": [
-                {"text": "Tasks", "icon": "check.svg", "badge": "5"},
-                {"text": "Calendar", "icon": "calendar_line.svg"},
-                {"text": "Messages", "icon": "user_line.svg", "badge": "9+"},
+                {"text": "Tasks", "icon": "check.svg", "badge": "5", "level": 3},
+                {"text": "Calendar", "icon": "calendar_line.svg", "level": 3},
+                {"text": "Messages", "icon": "user_line.svg", "badge": "9+", "level": 4},
             ],
         })
 
         sidebar.add_menu({
             "title": "Library",
+            "level": 2,
             "items": [
-                {"text": "Components", "icon": "list_view.svg"},
-                {"text": "Templates", "icon": "tree_view.svg"},
+                {"text": "Components", "icon": "list_view.svg", "level": 3},
+                {"text": "Templates", "icon": "tree_view.svg", "level": 4},
             ],
         })
 
         sidebar.add_divider()
 
-        sidebar.add_item({"text": "Settings", "icon": "edit_line.svg"})
+        sidebar.add_item({"text": "Settings", "icon": "edit_line.svg", "level": 1})
 
         # Bottom user area.
         user_widget = QtWidgets.QWidget()
