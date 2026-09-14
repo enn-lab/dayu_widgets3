@@ -47,6 +47,7 @@ class IconMenuExample(QtWidgets.QWidget):
             grid_menu.add_item(
                 version,
                 MIcon("app-maya.png"),
+                description,
                 checked=version == "2026",
                 data=version,
             )

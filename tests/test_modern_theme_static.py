@@ -117,6 +117,7 @@ class ModernThemeStaticTest(unittest.TestCase):
                 "error_5",
                 "error_7",
                 "font_size_base",
+                "font_size_small",
                 "font_unit",
                 "icon_close",
                 "icon_float",
@@ -152,6 +153,7 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("InstantPopup", example)
         self.assertIn("MIconGridMenu", example)
         self.assertIn("columns=4", example)
+        self.assertIn("description", example)
 
 
 if __name__ == "__main__":

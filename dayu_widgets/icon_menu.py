@@ -97,7 +97,7 @@ class MIconGridItem(QtWidgets.QFrame):
 
     sig_clicked = QtCore.Signal()
 
-    def __init__(self, icon=None, text="", checked=False, parent=None):
+    def __init__(self, icon=None, text="", description="", checked=False, parent=None):
         super(MIconGridItem, self).__init__(parent)
         self.setObjectName("icon_grid_item")
         self.setCursor(QtCore.Qt.PointingHandCursor)
@@ -119,12 +119,19 @@ class MIconGridItem(QtWidgets.QFrame):
         text_label.setAlignment(QtCore.Qt.AlignCenter)
         text_label.setWordWrap(False)
 
+        description_label = QtWidgets.QLabel(str(description), self)
+        description_label.setObjectName("icon_grid_description")
+        description_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        description_label.setAlignment(QtCore.Qt.AlignCenter)
+        description_label.setVisible(bool(description))
+
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(6, 7, 6, 6)
         layout.setSpacing(4)
         layout.addWidget(icon_label, 0, QtCore.Qt.AlignCenter)
         layout.addWidget(text_label)
-        self.setFixedSize(76, 78)
+        layout.addWidget(description_label)
+        self.setFixedSize(92, 94 if description else 78)
 
     def enterEvent(self, event):
         self.setProperty("dayu_hovered", True)
@@ -165,8 +172,8 @@ class MIconGridMenu(QtWidgets.QMenu):
         action.setDefaultWidget(container)
         self.addAction(action)
 
-    def add_item(self, text, icon=None, checked=False, data=None):
-        item = MIconGridItem(icon, text, checked, self)
+    def add_item(self, text, icon=None, description="", checked=False, data=None):
+        item = MIconGridItem(icon, text, description, checked, self)
         action = QtWidgets.QAction(str(text), self)
         action.setCheckable(True)
         action.setChecked(bool(checked))

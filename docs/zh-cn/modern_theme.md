@@ -78,8 +78,8 @@ menu.add_item("2025", MIcon("app-maya.png"), "Stable")
 
 ```python
 menu = MIconGridMenu(columns=4)
-menu.add_item("2026", MIcon("app-maya.png"), checked=True)
-menu.add_item("2025", MIcon("app-maya.png"))
+menu.add_item("2026", MIcon("app-maya.png"), "Recommended", checked=True)
+menu.add_item("2025", MIcon("app-maya.png"), "Stable")
 ```
 
 菜单项目按列数自动换行，适合应用或版本选择。完整示例见 `examples/icon_menu_example.py`。

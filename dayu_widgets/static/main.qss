@@ -1996,6 +1996,12 @@ MIconGridItem QLabel#icon_grid_text {
     background-color: transparent;
     border: none;
 }
+MIconGridItem QLabel#icon_grid_description {
+    color: @text_tertiary_color;
+    background-color: transparent;
+    border: none;
+    font-size: @font_size_small@font_unit;
+}
 MIconGridItem[dayu_checked="true"] QLabel#icon_grid_text,
 MIconGridItem[dayu_hovered="true"] QLabel#icon_grid_text {
     color: @text_primary_color;
