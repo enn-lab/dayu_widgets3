@@ -86,6 +86,8 @@ class ModernThemeStaticTest(unittest.TestCase):
             "MIconMenu::item:selected",
             "MIconMenuItem QLabel#icon_menu_description",
             'MBigView[dayu_tile_style="launcher"]',
+            "MIconGridMenu",
+            "MIconGridItem[dayu_checked=\"true\"]",
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, qss)
@@ -148,6 +150,8 @@ class ModernThemeStaticTest(unittest.TestCase):
             with self.subTest(version=version):
                 self.assertIn('"{}"'.format(version), example)
         self.assertIn("InstantPopup", example)
+        self.assertIn("MIconGridMenu", example)
+        self.assertIn("columns=4", example)
 
 
 if __name__ == "__main__":

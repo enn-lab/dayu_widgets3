@@ -46,6 +46,8 @@ from dayu_widgets.item_view import MTableView
 from dayu_widgets.item_view import MTreeView
 from dayu_widgets.icon_menu import MIconMenu
 from dayu_widgets.icon_menu import MIconMenuItem
+from dayu_widgets.icon_menu import MIconGridMenu
+from dayu_widgets.icon_menu import MIconGridItem
 from dayu_widgets.item_view_full_set import MItemViewFullSet
 from dayu_widgets.item_view_multi_set import MItemViewMultiSet
 from dayu_widgets.item_view_set import MItemViewSet
@@ -113,6 +115,8 @@ __all__ = [
     "MTreeView",
     "MIconMenu",
     "MIconMenuItem",
+    "MIconGridMenu",
+    "MIconGridItem",
     "MItemViewFullSet",
     "MItemViewMultiSet",
     "MItemViewSet",

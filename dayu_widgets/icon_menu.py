@@ -90,3 +90,102 @@ class MIconMenu(QtWidgets.QMenu):
         self.clear()
         for action in self._action_group.actions():
             self._action_group.removeAction(action)
+
+
+class MIconGridItem(QtWidgets.QFrame):
+    """Clickable icon tile used by :class:`MIconGridMenu`."""
+
+    sig_clicked = QtCore.Signal()
+
+    def __init__(self, icon=None, text="", checked=False, parent=None):
+        super(MIconGridItem, self).__init__(parent)
+        self.setObjectName("icon_grid_item")
+        self.setCursor(QtCore.Qt.PointingHandCursor)
+        self.setProperty("dayu_checked", bool(checked))
+        self.setProperty("dayu_hovered", False)
+
+        icon_label = QtWidgets.QLabel(self)
+        icon_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        icon_label.setObjectName("icon_grid_icon")
+        icon_label.setFixedSize(40, 40)
+        icon_label.setAlignment(QtCore.Qt.AlignCenter)
+        if icon:
+            icon = icon if isinstance(icon, QtGui.QIcon) else QtGui.QIcon(icon)
+            icon_label.setPixmap(icon.pixmap(40, 40))
+
+        text_label = QtWidgets.QLabel(str(text), self)
+        text_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        text_label.setObjectName("icon_grid_text")
+        text_label.setAlignment(QtCore.Qt.AlignCenter)
+        text_label.setWordWrap(False)
+
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(6, 7, 6, 6)
+        layout.setSpacing(4)
+        layout.addWidget(icon_label, 0, QtCore.Qt.AlignCenter)
+        layout.addWidget(text_label)
+        self.setFixedSize(76, 78)
+
+    def enterEvent(self, event):
+        self.setProperty("dayu_hovered", True)
+        self.style().polish(self)
+        super(MIconGridItem, self).enterEvent(event)
+
+    def leaveEvent(self, event):
+        self.setProperty("dayu_hovered", False)
+        self.style().polish(self)
+        super(MIconGridItem, self).leaveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.sig_clicked.emit()
+        super(MIconGridItem, self).mouseReleaseEvent(event)
+
+    def set_checked(self, checked):
+        self.setProperty("dayu_checked", bool(checked))
+        self.style().polish(self)
+
+
+class MIconGridMenu(QtWidgets.QMenu):
+    """Wrapping horizontal icon menu for compact application/version choices."""
+
+    sig_item_triggered = QtCore.Signal(object)
+
+    def __init__(self, parent=None, columns=4):
+        super(MIconGridMenu, self).__init__(parent)
+        self._columns = max(1, int(columns))
+        self._items = []
+        self._grid = QtWidgets.QGridLayout()
+        self._grid.setContentsMargins(6, 6, 6, 6)
+        self._grid.setSpacing(4)
+        container = QtWidgets.QWidget(self)
+        container.setObjectName("icon_grid_container")
+        container.setLayout(self._grid)
+        action = QtWidgets.QWidgetAction(self)
+        action.setDefaultWidget(container)
+        self.addAction(action)
+
+    def add_item(self, text, icon=None, checked=False, data=None):
+        item = MIconGridItem(icon, text, checked, self)
+        action = QtWidgets.QAction(str(text), self)
+        action.setCheckable(True)
+        action.setChecked(bool(checked))
+        action.setData(data)
+        item.sig_clicked.connect(lambda act=action: self._trigger_item(act))
+        self._items.append((action, item))
+        self._rebuild_grid()
+        return action
+
+    def _rebuild_grid(self):
+        while self._grid.count():
+            self._grid.takeAt(0)
+        for index, (_action, item) in enumerate(self._items):
+            self._grid.addWidget(item, index // self._columns, index % self._columns)
+
+    def _trigger_item(self, action):
+        for sibling, item in self._items:
+            selected = sibling is action
+            sibling.setChecked(selected)
+            item.set_checked(selected)
+        self.sig_item_triggered.emit(action)
+        self.hide()

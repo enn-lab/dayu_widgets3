@@ -74,7 +74,17 @@ menu.add_item("2026", MIcon("app-maya.png"), "Recommended", checked=True)
 menu.add_item("2025", MIcon("app-maya.png"), "Stable")
 ```
 
-示例见 `examples/icon_menu_example.py`。组件不会调用 PySide6 不支持的 `QMenu.setIconSize()`，图标尺寸由菜单项自身布局控制。
+需要横向排列并自动换行时使用 `MIconGridMenu`：
+
+```python
+menu = MIconGridMenu(columns=4)
+menu.add_item("2026", MIcon("app-maya.png"), checked=True)
+menu.add_item("2025", MIcon("app-maya.png"))
+```
+
+菜单项目按列数自动换行，适合应用或版本选择。完整示例见 `examples/icon_menu_example.py`。
+
+组件不会调用 PySide6 不支持的 `QMenu.setIconSize()`，图标尺寸由菜单项自身布局控制。
 
 展示页 `examples/modern_theme_example.py` 同时包含默认尺寸和小尺寸案例。小尺寸组件使用现有的链式 API：
 

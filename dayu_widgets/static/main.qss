@@ -1969,3 +1969,34 @@ MIconMenuItem[dayu_checked="true"] QLabel#icon_menu_check {
     color: @accent_color;
     font-size: 16px;
 }
+MIconGridMenu {
+    background-color: @elevated_color;
+    border: 1px solid @border_strong_color;
+    border-radius: @border_radius_large@unit;
+    padding: 0;
+}
+MIconGridMenu QWidget#icon_grid_container,
+MIconGridItem {
+    background: transparent;
+}
+MIconGridItem {
+    border: 1px solid transparent;
+    border-radius: @border_radius_base@unit;
+}
+MIconGridItem[dayu_hovered="true"],
+MIconGridItem[dayu_checked="true"] {
+    background-color: @surface_hover_color;
+    border-color: @border_subtle_color;
+}
+MIconGridItem[dayu_checked="true"] {
+    border-color: @accent_color;
+}
+MIconGridItem QLabel#icon_grid_text {
+    color: @text_secondary_color;
+    background-color: transparent;
+    border: none;
+}
+MIconGridItem[dayu_checked="true"] QLabel#icon_grid_text,
+MIconGridItem[dayu_hovered="true"] QLabel#icon_grid_text {
+    color: @text_primary_color;
+}
