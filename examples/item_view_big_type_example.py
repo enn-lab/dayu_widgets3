@@ -22,6 +22,7 @@ class ItemViewBigTypeExample(QtWidgets.QWidget, MFieldMixin):
 
     def _init_ui(self):
         item_view_set_thumbnail = MItemViewSet(view_type=MItemViewSet.BigViewType)
+        item_view_set_thumbnail.item_view.launcher().set_item_size(112, 104)
         item_view_set_thumbnail.set_header_list(
             [
                 {

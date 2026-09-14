@@ -57,6 +57,25 @@ tertiary = MListView().navigation(3)
 
 示例见 `examples/sidebar_hierarchy_example.py`，其中三种容器并排展示，项目内部仍可继续使用侧边栏项目的 `.h1()` ~ `.h4()` 做局部层级控制。
 
+### 图标网格和图标菜单
+
+`MBigView` 支持固定尺寸的应用 tile，适用于软件启动器、工具面板等图标网格：
+
+```python
+view = MBigView().launcher().set_item_size(112, 104)
+view.setIconSize(QtCore.QSize(48, 48))
+```
+
+`MIconMenu` 用于带图标和辅助说明的弹出选择菜单，内部使用 `QWidgetAction`，兼容 PySide6：
+
+```python
+menu = MIconMenu(exclusive=True)
+menu.add_item("2026", MIcon("app-maya.png"), "Recommended", checked=True)
+menu.add_item("2025", MIcon("app-maya.png"), "Stable")
+```
+
+示例见 `examples/icon_menu_example.py`。组件不会调用 PySide6 不支持的 `QMenu.setIconSize()`，图标尺寸由菜单项自身布局控制。
+
 展示页 `examples/modern_theme_example.py` 同时包含默认尺寸和小尺寸案例。小尺寸组件使用现有的链式 API：
 
 ```python

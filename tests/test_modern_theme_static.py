@@ -82,6 +82,10 @@ class ModernThemeStaticTest(unittest.TestCase):
             'MLabel[dayu_mark="true"]',
             "MTableView::item:selected",
             "MTreeView::item:selected",
+            'MBigView[dayu_tile_style="launcher"]::item:selected',
+            "MIconMenu::item:selected",
+            "MIconMenuItem QLabel#icon_menu_description",
+            'MBigView[dayu_tile_style="launcher"]',
         ):
             with self.subTest(selector=selector):
                 self.assertIn(selector, qss)

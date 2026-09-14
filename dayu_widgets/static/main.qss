@@ -1914,3 +1914,58 @@ MLabel[dayu_mark="true"] {
     padding: 2px 6px;
     font-weight: 600;
 }
+
+/* Icon tiles and rich popup choices used by application launchers. */
+MBigView[dayu_tile_style="launcher"] {
+    background-color: @canvas_color;
+    border: none;
+    border-radius: 0;
+    padding: 6px;
+}
+MBigView[dayu_tile_style="launcher"]::item {
+    color: @text_secondary_color;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: @border_radius_base@unit;
+    padding: 8px 6px 6px;
+}
+MBigView[dayu_tile_style="launcher"]::item:hover {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+    border-color: @border_subtle_color;
+}
+MBigView[dayu_tile_style="launcher"]::item:selected {
+    color: @text_primary_color;
+    background-color: @surface_selected_color;
+    border: 1px solid @accent_color;
+}
+MIconMenu {
+    background-color: @elevated_color;
+    border: 1px solid @border_strong_color;
+    border-radius: @border_radius_large@unit;
+    padding: 4px;
+}
+MIconMenu::item {
+    background-color: transparent;
+    border-radius: @border_radius_small@unit;
+    padding: 0;
+    margin: 0;
+}
+MIconMenu::item:selected {
+    background-color: @surface_hover_color;
+}
+MIconMenuItem,
+MIconMenuItem QLabel {
+    background: transparent;
+}
+MIconMenuItem QLabel#icon_menu_text {
+    color: @text_primary_color;
+    font-weight: 600;
+}
+MIconMenuItem QLabel#icon_menu_description {
+    color: @text_secondary_color;
+}
+MIconMenuItem[dayu_checked="true"] QLabel#icon_menu_check {
+    color: @accent_color;
+    font-size: 16px;
+}

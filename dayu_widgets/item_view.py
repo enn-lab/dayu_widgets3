@@ -351,6 +351,29 @@ class MBigView(QtWidgets.QListView):
         default_size = dayu_theme.big_view_default_size
         self.setIconSize(QtCore.QSize(default_size, default_size))
 
+    def set_item_size(self, width, height=None):
+        """Set a stable icon-tile size and return ``self`` for chaining."""
+        width = max(1, int(width))
+        height = width if height is None else max(1, int(height))
+        self.setGridSize(QtCore.QSize(width, height))
+        return self
+
+    def get_item_size(self):
+        return self.gridSize()
+
+    def set_tile_style(self, style):
+        """Select a semantic tile style, currently ``default`` or ``launcher``."""
+        style = str(style or "default")
+        if style not in ("default", "launcher"):
+            raise ValueError("tile style should be default or launcher")
+        self.setProperty("dayu_tile_style", style)
+        self.style().polish(self)
+        self.viewport().update()
+        return self
+
+    def launcher(self):
+        return self.set_tile_style("launcher")
+
     def scale_size(self, factor):
         """Scale the icon size."""
         new_size = self.iconSize() * factor
