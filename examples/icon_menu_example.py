@@ -21,10 +21,13 @@ class IconMenuExample(QtWidgets.QWidget):
 
         button = MToolButton().text_only()
         button.setText("Choose Maya version")
+        button.setPopupMode(QtWidgets.QToolButton.InstantPopup)
         menu = MIconMenu(parent=button, exclusive=True)
         menu.add_item("2026", MIcon("app-maya.png"), "Recommended", checked=True, data="2026")
         menu.add_item("2025", MIcon("app-maya.png"), "Stable", data="2025")
         menu.add_item("2024", MIcon("app-maya.png"), "Legacy", data="2024")
+        menu.add_item("2023", MIcon("app-maya.png"), "Supported", data="2023")
+        menu.add_item("2022", MIcon("app-maya.png"), "Older release", data="2022")
         menu.sig_item_triggered.connect(lambda action: button.setText(action.text()))
         button.setMenu(menu)
         layout.addWidget(button)

@@ -142,6 +142,13 @@ class ModernThemeStaticTest(unittest.TestCase):
         selected = selected[: selected.index("}") + 1]
         self.assertIn("background-color: @surface_hover_color;", selected)
 
+    def test_icon_menu_example_contains_version_choices(self):
+        example = (ROOT / "examples" / "icon_menu_example.py").read_text(encoding="utf-8")
+        for version in ("2026", "2025", "2024", "2023", "2022"):
+            with self.subTest(version=version):
+                self.assertIn('"{}"'.format(version), example)
+        self.assertIn("InstantPopup", example)
+
 
 if __name__ == "__main__":
     unittest.main()
