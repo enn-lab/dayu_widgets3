@@ -22,7 +22,7 @@ class ToolMenuExample(QtWidgets.QWidget, MFieldMixin):
         self.register_field("multi_selected_text", lambda: ", ".join(self.field("multi_selected")))
 
         # 创建工具按钮，设置图标和文字位置
-        tool_button = MToolButton().svg("group_by_dark.svg").text_beside_icon()
+        tool_button = MToolButton().svg("group_by_dark.svg").text_beside_icon().small()
         tool_button.setText("group_by_dark")
         
         # 计算并设置按钮的最小宽度，以确保文字显示完整
