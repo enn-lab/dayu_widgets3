@@ -76,6 +76,9 @@ from dayu_widgets.spin_box import MTimeEdit
 from dayu_widgets.switch import MSwitch
 from dayu_widgets.tab_widget import MTabWidget
 from dayu_widgets.text_edit import MTextEdit
+from dayu_widgets.tag import MTag
+from dayu_widgets.tag import MNewTag
+from dayu_widgets.tag import MCheckableTag
 from dayu_widgets.toast import MToast
 from dayu_widgets.tool_button import MToolButton
 from dayu_widgets.scrolling import MHoverScrollBar, install_hover_scrollbars
@@ -145,6 +148,9 @@ __all__ = [
     "MSwitch",
     "MTabWidget",
     "MTextEdit",
+    "MTag",
+    "MNewTag",
+    "MCheckableTag",
     "MToast",
     "MToolButton",
     "MHoverScrollBar",

@@ -1915,6 +1915,76 @@ MLabel[dayu_mark="true"] {
     font-weight: 600;
 }
 
+/* Tags: compact semantic chips with restrained modern surfaces. */
+MTag {
+    color: @text_secondary_color;
+    background-color: @surface_in_color;
+    border: 1px solid @border_subtle_color;
+    border-radius: @border_radius_base@unit;
+    font-size: @font_size_small@font_unit;
+}
+MTag:hover {
+    background-color: @surface_hover_color;
+}
+MTag[dayu_tag_style="filled"] {
+    color: @text_color_inverse;
+    background-color: @accent_color;
+    border-color: @accent_color;
+}
+MTag[dayu_tag_style="filled"]:hover {
+    background-color: @accent_hover_color;
+    border-color: @accent_hover_color;
+}
+MTag QToolButton#tag_close_button:hover {
+    background-color: rgba(255, 255, 255, 18%);
+    border-radius: @border_radius_small@unit;
+}
+MCheckableTag {
+    color: @text_secondary_color;
+    background-color: @surface_in_color;
+    border: 1px solid @border_subtle_color;
+    border-radius: @border_radius_base@unit;
+    spacing: 0;
+    padding: 5px 10px;
+    font-size: @font_size_small@font_unit;
+}
+MCheckableTag::indicator {
+    width: 0;
+    height: 0;
+}
+MCheckableTag:hover {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+    border-color: @border_strong_color;
+}
+MCheckableTag:checked {
+    color: @text_color_inverse;
+    background-color: @accent_color;
+    border-color: @accent_color;
+}
+MCheckableTag:checked:hover {
+    background-color: @accent_hover_color;
+    border-color: @accent_hover_color;
+}
+MNewTag {
+    background-color: transparent;
+    border: 1px dashed @border_strong_color;
+    border-radius: @border_radius_base@unit;
+}
+MNewTag:hover {
+    border-color: @accent_color;
+}
+MNewTag QToolButton,
+MNewTag QLineEdit {
+    color: @text_secondary_color;
+    background-color: transparent;
+    border: none;
+}
+MNewTag QToolButton:hover {
+    color: @text_primary_color;
+    background-color: @surface_hover_color;
+}
+
 /* Icon tiles and rich popup choices used by application launchers. */
 MBigView[dayu_tile_style="launcher"] {
     background-color: @canvas_color;
