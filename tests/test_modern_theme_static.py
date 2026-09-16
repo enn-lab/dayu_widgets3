@@ -83,6 +83,8 @@ class ModernThemeStaticTest(unittest.TestCase):
             "MTag[dayu_tag_style=\"filled\"]",
             "MCheckableTag:checked",
             "MNewTag",
+            "MTag QLabel#tag_text",
+            "MTag QToolButton#tag_close_button",
             "MTableView::item:selected",
             "MTreeView::item:selected",
             'MBigView[dayu_tile_style="launcher"]::item:selected',

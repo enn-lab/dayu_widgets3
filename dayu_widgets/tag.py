@@ -28,6 +28,7 @@ class MTag(QtWidgets.QWidget):
         self._pressed = False
 
         self._label = QtWidgets.QLabel(str(text), self)
+        self._label.setObjectName("tag_text")
         self._label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
         self._close_button = QtWidgets.QToolButton(self)
         self._close_button.setObjectName("tag_close_button")
@@ -35,6 +36,10 @@ class MTag(QtWidgets.QWidget):
         self._close_button.setIconSize(QtCore.QSize(12, 12))
         self._close_button.setFixedSize(16, 16)
         self._close_button.setCursor(QtCore.Qt.PointingHandCursor)
+        self._close_button.setAutoRaise(True)
+        self._close_button.setStyleSheet(
+            "QToolButton { background-color: transparent; border: none; padding: 0; }"
+        )
         self._close_button.setVisible(False)
         self._close_button.clicked.connect(self._close)
 

@@ -1935,6 +1935,15 @@ MTag[dayu_tag_style="filled"]:hover {
     background-color: @accent_hover_color;
     border-color: @accent_hover_color;
 }
+MTag QLabel#tag_text {
+    background-color: transparent;
+    border: none;
+}
+MTag QToolButton#tag_close_button {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
 MTag QToolButton#tag_close_button:hover {
     background-color: rgba(255, 255, 255, 18%);
     border-radius: @border_radius_small@unit;
