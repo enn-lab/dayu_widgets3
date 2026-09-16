@@ -27,14 +27,17 @@ class TagLineEditExample(QtWidgets.QWidget):
         self._tag_container = QtWidgets.QWidget(self)
         self._tag_container.setObjectName("tag_prefix_container")
         self._tag_container.setAttribute(QtCore.Qt.WA_StyledBackground)
-        self._tag_container.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        tag_layout = QtWidgets.QHBoxLayout(self._tag_container)
+        self._tag_container.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        tag_layout = QtWidgets.QGridLayout(self._tag_container)
         tag_layout.setContentsMargins(4, 1, 4, 1)
         tag_layout.setSpacing(4)
         self._tag_layout = tag_layout
-        self._tag_layout.addStretch()
+        self._tag_layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
 
         self.line_edit = MLineEdit().small()
+        self._line_edit_base_height = self.line_edit.sizeHint().height()
+        self.line_edit.setProperty("dayu_multiline_prefix", True)
+        self.line_edit.installEventFilter(self)
         self.line_edit.setPlaceholderText("输入文件名以显示补全选项")
         self.line_edit.set_prefix_widget(self._tag_container)
         self._files = [
@@ -65,26 +68,60 @@ class TagLineEditExample(QtWidgets.QWidget):
         tag = MTag(text).closeable()
         tag.sig_closed.connect(lambda current=tag: self._remove_tag(current))
         self._tags.append(tag)
-        self._tag_layout.insertWidget(self._tag_layout.count() - 1, tag)
         QtCore.QTimer.singleShot(0, self.line_edit.clear)
         self._resize_tag_container()
 
     def _remove_tag(self, tag):
         if tag in self._tags:
             self._tags.remove(tag)
-        self._tag_layout.removeWidget(tag)
         tag.deleteLater()
         self._resize_tag_container()
 
     def _resize_tag_container(self, *_args):
-        tag_width = sum(tag.sizeHint().width() for tag in self._tags)
-        spacing = self._tag_layout.spacing() * max(0, len(self._tags) - 1)
+        available_width = max(120, self.line_edit.width() - 160)
+        self._tag_container.setMaximumWidth(available_width)
+        self._tag_container.setMinimumWidth(min(available_width, 120))
+        while self._tag_layout.count():
+            item = self._tag_layout.takeAt(0)
+            if item.widget():
+                item.widget().setParent(self._tag_container)
+
+        row = 0
+        column = 0
+        used_width = 0
+        contents_width = max(1, available_width - 8)
+        for tag in self._tags:
+            tag_width = tag.sizeHint().width()
+            next_width = tag_width if not used_width else used_width + self._tag_layout.horizontalSpacing() + tag_width
+            if used_width and next_width > contents_width:
+                row += 1
+                column = 0
+                used_width = tag_width
+            else:
+                used_width = next_width
+            self._tag_layout.addWidget(tag, row, column)
+            column += 1
+
         margins = self._tag_layout.contentsMargins()
-        width = max(8, tag_width + spacing + margins.left() + margins.right())
-        self._tag_container.setFixedWidth(width)
+        row_count = row + 1 if self._tags else 1
+        tag_height = max((tag.sizeHint().height() for tag in self._tags), default=0)
+        container_height = margins.top() + margins.bottom() + row_count * tag_height
+        if row_count > 1:
+            container_height += (row_count - 1) * self._tag_layout.verticalSpacing()
+        self._tag_container.setFixedWidth(available_width)
+        self._tag_container.setFixedHeight(max(self._line_edit_base_height - 2, container_height))
+        self.line_edit.setMinimumHeight(
+            max(self._line_edit_base_height, container_height + 2)
+        )
         margins = self.line_edit.textMargins()
-        margins.setLeft(width + 2)
+        margins.setLeft(self._tag_container.width() + 2)
         self.line_edit.setTextMargins(margins)
+        self.line_edit.updateGeometry()
+
+    def eventFilter(self, watched, event):
+        if watched is self.line_edit and event.type() == QtCore.QEvent.Resize:
+            QtCore.QTimer.singleShot(0, self._resize_tag_container)
+        return super(TagLineEditExample, self).eventFilter(watched, event)
 
 
 class LineEditExample(QtWidgets.QWidget):

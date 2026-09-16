@@ -165,10 +165,13 @@ class ModernThemeStaticTest(unittest.TestCase):
         example = (ROOT / "examples" / "line_edit_example.py").read_text(encoding="utf-8")
         self.assertIn("class TagLineEditExample", example)
         self.assertIn("self._tags.append(tag)", example)
-        self.assertIn("self._tag_layout.insertWidget", example)
+        self.assertIn("self._tag_layout.addWidget(tag, row, column)", example)
         self.assertIn("_remove_tag", example)
         self.assertIn("QTimer.singleShot(0, self.line_edit.clear)", example)
         self.assertIn('setObjectName("tag_prefix_container")', example)
+        self.assertIn("QtWidgets.QGridLayout", example)
+        self.assertIn("dayu_multiline_prefix", example)
+        self.assertIn("event.type() == QtCore.QEvent.Resize", example)
 
 
 if __name__ == "__main__":

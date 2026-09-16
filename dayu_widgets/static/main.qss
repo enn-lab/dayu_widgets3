@@ -1997,6 +1997,9 @@ QWidget#tag_prefix_container {
     background-color: transparent;
     border: none;
 }
+QLineEdit[dayu_multiline_prefix=true] {
+    max-height: 1000px;
+}
 
 /* Icon tiles and rich popup choices used by application launchers. */
 MBigView[dayu_tile_style="launcher"] {
