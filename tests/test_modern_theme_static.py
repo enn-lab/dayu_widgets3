@@ -161,6 +161,13 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("columns=4", example)
         self.assertIn("description", example)
 
+    def test_line_edit_example_supports_multiple_tags(self):
+        example = (ROOT / "examples" / "line_edit_example.py").read_text(encoding="utf-8")
+        self.assertIn("class TagLineEditExample", example)
+        self.assertIn("self._tags.append(tag)", example)
+        self.assertIn("self._tag_layout.insertWidget", example)
+        self.assertIn("_remove_tag", example)
+
 
 if __name__ == "__main__":
     unittest.main()

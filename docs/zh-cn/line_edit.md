@@ -394,3 +394,7 @@ search_edit = MLineEdit().search_engine("搜索")
 # 监听回车键
 search_edit.returnPressed.connect(lambda: print("搜索:", search_edit.text()))
 ```
+
+### 如何在输入框中添加标签和补全？
+
+可以将 `MTag` 放入 `MLineEdit` 的前缀区域，再使用 `MCompleter` 提供文件候选。候选项被点击或通过回车确认后，转换为标签并清空输入内容。完整的可运行组合示例见 `examples/line_edit_example.py` 中的 `TagLineEditExample`。
