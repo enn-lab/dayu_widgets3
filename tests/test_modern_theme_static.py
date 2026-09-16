@@ -113,6 +113,7 @@ class ModernThemeStaticTest(unittest.TestCase):
                 "accent_color",
                 "accent_hover_color",
                 "accent_pressed_color",
+                "background_out_color",
                 "border_radius_base",
                 "border_radius_large",
                 "border_radius_small",
@@ -164,14 +165,12 @@ class ModernThemeStaticTest(unittest.TestCase):
     def test_line_edit_example_supports_multiple_tags(self):
         example = (ROOT / "examples" / "line_edit_example.py").read_text(encoding="utf-8")
         self.assertIn("class TagLineEditExample", example)
-        self.assertIn("self._tags.append(tag)", example)
-        self.assertIn("self._tag_layout.addWidget(tag, row, column)", example)
-        self.assertIn("_remove_tag", example)
-        self.assertIn("QTimer.singleShot(0, self.line_edit.clear)", example)
-        self.assertIn('setObjectName("tag_prefix_container")', example)
-        self.assertIn("QtWidgets.QGridLayout", example)
-        self.assertIn("dayu_multiline_prefix", example)
-        self.assertIn("event.type() == QtCore.QEvent.Resize", example)
+        self.assertIn("MTagLineEdit", example)
+        self.assertIn("self._completer.activated.connect(self._tag_editor.add_tag)", example)
+        component = (ROOT / "dayu_widgets" / "tag_line_edit.py").read_text(encoding="utf-8")
+        self.assertIn("class _FlowLayout", component)
+        self.assertIn("class MTagLineEdit", component)
+        self.assertIn("self._layout.addWidget(self._editor)", component)
 
 
 if __name__ == "__main__":

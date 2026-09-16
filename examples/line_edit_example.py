@@ -15,7 +15,7 @@ from dayu_widgets.menu import MMenu
 from dayu_widgets.message import MMessage
 from dayu_widgets.push_button import MPushButton
 from dayu_widgets.tool_button import MToolButton
-from dayu_widgets.tag import MTag
+from dayu_widgets.tag_line_edit import MTagLineEdit
 
 
 class TagLineEditExample(QtWidgets.QWidget):
@@ -23,25 +23,14 @@ class TagLineEditExample(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super(TagLineEditExample, self).__init__(parent)
-        self._tags = []
-        self._tag_container = QtWidgets.QWidget(self)
-        self._tag_container.setObjectName("tag_prefix_container")
-        self._tag_container.setAttribute(QtCore.Qt.WA_StyledBackground)
-        self._tag_container.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        tag_layout = QtWidgets.QGridLayout(self._tag_container)
-        tag_layout.setContentsMargins(4, 1, 4, 1)
-        tag_layout.setSpacing(4)
-        self._tag_layout = tag_layout
-        self._tag_layout.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-
-        self.line_edit = MLineEdit().small()
-        self._line_edit_base_height = self.line_edit.sizeHint().height()
-        self.line_edit.setProperty("dayu_multiline_prefix", True)
-        self.line_edit.installEventFilter(self)
+        self._tag_editor = MTagLineEdit()
+        self.line_edit = self._tag_editor.line_edit
         self.line_edit.setPlaceholderText("输入文件名以显示补全选项")
-        self.line_edit.set_prefix_widget(self._tag_container)
         self._files = [
             "character_rig.ma",
+            "character_rig2.ma",
+            "character_rig3.ma",
+            "character_rig4.ma",
             "environment_layout.ma",
             "hero_texture.1001.exr",
             "lighting_scene.nk",
@@ -51,77 +40,12 @@ class TagLineEditExample(QtWidgets.QWidget):
         self._completer.setModel(QtCore.QStringListModel(self._files, self._completer))
         self._completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self._completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
-        self._completer.activated.connect(self._add_tag)
+        self._completer.activated.connect(self._tag_editor.add_tag)
         self.line_edit.setCompleter(self._completer)
-        self.line_edit.textChanged.connect(self._resize_tag_container)
-        self._resize_tag_container()
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self.line_edit)
-
-    def _add_tag(self, text):
-        text = str(text).strip()
-        if not text or any(tag.get_dayu_text() == text for tag in self._tags):
-            QtCore.QTimer.singleShot(0, self.line_edit.clear)
-            return
-        tag = MTag(text).closeable()
-        tag.sig_closed.connect(lambda current=tag: self._remove_tag(current))
-        self._tags.append(tag)
-        QtCore.QTimer.singleShot(0, self.line_edit.clear)
-        self._resize_tag_container()
-
-    def _remove_tag(self, tag):
-        if tag in self._tags:
-            self._tags.remove(tag)
-        tag.deleteLater()
-        self._resize_tag_container()
-
-    def _resize_tag_container(self, *_args):
-        available_width = max(120, self.line_edit.width() - 160)
-        self._tag_container.setMaximumWidth(available_width)
-        self._tag_container.setMinimumWidth(min(available_width, 120))
-        while self._tag_layout.count():
-            item = self._tag_layout.takeAt(0)
-            if item.widget():
-                item.widget().setParent(self._tag_container)
-
-        row = 0
-        column = 0
-        used_width = 0
-        contents_width = max(1, available_width - 8)
-        for tag in self._tags:
-            tag_width = tag.sizeHint().width()
-            next_width = tag_width if not used_width else used_width + self._tag_layout.horizontalSpacing() + tag_width
-            if used_width and next_width > contents_width:
-                row += 1
-                column = 0
-                used_width = tag_width
-            else:
-                used_width = next_width
-            self._tag_layout.addWidget(tag, row, column)
-            column += 1
-
-        margins = self._tag_layout.contentsMargins()
-        row_count = row + 1 if self._tags else 1
-        tag_height = max((tag.sizeHint().height() for tag in self._tags), default=0)
-        container_height = margins.top() + margins.bottom() + row_count * tag_height
-        if row_count > 1:
-            container_height += (row_count - 1) * self._tag_layout.verticalSpacing()
-        self._tag_container.setFixedWidth(available_width)
-        self._tag_container.setFixedHeight(max(self._line_edit_base_height - 2, container_height))
-        self.line_edit.setMinimumHeight(
-            max(self._line_edit_base_height, container_height + 2)
-        )
-        margins = self.line_edit.textMargins()
-        margins.setLeft(self._tag_container.width() + 2)
-        self.line_edit.setTextMargins(margins)
-        self.line_edit.updateGeometry()
-
-    def eventFilter(self, watched, event):
-        if watched is self.line_edit and event.type() == QtCore.QEvent.Resize:
-            QtCore.QTimer.singleShot(0, self._resize_tag_container)
-        return super(TagLineEditExample, self).eventFilter(watched, event)
+        layout.addWidget(self._tag_editor)
 
 
 class LineEditExample(QtWidgets.QWidget):
