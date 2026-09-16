@@ -25,9 +25,11 @@ class TagLineEditExample(QtWidgets.QWidget):
         super(TagLineEditExample, self).__init__(parent)
         self._tags = []
         self._tag_container = QtWidgets.QWidget(self)
+        self._tag_container.setObjectName("tag_prefix_container")
+        self._tag_container.setAttribute(QtCore.Qt.WA_StyledBackground)
         self._tag_container.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         tag_layout = QtWidgets.QHBoxLayout(self._tag_container)
-        tag_layout.setContentsMargins(4, 0, 4, 0)
+        tag_layout.setContentsMargins(4, 1, 4, 1)
         tag_layout.setSpacing(4)
         self._tag_layout = tag_layout
         self._tag_layout.addStretch()
@@ -58,13 +60,13 @@ class TagLineEditExample(QtWidgets.QWidget):
     def _add_tag(self, text):
         text = str(text).strip()
         if not text or any(tag.get_dayu_text() == text for tag in self._tags):
-            self.line_edit.clear()
+            QtCore.QTimer.singleShot(0, self.line_edit.clear)
             return
         tag = MTag(text).closeable()
         tag.sig_closed.connect(lambda current=tag: self._remove_tag(current))
         self._tags.append(tag)
         self._tag_layout.insertWidget(self._tag_layout.count() - 1, tag)
-        self.line_edit.clear()
+        QtCore.QTimer.singleShot(0, self.line_edit.clear)
         self._resize_tag_container()
 
     def _remove_tag(self, tag):

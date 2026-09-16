@@ -1993,6 +1993,10 @@ MNewTag QToolButton:hover {
     color: @text_primary_color;
     background-color: @surface_hover_color;
 }
+QWidget#tag_prefix_container {
+    background-color: transparent;
+    border: none;
+}
 
 /* Icon tiles and rich popup choices used by application launchers. */
 MBigView[dayu_tile_style="launcher"] {

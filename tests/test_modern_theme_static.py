@@ -167,6 +167,8 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("self._tags.append(tag)", example)
         self.assertIn("self._tag_layout.insertWidget", example)
         self.assertIn("_remove_tag", example)
+        self.assertIn("QTimer.singleShot(0, self.line_edit.clear)", example)
+        self.assertIn('setObjectName("tag_prefix_container")', example)
 
 
 if __name__ == "__main__":
