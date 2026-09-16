@@ -171,6 +171,9 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("class _FlowLayout", component)
         self.assertIn("class MTagLineEdit", component)
         self.assertIn("self._layout.addWidget(self._editor)", component)
+        self.assertIn("QtCore.QTimer.singleShot(0, self._reset_editor)", component)
+        self.assertIn("self.setMinimumHeight(self.heightForWidth(width))", component)
+        self.assertIn("self._editor.setFocus(QtCore.Qt.OtherFocusReason)", component)
 
 
 if __name__ == "__main__":

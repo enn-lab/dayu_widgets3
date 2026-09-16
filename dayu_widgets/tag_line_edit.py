@@ -102,7 +102,7 @@ class MTagLineEdit(QtWidgets.QWidget):
     def add_tag(self, text):
         text = str(text).strip()
         if not text or any(tag.get_dayu_text() == text for tag in self._tags):
-            self._editor.clear()
+            QtCore.QTimer.singleShot(0, self._reset_editor)
             return
         editor_item = self._layout.takeAt(self._layout.count() - 1)
         tag = MTag(text).closeable()
@@ -110,7 +110,7 @@ class MTagLineEdit(QtWidgets.QWidget):
         self._tags.append(tag)
         self._layout.addWidget(tag)
         self._layout.addItem(editor_item)
-        self._editor.clear()
+        QtCore.QTimer.singleShot(0, self._reset_editor)
         self.sig_tag_added.emit(text)
         self._refresh_layout()
 
@@ -127,10 +127,26 @@ class MTagLineEdit(QtWidgets.QWidget):
         self._editor.setFixedWidth(width)
         self._refresh_layout()
 
+    def _reset_editor(self):
+        self._editor.clear()
+        self._editor.setFocus(QtCore.Qt.OtherFocusReason)
+        self._refresh_layout()
+
     def _refresh_layout(self):
         self._layout.invalidate()
+        width = max(1, self.width())
+        self.setMinimumHeight(self.heightForWidth(width))
         self.updateGeometry()
-        self.adjustSize()
+
+    def sizeHint(self):
+        width = max(320, self._layout.minimumSize().width())
+        return QtCore.QSize(width, self.heightForWidth(width))
+
+    def heightForWidth(self, width):
+        return self._layout.heightForWidth(width)
+
+    def hasHeightForWidth(self):
+        return True
 
     def resizeEvent(self, event):
         super(MTagLineEdit, self).resizeEvent(event)
