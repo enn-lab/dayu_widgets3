@@ -1,10 +1,8 @@
 """Tokenized line edit with inline tags."""
 
 from qtpy import QtCore
-from qtpy import QtGui
 from qtpy import QtWidgets
 
-from dayu_widgets import dayu_theme
 from dayu_widgets.line_edit import MLineEdit
 from dayu_widgets.tag import MTag
 
@@ -91,7 +89,6 @@ class MTagLineEdit(QtWidgets.QWidget):
         self._editor.setObjectName("tag_line_edit_editor")
         self._editor.setFrame(False)
         self._editor.setMinimumWidth(96)
-        self._apply_editor_palette()
         self._editor.installEventFilter(self)
         self._editor.textChanged.connect(self._update_editor_width)
         self._layout.addWidget(self._editor)
@@ -134,15 +131,6 @@ class MTagLineEdit(QtWidgets.QWidget):
         self._editor.setFixedWidth(width)
         self._refresh_layout()
 
-    def _apply_editor_palette(self):
-        palette = self._editor.palette()
-        palette.setColor(QtGui.QPalette.ColorRole.Text, QtGui.QColor(dayu_theme.text_primary_color))
-        palette.setColor(
-            QtGui.QPalette.ColorRole.PlaceholderText,
-            QtGui.QColor(dayu_theme.text_secondary_color),
-        )
-        self._editor.setPalette(palette)
-
     def _reset_editor(self):
         self._editor.clear()
         self._editor.setFocus(QtCore.Qt.OtherFocusReason)
@@ -174,7 +162,3 @@ class MTagLineEdit(QtWidgets.QWidget):
             self.setProperty("dayu_tag_line_focus", event.type() == QtCore.QEvent.FocusIn)
             self.style().polish(self)
         return super(MTagLineEdit, self).eventFilter(watched, event)
-
-    def showEvent(self, event):
-        self._apply_editor_palette()
-        super(MTagLineEdit, self).showEvent(event)
