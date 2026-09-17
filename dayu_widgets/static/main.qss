@@ -1994,9 +1994,12 @@ MNewTag QToolButton:hover {
     background-color: @surface_hover_color;
 }
 QWidget#tag_line_edit {
-    background-color: @background_out_color;
+    background-color: @input_color;
     border: 1px solid @border_color;
     border-radius: @border_radius_base@unit;
+}
+QWidget#tag_line_edit[dayu_tag_line_focus=true] {
+    border: 1px solid @focus_color;
 }
 MLineEdit#tag_line_edit_editor {
     background-color: transparent;

@@ -177,6 +177,9 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("self.width() - 8", component)
         self.assertIn("ColorRole.PlaceholderText", component)
         self.assertIn("def showEvent(self, event)", component)
+        qss = (STATIC / "main.qss").read_text(encoding="utf-8")
+        self.assertIn("QWidget#tag_line_edit[dayu_tag_line_focus=true]", qss)
+        self.assertIn("background-color: @input_color;", qss)
 
 
 if __name__ == "__main__":

@@ -92,6 +92,7 @@ class MTagLineEdit(QtWidgets.QWidget):
         self._editor.setFrame(False)
         self._editor.setMinimumWidth(96)
         self._apply_editor_palette()
+        self._editor.installEventFilter(self)
         self._editor.textChanged.connect(self._update_editor_width)
         self._layout.addWidget(self._editor)
 
@@ -167,6 +168,12 @@ class MTagLineEdit(QtWidgets.QWidget):
         super(MTagLineEdit, self).resizeEvent(event)
         self._update_editor_width(self._editor.text())
         self._layout.invalidate()
+
+    def eventFilter(self, watched, event):
+        if watched is self._editor and event.type() in (QtCore.QEvent.FocusIn, QtCore.QEvent.FocusOut):
+            self.setProperty("dayu_tag_line_focus", event.type() == QtCore.QEvent.FocusIn)
+            self.style().polish(self)
+        return super(MTagLineEdit, self).eventFilter(watched, event)
 
     def showEvent(self, event):
         self._apply_editor_palette()
