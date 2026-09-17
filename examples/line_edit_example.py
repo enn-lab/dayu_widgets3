@@ -36,6 +36,7 @@ class TagLineEditExample(QtWidgets.QWidget):
             "lighting_scene.nk",
             "shot010_animation.blend",
         ]
+        self._tag_editor.set_options(self._files)
         self._completer = MCompleter(self.line_edit)
         self._completer.setModel(QtCore.QStringListModel(self._files, self._completer))
         self._completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)

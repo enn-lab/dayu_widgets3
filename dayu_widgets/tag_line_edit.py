@@ -4,6 +4,7 @@ from qtpy import QtCore
 from qtpy import QtWidgets
 
 from dayu_widgets.line_edit import MLineEdit
+from dayu_widgets.menu import MMenu
 from dayu_widgets.tag import MTag
 
 
@@ -84,13 +85,14 @@ class MTagLineEdit(QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         self._tags = []
+        self._menu = None
+        self._max_rows = 3
         self._layout = _FlowLayout(self, spacing=4)
         self._editor = MLineEdit().small()
         self._editor.setObjectName("tag_line_edit_editor")
         self._editor.setFrame(False)
         self._editor.setMinimumWidth(96)
         self._editor.installEventFilter(self)
-        self._placeholder_text = ""
         self._editor.textChanged.connect(self._update_editor_width)
         self._layout.addWidget(self._editor)
 
@@ -101,17 +103,48 @@ class MTagLineEdit(QtWidgets.QWidget):
     def tags(self):
         return tuple(self._tags)
 
+    def set_options(self, options):
+        """Set selectable values used by the multi-select popup menu."""
+        self._menu = MMenu(exclusive=False, parent=self)
+        self._menu.set_data([str(option) for option in options])
+        self._menu.sig_value_changed.connect(self._set_selected_values)
+        return self
+
+    def selected_values(self):
+        return [tag.get_dayu_text() for tag in self._tags]
+
+    def _set_selected_values(self, values):
+        values = values if isinstance(values, list) else [values]
+        selected = {str(value) for value in values}
+        for tag in tuple(self._tags):
+            if tag.get_dayu_text() not in selected:
+                self.remove_tag(tag)
+        for value in values:
+            if not any(tag.get_dayu_text() == str(value) for tag in self._tags):
+                self._insert_tag(str(value))
+        self._editor.clear()
+        self._editor.setFocus(QtCore.Qt.OtherFocusReason)
+        self._refresh_layout()
+
+    def _insert_tag(self, text):
+        tag = MTag(text).closeable()
+        tag.sig_closed.connect(lambda current=tag: self.remove_tag(current))
+        self._tags.append(tag)
+        editor_item = self._layout.takeAt(self._layout.count() - 1)
+        self._layout.addWidget(tag)
+        self._layout.addItem(editor_item)
+
     def add_tag(self, text):
         text = str(text).strip()
         if not text or any(tag.get_dayu_text() == text for tag in self._tags):
             QtCore.QTimer.singleShot(0, self._reset_editor)
             return
-        editor_item = self._layout.takeAt(self._layout.count() - 1)
-        tag = MTag(text).closeable()
-        tag.sig_closed.connect(lambda current=tag: self.remove_tag(current))
-        self._tags.append(tag)
-        self._layout.addWidget(tag)
-        self._layout.addItem(editor_item)
+        if self._menu:
+            values = self.selected_values() + [text]
+            self._menu.set_value(values)
+            self._set_selected_values(values)
+        else:
+            self._insert_tag(text)
         QtCore.QTimer.singleShot(0, self._reset_editor)
         self.sig_tag_added.emit(text)
         self._refresh_layout()
@@ -122,6 +155,8 @@ class MTagLineEdit(QtWidgets.QWidget):
         self._tags.remove(tag)
         self._layout.removeWidget(tag)
         tag.deleteLater()
+        if self._menu:
+            self._menu.set_value(self.selected_values())
         self._refresh_layout()
 
     def _update_editor_width(self, text):
@@ -140,7 +175,9 @@ class MTagLineEdit(QtWidgets.QWidget):
     def _refresh_layout(self):
         self._layout.invalidate()
         width = max(1, self.width())
-        self.setMinimumHeight(self.heightForWidth(width))
+        row_height = self._editor.sizeHint().height() + self._layout._spacing
+        height = min(self.heightForWidth(width), row_height * self._max_rows)
+        self.setFixedHeight(height)
         self.updateGeometry()
 
     def sizeHint(self):
@@ -158,13 +195,28 @@ class MTagLineEdit(QtWidgets.QWidget):
         self._update_editor_width(self._editor.text())
         self._layout.invalidate()
 
+    def focusInEvent(self, event):
+        super(MTagLineEdit, self).focusInEvent(event)
+        self._editor.setFocus(QtCore.Qt.OtherFocusReason)
+
+    def mousePressEvent(self, event):
+        super(MTagLineEdit, self).mousePressEvent(event)
+        if self._menu and event.button() == QtCore.Qt.LeftButton:
+            self._menu.set_value(self.selected_values())
+            self._menu.popup(self.mapToGlobal(QtCore.QPoint(0, self.height())))
+
     def eventFilter(self, watched, event):
-        if watched is self._editor and event.type() in (QtCore.QEvent.FocusIn, QtCore.QEvent.FocusOut):
+        if watched is self._editor and event.type() == QtCore.QEvent.FocusIn:
             self.setProperty("dayu_tag_line_focus", event.type() == QtCore.QEvent.FocusIn)
-            if event.type() == QtCore.QEvent.FocusIn:
-                self._placeholder_text = self._editor.placeholderText()
-                self._editor.setPlaceholderText("")
-            elif self._placeholder_text:
-                self._editor.setPlaceholderText(self._placeholder_text)
+            self.style().polish(self)
+            if self._menu:
+                QtCore.QTimer.singleShot(0, self._show_menu)
+        elif watched is self._editor and event.type() == QtCore.QEvent.FocusOut:
+            self.setProperty("dayu_tag_line_focus", False)
             self.style().polish(self)
         return super(MTagLineEdit, self).eventFilter(watched, event)
+
+    def _show_menu(self):
+        if self._menu and self._editor.hasFocus():
+            self._menu.set_value(self.selected_values())
+            self._menu.popup(self.mapToGlobal(QtCore.QPoint(0, self.height())))
