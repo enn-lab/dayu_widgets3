@@ -162,11 +162,11 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("columns=4", example)
         self.assertIn("description", example)
 
-    def test_line_edit_example_supports_multiple_tags(self):
-        example = (ROOT / "examples" / "line_edit_example.py").read_text(encoding="utf-8")
-        self.assertIn("class TagLineEditExample", example)
+    def test_tag_software_list_example_supports_multi_select_tags(self):
+        example = (ROOT / "examples" / "tag_software_list_example.py").read_text(encoding="utf-8")
+        self.assertIn("class TagSoftwareListExample", example)
         self.assertIn("MTagLineEdit", example)
-        self.assertIn("self._completer.activated.connect(self._tag_editor.add_tag)", example)
+        self.assertIn("set_options", example)
         component = (ROOT / "dayu_widgets" / "tag_line_edit.py").read_text(encoding="utf-8")
         self.assertIn("class _FlowLayout", component)
         self.assertIn("class MTagLineEdit", component)
@@ -177,7 +177,11 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("self.width() - 8", component)
         self.assertIn("self._menu = MMenu(exclusive=False, parent=self)", component)
         self.assertIn("self._menu.popup", component)
+        self.assertIn("self._menu.hide()", component)
+        self.assertIn("self._menu_show_timer.stop()", component)
+        self.assertIn("event.type() == QtCore.QEvent.Leave", component)
         self.assertIn("self._max_rows = 3", component)
+        self.assertIn("self._editor.setReadOnly(True)", component)
         self.assertNotIn("setPlaceholderText(\"\")", component)
         qss = (STATIC / "main.qss").read_text(encoding="utf-8")
         self.assertIn("QWidget#tag_line_edit[dayu_tag_line_focus=true]", qss)

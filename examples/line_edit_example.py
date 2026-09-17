@@ -10,43 +10,10 @@ from dayu_widgets.combo_box import MComboBox
 from dayu_widgets.divider import MDivider
 from dayu_widgets.label import MLabel
 from dayu_widgets.line_edit import MLineEdit
-from dayu_widgets.completer import MCompleter
 from dayu_widgets.menu import MMenu
 from dayu_widgets.message import MMessage
 from dayu_widgets.push_button import MPushButton
 from dayu_widgets.tool_button import MToolButton
-from dayu_widgets.tag_line_edit import MTagLineEdit
-
-
-class TagLineEditExample(QtWidgets.QWidget):
-    """Compose MLineEdit, MCompleter and MTag into a tokenized file field."""
-
-    def __init__(self, parent=None):
-        super(TagLineEditExample, self).__init__(parent)
-        self._tag_editor = MTagLineEdit()
-        self.line_edit = self._tag_editor.line_edit
-        self.line_edit.setPlaceholderText("输入文件名以显示补全选项")
-        self._files = [
-            "character_rig.ma",
-            "character_rig2.ma",
-            "character_rig3.ma",
-            "character_rig4.ma",
-            "environment_layout.ma",
-            "hero_texture.1001.exr",
-            "lighting_scene.nk",
-            "shot010_animation.blend",
-        ]
-        self._tag_editor.set_options(self._files)
-        self._completer = MCompleter(self.line_edit)
-        self._completer.setModel(QtCore.QStringListModel(self._files, self._completer))
-        self._completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        self._completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
-        self._completer.activated.connect(self._tag_editor.add_tag)
-        self.line_edit.setCompleter(self._completer)
-
-        layout = QtWidgets.QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self._tag_editor)
 
 
 class LineEditExample(QtWidgets.QWidget):
@@ -107,8 +74,6 @@ class LineEditExample(QtWidgets.QWidget):
         main_lay.addWidget(line_edit_tool_button)
         main_lay.addWidget(line_edit_label)
         main_lay.addWidget(line_edit_push_button)
-        main_lay.addWidget(MDivider("tags + completion"))
-        main_lay.addWidget(TagLineEditExample())
         main_lay.addWidget(MDivider("preset"))
 
         main_lay.addWidget(MLabel("error"))
