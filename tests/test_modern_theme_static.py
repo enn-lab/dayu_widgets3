@@ -175,11 +175,15 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("self.setMinimumHeight(self.heightForWidth(width))", component)
         self.assertIn("self._editor.setFocus(QtCore.Qt.OtherFocusReason)", component)
         self.assertIn("self.width() - 8", component)
-        self.assertNotIn("setPalette", component)
-        self.assertNotIn("PlaceholderText", component)
+        self.assertIn('self._editor.setPlaceholderText("")', component)
+        self.assertIn("self._editor.setPlaceholderText(self._placeholder_text)", component)
         qss = (STATIC / "main.qss").read_text(encoding="utf-8")
         self.assertIn("QWidget#tag_line_edit[dayu_tag_line_focus=true]", qss)
         self.assertIn("background-color: @input_color;", qss)
+        editor_rule = qss[qss.index("MLineEdit#tag_line_edit_editor") :]
+        editor_rule = editor_rule[: editor_rule.index("}") + 1]
+        self.assertNotIn("\n    color:", editor_rule)
+        self.assertNotIn("\n    padding:", editor_rule)
 
 
 if __name__ == "__main__":

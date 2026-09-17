@@ -2004,8 +2004,6 @@ QWidget#tag_line_edit[dayu_tag_line_focus=true] {
 MLineEdit#tag_line_edit_editor {
     background-color: transparent;
     border: none;
-    color: @text_primary_color;
-    padding: 0;
 }
 
 /* Icon tiles and rich popup choices used by application launchers. */
