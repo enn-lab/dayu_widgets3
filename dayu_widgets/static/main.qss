@@ -1998,9 +1998,10 @@ QWidget#tag_line_edit {
     border: 1px solid @border_color;
     border-radius: @border_radius_base@unit;
 }
-QLineEdit#tag_line_edit_editor {
+MLineEdit#tag_line_edit_editor {
     background-color: transparent;
     border: none;
+    color: @text_primary_color;
     padding: 0;
 }
 

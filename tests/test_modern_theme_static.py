@@ -174,6 +174,9 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("QtCore.QTimer.singleShot(0, self._reset_editor)", component)
         self.assertIn("self.setMinimumHeight(self.heightForWidth(width))", component)
         self.assertIn("self._editor.setFocus(QtCore.Qt.OtherFocusReason)", component)
+        self.assertIn("self.width() - 8", component)
+        self.assertIn("ColorRole.PlaceholderText", component)
+        self.assertIn("def showEvent(self, event)", component)
 
 
 if __name__ == "__main__":
