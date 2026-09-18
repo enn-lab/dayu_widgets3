@@ -140,6 +140,19 @@ class MTheme(object):
         self.text_error_color = self.error_7
         self.text_color_inverse = "#fff"
         self.text_warning_color = self.warning_7
+        self._init_accent_alpha()
+
+    def _init_accent_alpha(self):
+        """Pre-compute accent tints (as ``rgba()``) for state-only surfaces.
+
+        QSS has no ``color-mix``/``lighten``, so any ``rgba(var, 12%)`` token
+        would be resolved by Qt's template engine as a literal and fail.  The
+        tints therefore have to be real color values.
+        """
+        self.accent_8_color = utils.fade_color(self.accent_color, "8%")
+        self.accent_12_color = utils.fade_color(self.accent_color, "12%")
+        self.accent_20_color = utils.fade_color(self.accent_color, "20%")
+        self.accent_35_color = utils.fade_color(self.accent_color, "35%")
 
     def set_theme(self, theme):
         is_light_theme = theme == "light" or theme.endswith("_light")
@@ -216,6 +229,7 @@ class MTheme(object):
             self.focus_color = self.primary_color
             self.accent_hover_color = self.primary_5
             self.accent_pressed_color = self.primary_7
+        self._init_accent_alpha()
         self._sync_theme_aliases()
 
     def set_primary_color(self, color):

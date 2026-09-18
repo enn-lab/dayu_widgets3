@@ -1935,7 +1935,21 @@ MTag[dayu_tag_style="filled"]:hover {
     background-color: @accent_hover_color;
     border-color: @accent_hover_color;
 }
-MTag QLabel#tag_text {
+/* A closable tag is interactive, so it earns the accent tint.  Plain
+ * MTag keeps the neutral surface and stays a read-only badge. */
+MTag[dayu_closeable="true"] {
+    color: @accent_color;
+    background-color: @accent_20_color;
+    border-color: @accent_35_color;
+}
+MTag[dayu_closeable="true"]:hover {
+    background-color: @accent_35_color;
+    border-color: @accent_color;
+}
+/* Text and icons inside a tag inherit the tag's own color; their child
+ * widgets must stay transparent so they never create black rectangles. */
+MTag QLabel#tag_text,
+MTag QLabel#tag_icon {
     background-color: transparent;
     border: none;
 }
@@ -1945,7 +1959,7 @@ MTag QToolButton#tag_close_button {
     padding: 0;
 }
 MTag QToolButton#tag_close_button:hover {
-    background-color: rgba(255, 255, 255, 18%);
+    background-color: @border_strong_color;
     border-radius: @border_radius_small@unit;
 }
 MCheckableTag {
@@ -2001,9 +2015,39 @@ QWidget#tag_line_edit {
 QWidget#tag_line_edit[dayu_tag_line_focus=true] {
     border: 1px solid @focus_color;
 }
+/* The inner MLineEdit is the caret of the container, not a field of its
+ * own: it must never paint a second frame, background, or text rule. */
 MLineEdit#tag_line_edit_editor {
     background-color: transparent;
     border: none;
+}
+QFrame#menu_search_popup {
+    background-color: @elevated_color;
+    border: 1px solid @border_strong_color;
+    border-radius: @border_radius_base@unit;
+    padding: 4px;
+}
+QLineEdit#menu_search_bar {
+    background-color: @input_color;
+    border: 1px solid @border_color;
+    border-radius: @border_radius_base@unit;
+    color: @text_primary_color;
+    padding: 4px 8px;
+}
+QLineEdit#menu_search_bar:focus {
+    border: 1px solid @focus_color;
+}
+QLabel#menu_search_label {
+    color: @text_secondary_color;
+    background-color: transparent;
+    border: none;
+}
+MLineEdit#tag_line_edit_editor:focus {
+    background-color: transparent;
+    border: none;
+}
+MLineEdit#tag_line_edit_editor::placeholder {
+    color: @text_tertiary_color;
 }
 
 /* Icon tiles and rich popup choices used by application launchers. */

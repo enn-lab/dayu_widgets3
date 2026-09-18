@@ -9,7 +9,6 @@ from qtpy import QtWidgets
 from dayu_widgets import dayu_theme
 from dayu_widgets.mixin import cursor_mixin
 from dayu_widgets.qt import MIcon
-from dayu_widgets import utils
 
 
 @cursor_mixin
@@ -30,6 +29,10 @@ class MTag(QtWidgets.QWidget):
         self._label = QtWidgets.QLabel(str(text), self)
         self._label.setObjectName("tag_text")
         self._label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self._icon_label = QtWidgets.QLabel(self)
+        self._icon_label.setObjectName("tag_icon")
+        self._icon_label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self._icon_label.setVisible(False)
         self._close_button = QtWidgets.QToolButton(self)
         self._close_button.setObjectName("tag_close_button")
         self._close_button.setIcon(MIcon("close_line.svg"))
@@ -37,15 +40,13 @@ class MTag(QtWidgets.QWidget):
         self._close_button.setFixedSize(16, 16)
         self._close_button.setCursor(QtCore.Qt.PointingHandCursor)
         self._close_button.setAutoRaise(True)
-        self._close_button.setStyleSheet(
-            "QToolButton { background-color: transparent; border: none; padding: 0; }"
-        )
         self._close_button.setVisible(False)
         self._close_button.clicked.connect(self._close)
 
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(8, 3, 8, 3)
         layout.setSpacing(4)
+        layout.addWidget(self._icon_label)
         layout.addWidget(self._label)
         layout.addWidget(self._close_button)
 
@@ -63,31 +64,33 @@ class MTag(QtWidgets.QWidget):
         return self.property("dayu_tag_color")
 
     def set_dayu_color(self, value):
+        """Store the semantic color; the QSS owns how it is painted.
+
+        ``MTag`` deliberately raises no local stylesheet: a widget-level
+        stylesheet wins over the application one and would freeze the tag on
+        the colors captured at construction time, so a later
+        ``dayu_theme.apply()`` / theme switch could never restyle it.
+        """
         color = QtGui.QColor(value)
         if not color.isValid():
             raise ValueError("tag color should be a valid QColor value")
         self.setProperty("dayu_tag_color", color.name())
-        self._apply_color_style(color)
-
-    def _apply_color_style(self, color):
-        self.setStyleSheet(
-            "MTag { color: %s; border-color: %s; background-color: %s; }"
-            "MTag[dayu_tag_style=filled] { color: %s; border-color: %s; background-color: %s; }"
-            "MTag QToolButton { background: transparent; border: none; }"
-            % (
-                color.name(),
-                utils.fade_color(color.name(), "45%"),
-                utils.fade_color(color.name(), "12%"),
-                dayu_theme.text_color_inverse,
-                color.name(),
-                utils.generate_color(color.name(), 6),
-            )
-        )
 
     dayu_text = QtCore.Property(str, get_dayu_text, set_dayu_text)
     dayu_color = QtCore.Property(str, get_dayu_color, set_dayu_color)
 
+    def setIcon(self, icon):
+        """Show an optional leading icon."""
+        if icon is None or icon.isNull():
+            self._icon_label.clear()
+            self._icon_label.setVisible(False)
+            return
+        self._icon_label.setPixmap(icon.pixmap(12, 12))
+        self._icon_label.setFixedSize(12, 12)
+        self._icon_label.setVisible(True)
+
     def closeable(self):
+        self.setProperty("dayu_closeable", "true")
         self._close_button.setVisible(True)
         return self
 
@@ -98,7 +101,6 @@ class MTag(QtWidgets.QWidget):
 
     def no_border(self):
         self.setProperty("dayu_tag_style", "filled")
-        self._apply_color_style(QtGui.QColor(self.get_dayu_color()))
         return self
 
     def coloring(self, color):
@@ -108,12 +110,17 @@ class MTag(QtWidgets.QWidget):
     def mousePressEvent(self, event):
         self._pressed = event.button() == QtCore.Qt.LeftButton
         super(MTag, self).mousePressEvent(event)
+        # Keep the press from bubbling up to a parent token editor, which
+        # would otherwise treat a click on a tag as a click on the container
+        # and open its popup.
+        event.accept()
 
     def mouseReleaseEvent(self, event):
         if self._pressed and event.button() == QtCore.Qt.LeftButton and self.property("dayu_clickable"):
             self.sig_clicked.emit()
         self._pressed = False
         super(MTag, self).mouseReleaseEvent(event)
+        event.accept()
 
 
 @cursor_mixin

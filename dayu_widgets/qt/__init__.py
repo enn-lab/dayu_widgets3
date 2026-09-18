@@ -11,12 +11,20 @@ from qtpy.QtSvg import QSvgRenderer
 
 
 class MCacheDict(object):
-    _render = QSvgRenderer()
+    # The renderer is created lazily: constructing a QObject at import time
+    # (before any ``QApplication`` exists) leaves it unusable or destroyed by
+    # the time tests and embedding hosts create their application object.
+    _render = None
 
     def __init__(self, cls):
         super(MCacheDict, self).__init__()
         self.cls = cls
         self._cache_pix_dict = {}
+
+    def _get_render(self):
+        if MCacheDict._render is None:
+            MCacheDict._render = QSvgRenderer()
+        return MCacheDict._render
 
     def _render_svg(self, svg_path, replace_color=None):
         # Import local modules
@@ -29,11 +37,12 @@ class MCacheDict(object):
             data_content = f.read()
             if replace_color is not None:
                 data_content = data_content.replace("#555555", replace_color)
-            self._render.load(QtCore.QByteArray(data_content.encode()))
+            render = self._get_render()
+            render.load(QtCore.QByteArray(data_content.encode()))
             pix = QtGui.QPixmap(128, 128)
             pix.fill(QtCore.Qt.transparent)
             painter = QtGui.QPainter(pix)
-            self._render.render(painter)
+            render.render(painter)
             painter.end()
             if self.cls is QtGui.QPixmap:
                 return pix

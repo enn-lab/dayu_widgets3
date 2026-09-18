@@ -81,10 +81,10 @@ class ModernThemeStaticTest(unittest.TestCase):
             'MPushButton[dayu_type]:disabled',
             'MLabel[dayu_mark="true"]',
             "MTag[dayu_tag_style=\"filled\"]",
+            'MTag[dayu_closeable="true"]',
             "MCheckableTag:checked",
             "MNewTag",
-            "MTag QLabel#tag_text",
-            "MTag QToolButton#tag_close_button",
+            "MTag QToolButton#tag_close_button:hover",
             "MTableView::item:selected",
             "MTreeView::item:selected",
             'MBigView[dayu_tile_style="launcher"]::item:selected',
@@ -113,6 +113,10 @@ class ModernThemeStaticTest(unittest.TestCase):
                 "accent_color",
                 "accent_hover_color",
                 "accent_pressed_color",
+                "accent_8_color",
+                "accent_12_color",
+                "accent_20_color",
+                "accent_35_color",
                 "background_out_color",
                 "border_radius_base",
                 "border_radius_large",
@@ -171,25 +175,79 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("class _FlowLayout", component)
         self.assertIn("class MTagLineEdit", component)
         self.assertIn("self._layout.addWidget(self._editor)", component)
-        self.assertIn("QtCore.QTimer.singleShot(0, self._reset_editor)", component)
-        self.assertIn("self.setFixedHeight(height)", component)
-        self.assertIn("self._editor.setFocus(QtCore.Qt.OtherFocusReason)", component)
         self.assertIn("self.width() - 8", component)
         self.assertIn("self._menu = MMenu(exclusive=False, parent=self)", component)
+        self.assertIn('self._menu.setProperty("keep_open", True)', component)
         self.assertIn("self._menu.popup", component)
         self.assertIn("self._menu.hide()", component)
-        self.assertIn("self._menu_show_timer.stop()", component)
-        self.assertIn("event.type() == QtCore.QEvent.Leave", component)
         self.assertIn("self._max_rows = 3", component)
-        self.assertIn("self._editor.setReadOnly(True)", component)
         self.assertNotIn("setPlaceholderText(\"\")", component)
+
+        # The editor is the caret of the container, not an editable field:
+        # a free token is typed into it and committed with Enter.
+        self.assertNotIn("setReadOnly(True)", component)
+        self.assertIn("def _commit_editor_text", component)
+
+        # The height is derived from the measured content on every resize
+        # instead of being frozen from a stale measurement: an unlaid-out
+        # widget (width 0/1) must not clamp the container to a bogus height.
+        self.assertIn("def _apply_height", component)
+        self.assertIn("def minimumSizeHint", component)
+        self.assertIn("if width > 1 else 0", component)
+        self.assertNotIn("min(self.heightForWidth(width)", component)
+
+        # The popup is a picker: it must survive its own selection change.
+        self.assertNotIn("self._suppress_menu_on_focus", component)
+        self.assertIn("def _filter_menu_event", component)
+        self.assertIn("self._menu_dispatching", component)
+        self.assertIn("def _pointer_inside_interaction", component)
+        self.assertIn("search_popup = self._menu.search_popup", component)
+        self.assertIn("def _widget_contains_pointer", component)
+        example = (ROOT / "examples" / "tag_software_list_example.py").read_text(encoding="utf-8")
+        self.assertIn(").secondary())", example)
+
         qss = (STATIC / "main.qss").read_text(encoding="utf-8")
         self.assertIn("QWidget#tag_line_edit[dayu_tag_line_focus=true]", qss)
         self.assertIn("background-color: @input_color;", qss)
+        self.assertIn("QLineEdit#menu_search_bar:focus", qss)
+        menu = (ROOT / "dayu_widgets" / "menu.py").read_text(encoding="utf-8")
+        self.assertIn("self.search_bar.setCursorPosition(len(char))", menu)
+        self.assertNotIn("self.search_bar.selectAll()", menu)
         editor_rule = qss[qss.index("MLineEdit#tag_line_edit_editor") :]
         editor_rule = editor_rule[: editor_rule.index("}") + 1]
         self.assertNotIn("\n    color:", editor_rule)
         self.assertNotIn("\n    padding:", editor_rule)
+
+    def test_tag_text_and_close_button_have_transparent_surfaces(self):
+        """MTag sub-controls must not paint black child-widget surfaces."""
+        qss = (STATIC / "main.qss").read_text(encoding="utf-8")
+        tag_block = qss[qss.index("MTag {") :]
+        tag_block = tag_block[: tag_block.index("MCheckableTag {")]
+        self.assertIn("MTag QLabel#tag_text", tag_block)
+        self.assertIn("background-color: transparent;", tag_block)
+        self.assertIn("MTag QToolButton#tag_close_button {", tag_block)
+        close_rule = qss[qss.index("MTag QToolButton#tag_close_button:hover") :]
+        close_rule = close_rule[: close_rule.index("}") + 1]
+        declared = {
+            line.strip().split(":")[0]
+            for line in close_rule.splitlines()
+            if ":" in line and not line.strip().startswith(("/*", "*"))
+        }
+        for prop in ("color", "padding"):
+            with self.subTest(prop=prop):
+                self.assertNotIn(prop, declared)
+
+    def test_tag_does_not_carry_a_widget_stylesheet(self):
+        """MTag must be painted by the theme, never by a local stylesheet.
+
+        A widget-level stylesheet outranks the application stylesheet and would
+        freeze the tag on the colors captured at construction time, so a later
+        ``dayu_theme.apply()`` could never restyle it.  The same applies to the
+        close button.
+        """
+        source = (ROOT / "dayu_widgets" / "tag.py").read_text(encoding="utf-8")
+        self.assertNotIn("setStyleSheet", source)
+        self.assertNotIn("_apply_color_style", source)
 
 
 if __name__ == "__main__":

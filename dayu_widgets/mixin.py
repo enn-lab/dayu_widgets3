@@ -9,14 +9,25 @@ from qtpy import QtWidgets
 
 
 def property_mixin(cls):
-    """Run function after dynamic property value changed"""
+    """Run function after dynamic property value changed.
+
+    Dynamic properties are set twice in a row by every ``setXxx`` call:
+    ``QObject.setProperty`` first clears the old value and emits
+    ``DynamicPropertyChange`` with an invalid ``QVariant``, then writes the
+    new value and emits again.  Only the second (valid) event carries the
+    real value, so the invalid one is skipped — otherwise a callback like
+    ``_set_dayu_style`` would rebuild styles from a stale property.
+    """
 
     def _new_event(self, event):
         if event.type() == QtCore.QEvent.DynamicPropertyChange:
             prp = event.propertyName().data().decode()
             if hasattr(self, "_set_{}".format(prp)):
+                value = self.property(str(prp))
+                if value is None:
+                    return super(cls, self).event(event)
                 callback = getattr(self, "_set_{}".format(prp))
-                callback(self.property(str(prp)))
+                callback(value)
         return super(cls, self).event(event)
 
     setattr(cls, "event", _new_event)
@@ -72,6 +83,10 @@ def focus_shadow_mixin(cls):
 
     def _new_focus_in_event(self, *args, **kwargs):
         old_focus_in_event(self, *args, **kwargs)
+        if self.property("disable_focus_shadow"):
+            if self.graphicsEffect():
+                self.graphicsEffect().setEnabled(False)
+            return
         if not self.graphicsEffect():
             # Import local modules
             from dayu_widgets import dayu_theme

@@ -606,8 +606,11 @@ class SearchableMenuBase(ScrollableMenuBase):
     def __init__(self, *args, **kwargs):
         super(SearchableMenuBase, self).__init__(*args, **kwargs)
         self.search_popup = MPopup(self)
+        self.search_popup.setObjectName("menu_search_popup")
         self.search_popup.setVisible(False)
         self.search_bar = MLineEdit(parent=self)
+        self.search_bar.setObjectName("menu_search_bar")
+        self.search_bar.setProperty("disable_focus_shadow", True)
         self.search_label = QtWidgets.QLabel()
 
         self.search_bar.textChanged.connect(self.slot_search_change)
@@ -637,9 +640,14 @@ class SearchableMenuBase(ScrollableMenuBase):
                 QtCore.Qt.Key_Enter,
         ):
             super(SearchableMenuBase, self).keyPressEvent(event)
-        elif key == QtCore.Qt.Key_Tab:
+            return
+        if key == QtCore.Qt.Key_Tab:
             self.search_bar.setFocus()
-        return call(event)
+            event.accept()
+            return
+        result = call(event)
+        event.accept()
+        return result
 
     def _set_search_label(self, value):
         self.search_label.setText(value)
@@ -682,12 +690,17 @@ class SearchableMenuBase(ScrollableMenuBase):
                 char = chr(key)
                 self.search_bar.setText(char)
                 self.search_bar.setFocus()
-                self.search_bar.selectAll()
+                # The trigger key is already the first search character.
+                # Selecting it makes the next typed character overwrite it
+                # (``Maya`` becomes ``aya``).  Keep the caret after it so the
+                # normal editor key path appends the remaining text.
+                self.search_bar.setCursorPosition(len(char))
                 width = self.sizeHint().width()
                 width = width if width >= 50 else 50
                 offset = QtCore.QPoint(width, 0)
                 self.search_popup.move(self.pos() + offset)
                 self.search_popup.show()
+                return
             elif key == QtCore.Qt.Key_Escape:
                 self.search_bar.setText("")
                 self.search_popup.hide()
@@ -751,6 +764,16 @@ class MMenu(SearchableMenuBase):
         self.set_value("")
         self.set_data([])
         self.set_separator("/")
+
+    def mouseReleaseEvent(self, event):
+        """Allow picker menus to remain open across checkbox toggles."""
+        if self.property("keep_open") and event.button() == QtCore.Qt.LeftButton:
+            action = self.actionAt(event.pos())
+            if action and action.isEnabled() and not action.isSeparator():
+                action.trigger()
+                event.accept()
+                return
+        return super(MMenu, self).mouseReleaseEvent(event)
 
     def set_separator(self, chr):
         self.setProperty("separator", chr)
@@ -886,6 +909,31 @@ class MMenu(SearchableMenuBase):
                 ]
         self.set_value(selected_data)
         self.sig_value_changed.emit(selected_data)
+
+    def search_text(self):
+        """Return the programmatic search filter (empty when inactive)."""
+        return self.property("search_text") or ""
+
+    def set_search_text(self, text):
+        """Filter the visible actions without opening the search bar.
+
+        The built-in search bar only engages on a physical keystroke.  A host
+        widget that already owns a text field (for example
+        :class:`~dayu_widgets.tag_line_edit.MTagLineEdit`) reuses this to keep
+        the popup in sync with its own input.
+        """
+        self.setProperty("search_text", text or "")
+        return self
+
+    def clear_search_text(self):
+        """Remove the programmatic filter and show every action again."""
+        return self.set_search_text("")
+
+    def _set_search_text(self, value):
+        flags = 0
+        for m in self.property("search_re") or "":
+            flags |= getattr(re, m.upper(), 0)
+        self._update_search(re.compile(r".*%s.*" % value, flags))
 
     def set_loader(self, func):
         self._load_data_func = func
