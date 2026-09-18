@@ -15,9 +15,28 @@ class MPopup(QtWidgets.QFrame):
         super(MPopup, self).__init__(parent)
         self.setWindowFlags(QtCore.Qt.Popup)
         self.mouse_pos = None
+        # The deferred initialisation and mask updates must be scheduled on
+        # timers the popup *owns*.  The module-level ``QTimer.singleShot``
+        # helper keeps the callback alive after the widget is gone, so
+        # destroying a popup (or a menu/page that parents one) before the
+        # event loop drained the timer ran ``post_init`` / ``update_mask``
+        # against a deleted C++ object: PySide6 6.11.1 reported
+        # ``Internal C++ object (MPopup) already deleted`` and killed the
+        # whole process with an access violation.
+        # A timer parented to ``self`` is destroyed together with the widget,
+        # which cancels any pending callback — the pattern ``menu.py`` already
+        # uses for ``scrollTimer`` / ``delayTimer``.
+        self._init_timer = QtCore.QTimer(self)
+        self._init_timer.setSingleShot(True)
+        self._init_timer.timeout.connect(self.post_init)
+
+        self._mask_timer = QtCore.QTimer(self)
+        self._mask_timer.setSingleShot(True)
+        self._mask_timer.timeout.connect(self.update_mask)
+
         self.setProperty("movable", True)
         self.setProperty("animatable", True)
-        QtCore.QTimer.singleShot(0, self.post_init)
+        self._init_timer.start(0)
 
         self._opacity_anim = QtCore.QPropertyAnimation(self, b"windowOpacity")
         self.setProperty("anim_opacity_duration", 300)
@@ -54,7 +73,7 @@ class MPopup(QtWidgets.QFrame):
         return curve
 
     def _set_border_radius(self, value):
-        QtCore.QTimer.singleShot(0, self.update_mask)
+        self._mask_timer.start(0)
 
     def _set_anim_opacity_duration(self, value):
         self._opacity_anim.setDuration(value)
@@ -79,7 +98,7 @@ class MPopup(QtWidgets.QFrame):
 
     def _set_anim_size_end(self, value):
         self._size_anim.setEndValue(value)
-        QtCore.QTimer.singleShot(0, self.update_mask)
+        self._mask_timer.start(0)
 
     def start_anim(self):
         self._size_anim.start()

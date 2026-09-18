@@ -23,9 +23,19 @@ PYSIDE6 = os.environ.get("QT_API") == "pyside6"
 class CompatStyle(QtWidgets.QProxyStyle):
     """PySide2 PySide6"""
 
-    def __init__(self, style=None):
-        super(CompatStyle, self).__init__(style)
-        self.style = style
+    def __init__(self):
+        # KM-M9-015: construct with no base style at all.
+        # ``QProxyStyle`` takes ownership of any style it is constructed with,
+        # so the previous ``CompatStyle(widget.style())`` made this proxy adopt
+        # (and later delete) Qt's shared application style — every widget still
+        # referencing that style then crashed the process (PySide6 6.11.1:
+        # heap corruption the moment the proxy was collected).  With no
+        # argument, the proxy creates its own private base style instead.
+        # This class only publishes the ``State_*`` / ``PE_*`` / ``PM_*`` /
+        # ``CE_*`` enum aliases used by the drawing code; drawing itself always
+        # goes through ``widget.style()``, so a base style is not needed.
+        # NB: no ``self.style`` attribute — it used to shadow ``QProxyStyle.style()``.
+        super(CompatStyle, self).__init__()
 
     @property
     def State_None(self):
@@ -158,7 +168,8 @@ class ScrollableMenuBase(QtWidgets.QMenu):
             self.setWindowFlags(self.windowFlags() | no_shadow)
         self._maximumHeight = self.maximumHeight()
         self._actionRects = []
-        self._compat_style = CompatStyle(self.style())
+        # KM-M9-015: no base style — see CompatStyle.__init__.
+        self._compat_style = CompatStyle()
 
         self.scrollTimer = QtCore.QTimer(parent=self, interval=50, singleShot=True)
         self.scrollTimer.timeout.connect(self.checkScroll)
