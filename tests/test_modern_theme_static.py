@@ -265,6 +265,11 @@ class ModernThemeStaticTest(unittest.TestCase):
         combo = (ROOT / "dayu_widgets" / "combo_box.py").read_text(encoding="utf-8")
         self.assertIn("edit.setCursor(QtCore.Qt.IBeamCursor)", combo)
 
+    def test_cascade_submenu_inherits_parent_menu_stylesheet(self):
+        menu = (ROOT / "dayu_widgets" / "menu.py").read_text(encoding="utf-8")
+        self.assertIn("source.setStyleSheet(self.styleSheet())", menu)
+        self.assertIn("self._position_submenu(source)", menu)
+
 
 if __name__ == "__main__":
     unittest.main()

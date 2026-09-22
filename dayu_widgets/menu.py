@@ -325,6 +325,12 @@ class ScrollableMenuBase(QtWidgets.QMenu):
     def eventFilter(self, source, event):
         if event.type() == QtCore.QEvent.Show:
             if isinstance(source, QtWidgets.QMenu) and source is not self:
+                # Cascaded QMenus are independent top-level popup windows on
+                # Qt, so the parent menu's stylesheet is not inherited.  Copy
+                # it immediately before showing the submenu to keep the
+                # surface, radius, item states, and arrows visually aligned.
+                if self.styleSheet():
+                    source.setStyleSheet(self.styleSheet())
                 self._position_submenu(source)
             if self.isScrollable() and self.deltaY:
                 action = source.menuAction()
