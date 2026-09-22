@@ -20,6 +20,27 @@ import dayu_widgets.utils as utils
 PYSIDE6 = os.environ.get("QT_API") == "pyside6"
 
 
+def _qcolor_from_theme(value):
+    """Convert a theme/QSS color token to a QColor for custom painting."""
+    color = QtGui.QColor(value)
+    if color.isValid():
+        return color
+
+    match = re.fullmatch(
+        r"rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)(%)?\s*\)",
+        str(value),
+        re.IGNORECASE,
+    )
+    if not match:
+        return QtGui.QColor(QtCore.Qt.transparent)
+
+    red, green, blue = (int(match.group(i)) for i in range(1, 4))
+    alpha = float(match.group(4))
+    alpha = alpha * 2.55 if match.group(5) else alpha * 255 if alpha <= 1 else alpha
+    color = QtGui.QColor(red, green, blue, max(0, min(255, round(alpha))))
+    return color
+
+
 class CompatStyle(QtWidgets.QProxyStyle):
     """PySide2 PySide6"""
 
@@ -164,8 +185,19 @@ class ScrollableMenuBase(QtWidgets.QMenu):
             no_shadow = QtCore.Qt.WindowType.NoDropShadowWindowHint
         except AttributeError:
             no_shadow = getattr(QtCore.Qt, "NoDropShadowWindowHint", None)
+        try:
+            frameless = QtCore.Qt.WindowType.FramelessWindowHint
+        except AttributeError:
+            frameless = getattr(QtCore.Qt, "FramelessWindowHint", None)
+        popup_flags = self.windowFlags()
         if no_shadow is not None:
-            self.setWindowFlags(self.windowFlags() | no_shadow)
+            popup_flags |= no_shadow
+        if frameless is not None:
+            # QMenu keeps a native Windows frame unless it is explicitly
+            # frameless.  That frame remains black around a translucent,
+            # custom-painted cascade popup.
+            popup_flags |= frameless
+        self.setWindowFlags(popup_flags)
         self._maximumHeight = self.maximumHeight()
         self._actionRects = []
         # KM-M9-015: no base style — see CompatStyle.__init__.
@@ -561,8 +593,8 @@ class ScrollableMenuBase(QtWidgets.QMenu):
             from dayu_widgets import dayu_theme
 
             radius = getattr(dayu_theme, "border_radius_large", 6)
-            surface = QtGui.QColor(dayu_theme.elevated_color)
-            border = QtGui.QColor(dayu_theme.border_strong_color)
+            surface = _qcolor_from_theme(dayu_theme.elevated_color)
+            border = _qcolor_from_theme(dayu_theme.border_strong_color)
             menu_rect = QtCore.QRectF(self.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
             qp.setPen(QtGui.QPen(border, 1))
             qp.setBrush(surface)
