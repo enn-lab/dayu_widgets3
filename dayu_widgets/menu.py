@@ -545,7 +545,38 @@ class ScrollableMenuBase(QtWidgets.QMenu):
 
     def paintEvent(self, event):
         if not self.isScrollable():
-            super(ScrollableMenuBase, self).paintEvent(event)
+            # On Windows an independent cascade popup can let the native
+            # QMenu panel paint over its stylesheet background.  This is most
+            # visible for a submenu: the first menu inherits its host surface,
+            # while the child falls back to an opaque black panel.  Paint the
+            # shared modern surface ourselves, then delegate each item to the
+            # active style so check states, icons and hover states still use
+            # the normal QSS rules.
+            qp = QtGui.QPainter(self)
+            qp.setRenderHint(QtGui.QPainter.Antialiasing)
+            qp.setCompositionMode(QtGui.QPainter.CompositionMode_Source)
+            qp.fillRect(self.rect(), QtCore.Qt.transparent)
+            qp.setCompositionMode(QtGui.QPainter.CompositionMode_SourceOver)
+
+            from dayu_widgets import dayu_theme
+
+            radius = getattr(dayu_theme, "border_radius_large", 6)
+            surface = QtGui.QColor(dayu_theme.elevated_color)
+            border = QtGui.QColor(dayu_theme.border_strong_color)
+            menu_rect = QtCore.QRectF(self.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
+            qp.setPen(QtGui.QPen(border, 1))
+            qp.setBrush(surface)
+            qp.drawRoundedRect(menu_rect, radius, radius)
+
+            style = self.style()
+            for action in self.actions():
+                if not action.isVisible():
+                    continue
+                option = QtWidgets.QStyleOptionMenuItem()
+                self.initStyleOption(option, action)
+                option.rect = self.actionGeometry(action)
+                style.drawControl(self._compat_style.CE_MenuItem, option, qp, self)
+            qp.end()
             return
 
         style = self.style()

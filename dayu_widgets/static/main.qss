@@ -1527,6 +1527,7 @@ MTableView QTableCornerButton::section {
 }
 
 MMenu,
+QMenu,
 MMessage,
 MDrawer {
     color: @text_primary_color;
@@ -1591,17 +1592,20 @@ MTreeView::item:selected {
     background-color: @surface_selected_color;
     border: none;
 }
-MMenu::item {
+MMenu::item,
+QMenu::item {
     color: @text_primary_color;
     background-color: transparent;
     border-radius: @border_radius_small@unit;
     padding: 7px 28px 7px 12px;
     margin: 2px 4px;
 }
-MMenu QWidget {
+MMenu QWidget,
+QMenu QWidget {
     background-color: transparent;
 }
-MMenu::indicator:non-exclusive {
+MMenu::indicator:non-exclusive,
+QMenu::indicator:non-exclusive {
     width: 13px;
     height: 13px;
     subcontrol-origin: padding;
@@ -1611,22 +1615,26 @@ MMenu::indicator:non-exclusive {
     border: 1px solid @border_strong_color;
     background-color: @input_color;
 }
-MMenu::indicator:non-exclusive:checked {
+MMenu::indicator:non-exclusive:checked,
+QMenu::indicator:non-exclusive:checked {
     border-color: @accent_color;
     background-color: @accent_color;
     image: url(@icon_check);
 }
-MMenu::indicator:non-exclusive:hover {
+MMenu::indicator:non-exclusive:hover,
+QMenu::indicator:non-exclusive:hover {
     border-color: @accent_hover_color;
 }
-MMenu::icon {
+MMenu::icon,
+QMenu::icon {
     subcontrol-origin: padding;
     subcontrol-position: left center;
     left: 0;
     width: 16px;
     height: 16px;
 }
-MMenu::right-arrow {
+MMenu::right-arrow,
+QMenu::right-arrow {
     image: url(@icon_menu_right);
     width: 10px;
     height: 12px;
@@ -1635,18 +1643,23 @@ MMenu::right-arrow {
     right: 10px;
 }
 MMenu::item:hover,
-MMenu::item:selected {
+MMenu::item:selected,
+QMenu::item:hover,
+QMenu::item:selected {
     color: @text_primary_color;
     background-color: @surface_hover_color;
 }
-MMenu::item:checked {
+MMenu::item:checked,
+QMenu::item:checked {
     color: @accent_color;
     background-color: @surface_selected_color;
 }
-MMenu::item:disabled {
+MMenu::item:disabled,
+QMenu::item:disabled {
     color: @text_disabled_color;
 }
-MMenu::separator {
+MMenu::separator,
+QMenu::separator {
     height: 1px;
     background-color: @border_subtle_color;
     margin: 4px 8px;

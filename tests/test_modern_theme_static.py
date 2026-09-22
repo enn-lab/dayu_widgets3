@@ -271,6 +271,11 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("def _effective_stylesheet(self):", menu)
         self.assertIn("style_sheet = self._effective_stylesheet()", menu)
         self.assertIn("self._position_submenu(source)", menu)
+        self.assertIn("dayu_theme.elevated_color", menu)
+        self.assertIn("style.drawControl(self._compat_style.CE_MenuItem", menu)
+        qss = (STATIC / "main.qss").read_text(encoding="utf-8")
+        self.assertIn("QMenu::item", qss)
+        self.assertIn("QMenu::right-arrow", qss)
 
 
 if __name__ == "__main__":
