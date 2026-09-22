@@ -268,6 +268,8 @@ class ModernThemeStaticTest(unittest.TestCase):
     def test_cascade_submenu_inherits_parent_menu_stylesheet(self):
         menu = (ROOT / "dayu_widgets" / "menu.py").read_text(encoding="utf-8")
         self.assertIn("source.setStyleSheet(self.styleSheet())", menu)
+        self.assertIn("def _effective_stylesheet(self):", menu)
+        self.assertIn("style_sheet = self._effective_stylesheet()", menu)
         self.assertIn("self._position_submenu(source)", menu)
 
 

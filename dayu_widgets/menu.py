@@ -179,6 +179,30 @@ class ScrollableMenuBase(QtWidgets.QMenu):
 
         self.setMaxItemCount(0)
 
+    def setStyleSheet(self, style_sheet):
+        """Apply the menu stylesheet to every existing cascade popup.
+
+        Qt creates each submenu as an independent top-level window, so a
+        stylesheet assigned to the root QMenu is not inherited by descendants.
+        Synchronize the complete cascade when the theme is applied; the show
+        event synchronization below remains useful for menus created later.
+        """
+        super(ScrollableMenuBase, self).setStyleSheet(style_sheet)
+        for action in self.actions():
+            submenu = action.menu()
+            if submenu and submenu is not self:
+                submenu.setStyleSheet(style_sheet)
+
+    def _effective_stylesheet(self):
+        """Find the theme stylesheet inherited from the owning widget tree."""
+        widget = self
+        while widget is not None:
+            style_sheet = widget.styleSheet()
+            if style_sheet:
+                return style_sheet
+            widget = widget.parentWidget()
+        return ""
+
     def _set_max_scroll_count(self, value):
         self.setMaxItemCount(value * 2.2)
 
@@ -472,6 +496,9 @@ class ScrollableMenuBase(QtWidgets.QMenu):
             self.scrollBy(-self.defaultItemHeight)
 
     def showEvent(self, event):
+        style_sheet = self._effective_stylesheet()
+        if style_sheet:
+            self.setStyleSheet(style_sheet)
         for action in self.actions():
             if action.menu():
                 action.menu().installEventFilter(self)
