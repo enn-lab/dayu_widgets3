@@ -250,7 +250,7 @@ class ScrollableMenuBase(QtWidgets.QMenu):
             return
         radius = 6
         path = QtGui.QPainterPath()
-        path.addRoundedRect(QtCore.QRectF(self.rect()), radius, radius)
+        path.addRoundedRect(QtCore.QRectF(self.rect()).adjusted(1, 1, -1, -1), radius, radius)
         self.setMask(QtGui.QRegion(path.toFillPolygon().toPolygon()))
 
     @property
@@ -594,9 +594,13 @@ class ScrollableMenuBase(QtWidgets.QMenu):
 
             radius = getattr(dayu_theme, "border_radius_large", 6)
             surface = _qcolor_from_theme(dayu_theme.elevated_color)
-            border = _qcolor_from_theme(dayu_theme.border_strong_color)
-            menu_rect = QtCore.QRectF(self.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
-            qp.setPen(QtGui.QPen(border, 1))
+            # Keep the outermost pixel transparent.  Drawing a semi-transparent
+            # pen on the window edge lets Windows composite the antialiased
+            # fringe against black, which appears as a dark outline around
+            # cascade popups.  The border is intentionally omitted here; the
+            # inset mask provides the clean rounded boundary.
+            menu_rect = QtCore.QRectF(self.rect()).adjusted(1, 1, -1, -1)
+            qp.setPen(QtCore.Qt.NoPen)
             qp.setBrush(surface)
             qp.drawRoundedRect(menu_rect, radius, radius)
 

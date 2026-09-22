@@ -275,7 +275,7 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("style.drawControl(self._compat_style.CE_MenuItem", menu)
         self.assertIn("FramelessWindowHint", menu)
         self.assertIn("def _qcolor_from_theme(value):", menu)
-        self.assertIn("border = _qcolor_from_theme(dayu_theme.border_strong_color)", menu)
+        self.assertIn("qp.setPen(QtCore.Qt.NoPen)", menu)
         qss = (STATIC / "main.qss").read_text(encoding="utf-8")
         self.assertIn("QMenu::item", qss)
         self.assertIn("QMenu::right-arrow", qss)
