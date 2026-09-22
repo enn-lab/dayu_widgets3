@@ -30,6 +30,7 @@ class MComboBoxSearchMixin(object):
 
         edit = self.lineEdit()
         edit.setReadOnly(False)
+        edit.setCursor(QtCore.Qt.IBeamCursor)
         edit.returnPressed.disconnect()
         edit.textEdited.connect(self.filter_model.setFilterFixedString)
         self.completer.activated.connect(lambda t: t and self.setCurrentIndex(self.findText(t)))

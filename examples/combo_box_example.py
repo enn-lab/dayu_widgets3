@@ -134,6 +134,13 @@ class ComboBoxExample(QtWidgets.QWidget, MFieldMixin):
         sub_lay5.addWidget(select5)
         sub_lay5.addStretch()
 
+        sub_lay_default = QtWidgets.QHBoxLayout()
+        default_combo = MComboBox()
+        default_combo.addItems(cities + ["北戴河"])
+        sub_lay_default.addWidget(MLabel("默认原生下拉"))
+        sub_lay_default.addWidget(default_combo)
+        sub_lay_default.addStretch()
+
         sub_lay6 = QtWidgets.QHBoxLayout()
         combo = MComboBox()
         items = cities + ["北戴河"]
@@ -152,6 +159,7 @@ class ComboBoxExample(QtWidgets.QWidget, MFieldMixin):
         main_lay.addWidget(MDivider("自定义格式"))
         main_lay.addLayout(sub_lay4)
         main_lay.addLayout(sub_lay5)
+        main_lay.addLayout(sub_lay_default)
         main_lay.addLayout(sub_lay6)
         main_lay.addStretch()
 

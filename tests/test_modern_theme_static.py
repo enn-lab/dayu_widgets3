@@ -258,6 +258,13 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("def hidePopup(self):", combo)
         self.assertIn("QtCore.Qt.PointingHandCursor", combo)
 
+    def test_combo_example_includes_default_native_popup(self):
+        example = (ROOT / "examples" / "combo_box_example.py").read_text(encoding="utf-8")
+        self.assertIn('MLabel("默认原生下拉")', example)
+        self.assertIn('default_combo.addItems(cities + ["北戴河"])', example)
+        combo = (ROOT / "dayu_widgets" / "combo_box.py").read_text(encoding="utf-8")
+        self.assertIn("edit.setCursor(QtCore.Qt.IBeamCursor)", combo)
+
 
 if __name__ == "__main__":
     unittest.main()
