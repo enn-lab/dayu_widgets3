@@ -739,10 +739,6 @@ MComboBox > QLineEdit{
 MComboBox:focus{
     border: 1px solid @focus_color;
 }
-MComboBox:hover{
-    border: 1px solid @border_strong_color;
-    background-color: @surface_hover_color;
-}
 MComboBox:disabled{
     color: @text_disabled_color;
 }
