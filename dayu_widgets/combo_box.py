@@ -121,10 +121,28 @@ class MComboBox(MComboBoxSearchMixin, QtWidgets.QComboBox):
     def showPopup(self):
         """Override default showPopup. When set custom menu, show the menu instead."""
         if self._has_custom_view or self._root_menu is None:
+            self.setProperty("cursor_popup_open", True)
             super(MComboBox, self).showPopup()
+            if self.isEnabled():
+                self.setCursor(QtCore.Qt.PointingHandCursor)
         else:
             super(MComboBox, self).hidePopup()
+            self.setProperty("cursor_popup_open", False)
             self._root_menu.popup(self.mapToGlobal(QtCore.QPoint(0, self.height())))
+
+    def hidePopup(self):
+        """Close the popup and restore the ComboBox hover cursor state."""
+        native_popup = self._has_custom_view or self._root_menu is None
+        if not native_popup and self._root_menu is not None:
+            self._root_menu.hide()
+        super(MComboBox, self).hidePopup()
+        self.setProperty("cursor_popup_open", False)
+        if self.underMouse():
+            self.setCursor(
+                QtCore.Qt.PointingHandCursor
+                if self.isEnabled()
+                else QtCore.Qt.ForbiddenCursor
+            )
 
     # def setCurrentIndex(self, index):
     #     raise NotImplementedError

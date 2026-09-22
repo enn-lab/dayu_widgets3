@@ -249,6 +249,15 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertNotIn("setStyleSheet", source)
         self.assertNotIn("_apply_color_style", source)
 
+    def test_combo_popup_preserves_hover_cursor(self):
+        mixin = (ROOT / "dayu_widgets" / "mixin.py").read_text(encoding="utf-8")
+        combo = (ROOT / "dayu_widgets" / "combo_box.py").read_text(encoding="utf-8")
+        self.assertIn('"cursor_popup_open"', mixin)
+        self.assertIn('self.setProperty("cursor_popup_open", True)', combo)
+        self.assertIn('self.setProperty("cursor_popup_open", False)', combo)
+        self.assertIn("def hidePopup(self):", combo)
+        self.assertIn("QtCore.Qt.PointingHandCursor", combo)
+
 
 if __name__ == "__main__":
     unittest.main()

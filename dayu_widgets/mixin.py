@@ -54,7 +54,9 @@ def cursor_mixin(cls):
 
     def _new_leave_event(self, *args, **kwargs):
         old_leave_event(self, *args, **kwargs)
-        if self.__dict__.get("__dayu_enter", False):
+        if self.__dict__.get("__dayu_enter", False) and not self.property(
+            "cursor_popup_open"
+        ):
             self.unsetCursor()
             self.__dict__.update({"__dayu_enter": False})
         return super(cls, self).leaveEvent(*args, **kwargs)
