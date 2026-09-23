@@ -44,6 +44,14 @@ def cursor_mixin(cls):
     old_enter_event = cls.enterEvent
     old_leave_event = cls.leaveEvent
 
+    def _clear_window_cursor(self):
+        handle = self.window().windowHandle()
+        if handle is not None:
+            # Qt5 can retain a child widget's cursor on QWindow after the
+            # widget itself is unset.  Always clear the current window cursor;
+            # remembering it would preserve an already-stale pointing hand.
+            handle.unsetCursor()
+
     def _new_enter_event(self, *args, **kwargs):
         old_enter_event(self, *args, **kwargs)
         self.__dict__.update({"__dayu_enter": True})
@@ -58,6 +66,7 @@ def cursor_mixin(cls):
             "cursor_popup_open"
         ):
             self.unsetCursor()
+            self._clear_window_cursor()
             self.__dict__.update({"__dayu_enter": False})
         return super(cls, self).leaveEvent(*args, **kwargs)
 
@@ -65,12 +74,14 @@ def cursor_mixin(cls):
         old_leave_event(self, *args, **kwargs)
         if self.__dict__.get("__dayu_enter", False):
             self.unsetCursor()
+            self._clear_window_cursor()
             self.__dict__.update({"__dayu_enter": False})
         return super(cls, self).hideEvent(*args, **kwargs)
 
     setattr(cls, "enterEvent", _new_enter_event)
     setattr(cls, "leaveEvent", _new_leave_event)
     setattr(cls, "hideEvent", _new_hide_event)
+    setattr(cls, "_clear_window_cursor", _clear_window_cursor)
     return cls
 
 

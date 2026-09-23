@@ -66,7 +66,6 @@ class MComboBox(MComboBoxSearchMixin, QtWidgets.QComboBox):
         line_edit.setReadOnly(True)
         line_edit.setTextMargins(4, 0, 4, 0)
         line_edit.setStyleSheet("background-color:transparent")
-        line_edit.setCursor(QtCore.Qt.PointingHandCursor)
         line_edit.installEventFilter(self)
         self._has_custom_view = False
         self.set_value("")

@@ -258,6 +258,13 @@ class ModernThemeStaticTest(unittest.TestCase):
         self.assertIn("def hidePopup(self):", combo)
         self.assertIn("QtCore.Qt.PointingHandCursor", combo)
 
+    def test_cursor_mixin_restores_window_cursor(self):
+        mixin = (ROOT / "dayu_widgets" / "mixin.py").read_text(encoding="utf-8")
+        combo = (ROOT / "dayu_widgets" / "combo_box.py").read_text(encoding="utf-8")
+        self.assertIn("def _clear_window_cursor(self):", mixin)
+        self.assertIn("handle.unsetCursor()", mixin)
+        self.assertNotIn("line_edit.setCursor(QtCore.Qt.PointingHandCursor)", combo)
+
     def test_combo_example_includes_default_native_popup(self):
         example = (ROOT / "examples" / "combo_box_example.py").read_text(encoding="utf-8")
         self.assertIn('MLabel("默认原生下拉")', example)
