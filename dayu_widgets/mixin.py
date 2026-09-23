@@ -45,12 +45,20 @@ def cursor_mixin(cls):
     old_leave_event = cls.leaveEvent
 
     def _clear_window_cursor(self):
-        handle = self.window().windowHandle()
-        if handle is not None:
-            # Qt5 can retain a child widget's cursor on QWindow after the
-            # widget itself is unset.  Always clear the current window cursor;
-            # remembering it would preserve an already-stale pointing hand.
-            handle.unsetCursor()
+        try:
+            handle = self.window().windowHandle()
+            if handle is not None:
+                # Qt5 can retain a child widget's cursor on QWindow after the
+                # widget itself is unset.  Always clear the current window
+                # cursor; remembering it would preserve an already-stale
+                # pointing hand.
+                handle.unsetCursor()
+        except RuntimeError:
+            # Maya can delete the native QWindow before the QWidget's final
+            # leave/hide event reaches Python.  The PySide wrapper remains,
+            # but calling it raises "C++ object already deleted"; cleanup is
+            # already complete from Qt's perspective in that case.
+            return
 
     def _new_enter_event(self, *args, **kwargs):
         old_enter_event(self, *args, **kwargs)

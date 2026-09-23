@@ -263,6 +263,7 @@ class ModernThemeStaticTest(unittest.TestCase):
         combo = (ROOT / "dayu_widgets" / "combo_box.py").read_text(encoding="utf-8")
         self.assertIn("def _clear_window_cursor(self):", mixin)
         self.assertIn("handle.unsetCursor()", mixin)
+        self.assertIn("except RuntimeError:", mixin)
         self.assertNotIn("line_edit.setCursor(QtCore.Qt.PointingHandCursor)", combo)
 
     def test_combo_example_includes_default_native_popup(self):
